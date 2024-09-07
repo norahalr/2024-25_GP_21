@@ -5,7 +5,10 @@
 
 #### Additionally, the platform fosters interdisciplinary collaboration, enabling faculties to request support from other departments. This promotes knowledge sharing and effective teamwork across various disciplines.
 
-### Technology
+### Technology:
 #### Backend: Python 
 #### Frontend: HTML, CSS, JavaScript
 #### Database: MySQL
+
+### Launching Instructions:
+#### TBA
