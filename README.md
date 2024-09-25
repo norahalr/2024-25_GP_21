@@ -11,4 +11,4 @@
 #### Database: MySQL
 
 ### Launching Instructions:
-#### TBA
+#### To initiate the project, begin by cloning the repository and navigating to the project directory. Create and activate a virtual environment. Ensure MySQL is properly configured with the appropriate credentials. Once these steps are completed, start the server to access the website. Detailed instructions will be provided subsequently.
