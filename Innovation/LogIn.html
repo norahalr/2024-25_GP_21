@@ -1,324 +1,238 @@
 <!DOCTYPE html>
-<html lang="en">
+<html style="font-size: 16px;" lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login/Signup Form</title>
-  <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Supervisor log-in​">
+    <meta name="description" content="">
+    <title>supervisorLogin</title>
+    <link rel="stylesheet" href="nicepage2.css" media="screen">
+    <link rel="stylesheet" href="supervisorLogin.css" media="screen">
 
-    html, body {
-      display: grid;
-      height: 100%;
-      width: 100%;
-      place-items: center;
-      background: -webkit-linear-gradient(left, #003366, #004080, #0059b3, #0073e6);
-    }
+    <style>
+        input[type="radio"] {
+            display: none;
+        }
 
-    ::selection {
-      background: #1a75ff;
-      color: #fff;
-    }
+        .radio-btn-container {
+            position: relative;
+            display: flex;
+            width: 100%;
+            margin: 20px 0;
+            border: 1px solid lightgrey;
+            border-radius: 15px;
+            overflow: hidden;
+        }
 
-    .wrapper {
-      overflow: hidden;
-      max-width: 390px;
-      background: #fff;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0px 15px 20px rgba(0,0,0,0.1);
-    }
+        .radio-btn {
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: #081f56;
+            transition: color 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
 
-    .wrapper .title-text {
-      display: flex;
-      width: 200%;
-    }
+        .slider-tab {
+            position: absolute;
+            height: 100%;
+            width: 50%;
+            left: 0;
+            background: linear-gradient(to right, #296aa4 , #11518a);
+            transition: left 0.3s ease;
+            z-index: 0;
+        }
 
-    .wrapper .title {
-      width: 50%;
-      font-size: 35px;
-      font-weight: 600;
-      text-align: center;
-      transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
-    }
+        #student:checked ~ .slider-tab {
+            left: 50%; /* Move the tab to the right when student is checked */
+        }
 
-    .wrapper .slide-controls {
-      position: relative;
-      display: flex;
-      height: 50px;
-      width: 100%;
-      overflow: hidden;
-      margin: 30px 0 10px 0;
-      justify-content: space-between;
-      border: 1px solid lightgrey;
-      border-radius: 15px;
-    }
+        .form-container {
+            width: 100%;
+            overflow: hidden;
+        }
 
-    .slide-controls .slide {
-      height: 100%;
-      width: 100%;
-      color: #fff;
-      font-size: 18px;
-      font-weight: 500;
-      text-align: center;
-      line-height: 48px;
-      cursor: pointer;
-      z-index: 1;
-      transition: all 0.6s ease;
-    }
+        .form-inner {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            width: 200%;
+        }
 
-    .slide-controls label.signup {
-      color: #000;
-    }
+        form {
+            width: 50%;
+            padding: 20px;
+        }
 
-    .slide-controls .slider-tab {
-      position: absolute;
-      height: 100%;
-      width: 50%;
-      left: 0;
-      z-index: 0;
-      border-radius: 15px;
-      background: -webkit-linear-gradient(left,#003366,#004080,#0059b3, #0073e6);
-      transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
-    }
+        .field {
+            margin-top: 20px;
+        }
 
-    input[type="radio"] {
-      display: none;
-    }
+        .field input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
 
-    #signup:checked ~ .slider-tab {
-      left: 50%;
-    }
+        .btn input {
+            width: 100%;
+            padding: 10px;
+            background-color: #11518a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .u-btn.u-button-style {
+    display: block; /* Make the button a block element */
+    margin: 0 auto; /* Center the button horizontally */
+    background: none; /* Remove the background */
+    border: none; /* Remove any borders */
+    color: #11518a; /* Inherit the text color from the parent */
+    text-align: center; /* Center the text within the button */
+    padding: 10px 20px; /* Add padding for a better look */
+    cursor: pointer; /* Change cursor to pointer */
+    font-size: 16px; /* Optional: set font size */
+}
 
-    #signup:checked ~ label.signup {
-      color: #fff;
-      cursor: default;
-      user-select: none;
-    }
+/* Optional: Add hover effect */
+.u-btn.u-button-style:hover {
+    text-decoration: underline; /* Underline text on hover */
+}
 
-    #signup:checked ~ label.login {
-      color: #000;
-    }
+        .u-container-layout {
+    max-width: 800px; /* Set a maximum width for the container */
+    margin: 0 auto; /* Center the container horizontally */
+    padding: 20px; /* Add padding inside the container */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for depth */
+    background-color: white; /* Optional: Set a background color */
+    border-radius: 10px; /* Optional: Add rounded corners */
+}
 
-    #login:checked ~ label.signup {
-      color: #000;
-    }
+.u-layout {
+    display: flex;
+    justify-content: center; /* Center the layout items horizontally */
+    align-items: center; /* Center the layout items vertically */
+    padding: 20px; /* Optional: Add padding to the layout */
+}
 
-    #login:checked ~ label.login {
-      cursor: default;
-      user-select: none;
-    }
-
-    .wrapper .form-container {
-      width: 100%;
-      overflow: hidden;
-    }
-
-    .form-container .form-inner {
-      display: flex;
-      width: 200%;
-    }
-
-    .form-container .form-inner form {
-      width: 50%;
-      transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
-    }
-
-    .form-inner form .field {
-      height: 50px;
-      width: 100%;
-      margin-top: 20px;
-    }
-
-    .form-inner form .field input {
-      height: 100%;
-      width: 100%;
-      outline: none;
-      padding-left: 15px;
-      border-radius: 15px;
-      border: 1px solid lightgrey;
-      border-bottom-width: 2px;
-      font-size: 17px;
-      transition: all 0.3s ease;
-    }
-
-    .form-inner form .field input:focus {
-      border-color: #1a75ff;
-    }
-
-    .form-inner form .field input::placeholder {
-      color: #999;
-      transition: all 0.3s ease;
-    }
-
-    form .field input:focus::placeholder {
-      color: #1a75ff;
-    }
-
-    .form-inner form .pass-link {
-      margin-top: 5px;
-    }
-
-    .form-inner form .signup-link {
-      text-align: center;
-      margin-top: 30px;
-    }
-
-    .form-inner form .pass-link a,
-    .form-inner form .signup-link a {
-      color: #1a75ff;
-      text-decoration: none;
-    }
-
-    .form-inner form .pass-link a:hover,
-    .form-inner form .signup-link a:hover {
-      text-decoration: underline;
-    }
-
-    form .btn {
-      height: 50px;
-      width: 100%;
-      border-radius: 15px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    form .btn .btn-layer {
-      height: 100%;
-      width: 300%;
-      position: absolute;
-      left: -100%;
-      background: -webkit-linear-gradient(right,#003366,#004080,#0059b3, #0073e6);
-      border-radius: 15px;
-      transition: all 0.4s ease;
-    }
-
-    form .btn:hover .btn-layer {
-      left: 0;
-    }
-
-    form .btn input[type="submit"] {
-      height: 100%;
-      width: 100%;
-      z-index: 1;
-      position: relative;
-      background: none;
-      border: none;
-      color: #fff;
-      padding-left: 0;
-      border-radius: 15px;
-      font-size: 20px;
-      font-weight: 500;
-      cursor: pointer;
-    }
-  </style>
+</style>
 </head>
 <body>
-  <div class="wrapper">
-    <div class="title-text">
-      <div class="title login">Login Form</div>
-      <div class="title signup">Signup Form</div>
-    </div>
-    <div class="form-container">
-      <div class="slide-controls">
-        <input type="radio" name="slide" id="login" checked>
-        <input type="radio" name="slide" id="signup">
-        <label for="login" class="slide login">Login</label>
-        <label for="signup" class="slide signup">Signup</label>
-        <div class="slider-tab"></div>
-      </div>
-      <div class="form-inner">
-        <form action="#" class="login">
-          <div class="field">
-            <input type="text" placeholder="Email Address" required>
-          </div>
-          <div class="field">
-            <input type="password" placeholder="Password" required>
-          </div>
-          <div class="pass-link"><a href="#">Forgot password?</a></div>
-          <div class="field btn">
-            <div class="btn-layer"></div>
-            <input type="submit" value="Login">
-          </div>
-          <div class="signup-link">Not a member? <a href="#">Signup now</a></div>
-        </form>
-        <form action="#" class="signup">
-          <div class="field">
-            <input type="text" placeholder="Email Address" required>
-          </div>
-          <div class="field">
-            <input type="password" placeholder="Password" required>
-          </div>
-          <div class="field">
-            <input type="password" placeholder="Confirm Password" required>
-          </div>
-          <div class="field btn">
-            <div class="btn-layer"></div>
-            <input type="submit" value="Signup">
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const loginText = document.querySelector(".title-text .login");
-    const loginForm = document.querySelector("form.login");
-    const loginBtn = document.querySelector("label.login");
-    const signupBtn = document.querySelector("label.signup");
-    const signupLink = document.querySelector("form .signup-link a");
-
-    signupBtn.onclick = () => {
-      loginForm.style.marginLeft = "-50%";
-      loginText.style.marginLeft = "-50%";
-    };
-
-    loginBtn.onclick = () => {
-      loginForm.style.marginLeft = "0%";
-      loginText.style.marginLeft = "0%";
-    };
-
-    signupLink.onclick = () => {
-      signupBtn.click();
-      return false;
-    };
-  </script>
-  
-<footer class="u-clearfix u-custom-color-3 u-footer" id="sec-9e3e"><div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
-  <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-30 u-layout-wrap u-layout-wrap-1">
-    <div class="u-gutter-0 u-layout">
-      <div class="u-layout-row">
-        <div class="u-align-left u-container-style u-layout-cell u-left-cell u-size-60 u-layout-cell-1">
-          <div class="u-container-layout u-container-layout-1">
-            <h5 class="u-align-center u-text u-text-default u-text-1">Thank you for visiting our website!<br>If you have any suggestions, please do not hesitate to contact us
-            </h5><!--position-->
-            <div data-position="" class="u-position u-position-1"><!--block-->
-              <div class="u-block">
-                <div class="u-block-container u-clearfix"><!--block_header-->
-                  <h5 class="u-block-header u-text"><!--block_header_content--><!--/block_header_content--></h5><!--/block_header--><!--block_content-->
-                  <div class="u-block-content u-text"><!--block_content_content--><!--/block_content_content--></div><!--/block_content-->
+    <!-- Header Section -->
+    <header class="u-clearfix u-header u-header" id="sec-4e01">
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <img class="custom-expanded u-image u-image-contain u-image-default u-image-1" src="images/a4ed5b0e-2e1f-1810-60d4-54a099399ed4.png" alt="" data-image-width="330" data-image-height="245">
+            <nav class="u-menu u-menu-one-level u-offcanvas u-menu-1">
+                <div class="menu-collapse">
+                    <a class="u-button-style u-nav-link" href="#">Menu</a>
                 </div>
-              </div><!--/block-->
-            </div><!--/position-->
-            <div class="u-social-icons u-spacing-10 u-social-icons-1" data-animation-name="" data-animation-duration="0" data-animation-direction="">
-              <a class="u-social-url" title="Email" target="_blank" href=""><span class="u-file-icon u-icon u-social-facebook u-social-icon u-icon-1"><img src="images/542740.png" alt=""></span>
-              </a>
-              <a class="u-social-url" title="department website" target="_blank" href="https://ccis.ksu.edu.sa/ar"><span class="u-file-icon u-icon u-social-icon u-social-linkedin u-icon-2"><img src="images/3308395.png" alt=""></span>
-              </a>
-              <a class="u-social-url" title="twitter" target="_blank" href="https://x.com/fccis_ksu?s=11&amp;t=U-hrOO7JjdBm0Zm8XnUG6A"><span class="u-file-icon u-icon u-social-icon u-social-twitter u-icon-3"><img src="images/11823292.png" alt=""></span>
-              </a>
-            </div>
-          </div>
+                <div class="u-custom-menu u-nav-container">
+                    <ul class="u-nav u-unstyled u-nav-1">
+                        <li class="u-nav-item"><a class="u-button-style u-nav-link" href="./">Home</a></li>
+                        <li class="u-nav-item"><a class="u-button-style u-nav-link" href="externalForm.html">External Form</a></li>
+                        <li class="u-nav-item"><a class="u-button-style u-nav-link" href="supervisorRegister.html">Supervisor Register</a></li>
+                    </ul>
+                </div>
+            </nav>
         </div>
-      </div>
-    </div>
-  </div>
-</div></footer>
+    </header>
+
+    <!-- Main Section with Forms -->
+    <section class="u-align-center u-clearfix u-white u-section-1" id="sec-d49e">
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <div class="u-layout">
+                <div class="u-layout-row">
+                    <div class="u-container-style u-layout-cell u-palette-1-light-2 u-radius u-shape-round u-size-60 u-layout-cell-1">
+                        <div class="u-container-layout">
+
+                            <!-- Add Radio Buttons to choose between Supervisor or Student -->
+                            <div class="radio-btn-container">
+                                <input type="radio" name="user-role" id="supervisor" value="supervisor" checked>
+                                <input type="radio" name="user-role" id="student" value="student">
+                                <span class="slider-tab"></span>
+                                
+                                <label for="supervisor" class="radio-btn">Supervisor</label>
+                                <label for="student" class="radio-btn">Student</label>
+                            </div>
+
+                            <div class="form-container">
+                                <div class="form-inner">
+                                    <!-- Supervisor Login Form -->
+                                    <form id="supervisor-login-form" class="supervisorLogin">
+                                        <h2 class="u-text u-text-custom-color-3 u-text-default u-text-1">Supervisor Login</h2>
+                                        <div class="field">
+                                            <input type="text" placeholder="Email Address" required>
+                                        </div>
+                                        <div class="field">
+                                            <input type="password" placeholder="Password" required>
+                                        </div>
+                                        <div class="pass-link"><a href="#">Forgot password?</a></div>
+                                        <div class="field btn">
+                                            <input type="submit" value="Login">
+                                        </div>
+                                    </form>
+
+<!-- Student Login Form -->
+                                    <form id="student-login-form" class="studentsLogin" style="display: none;">
+                                        <h2 class="u-text u-text-custom-color-3 u-text-default u-text-1">Student Login</h2>
+                                        <div class="field">
+                                            <input type="text" placeholder="Email Address" required>
+                                        </div>
+                                        <div class="field">
+                                            <input type="password" placeholder="Password" required>
+                                        </div>
+                                        <div class="pass-link"><a href="#">Forgot password?</a></div>
+                                        <div class="field btn">
+                                            <input type="submit" value="Login">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <a href="#" class="u-btn u-button-style">Don't have an account?Register now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="u-align-center u-footer u-grey-80" id="sec-9e3e">
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <p class="u-small-text u-text u-text-variant u-text-1">Sample text. Click to select the Text Element.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const supervisorForm = document.getElementById("supervisor-login-form");
+            const studentForm = document.getElementById("student-login-form");
+            const roleRadios = document.querySelectorAll("input[name='user-role']");
+
+            // Function to show the appropriate form based on selected radio button
+            function showFormBasedOnRole() {
+                const selectedRole = document.querySelector("input[name='user-role']:checked").value;
+
+                if (selectedRole === "supervisor") {
+                    supervisorForm.style.display = "block";
+                    studentForm.style.display = "none";
+                } else {
+                    supervisorForm.style.display = "none";
+                    studentForm.style.display = "block";
+                }
+            }
+
+            // Add event listeners to radio buttons to switch between forms
+            roleRadios.forEach(radio => {
+                radio.addEventListener("change", showFormBasedOnRole);
+            });
+
+            // Initial form display based on the pre-selected radio button
+            showFormBasedOnRole();
+        });
+    </script>
 </body>
 </html>
