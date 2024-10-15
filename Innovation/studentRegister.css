@@ -1,9 +1,10 @@
+ 
  .u-section-1 {
   background-image: none;
 }
 
 .u-section-1 .u-sheet-1 {
-  min-height: 1364px;
+  min-height: auto;
 }
 
 .u-section-1 .u-shape-1 {
@@ -15,12 +16,12 @@
 }
 
 .u-section-1 .u-group-1 {
-  min-height: 1137px;
+  min-height: auto;
   box-shadow: 5px 5px 20px 0 rgba(0,0,0,0.2);
   height: auto;
   --radius: 20px;
-  margin-top: 60px;
-  margin-bottom: 60px;
+  margin-top: 10%;
+  margin-bottom: 10%;
 }
 
 .u-section-1 .u-container-layout-1 {
@@ -52,7 +53,7 @@
 .u-section-1 .u-group-2 {
   --radius: 30px;
   width: 988px;
-  min-height: 902px;
+  min-height: auto;
   height: auto;
   margin: 43px auto 0;
 }
@@ -134,8 +135,8 @@
   }
 
   .u-section-1 .u-group-1 {
-    margin-top: 182px;
-    height: auto;
+    margin-top: 10%;
+    margin-bottom: 10%;
   }
 
   .u-section-1 .u-container-layout-1 {
@@ -148,7 +149,7 @@
   }
 
   .u-section-1 .u-layout-cell-1 {
-    min-height: 944px;
+    min-height: auto;
   }
 
   .u-section-1 .u-group-2 {
@@ -168,8 +169,8 @@
   }
 
   .u-section-1 .u-group-1 {
-    margin-top: 308px;
-  }
+    margin-top: 10%;
+    margin-bottom: 10%;  }
 
   .u-section-1 .u-container-layout-1 {
     padding-left: 0;
@@ -204,8 +205,8 @@
   }
 
   .u-section-1 .u-group-1 {
-    margin-top: -192px;
-  }
+    margin-top: 10%;
+    margin-bottom: 10%;  }
 
   .u-section-1 .u-container-layout-1 {
     padding-left: 30px;
@@ -236,8 +237,8 @@
   }
 
   .u-section-1 .u-group-1 {
-    margin-top: -227px;
-    margin-bottom: -79px;
+    margin-top: 10%;
+    margin-bottom: 10%;
   }
 
   .u-section-1 .u-container-layout-1 {
@@ -255,5 +256,26 @@
 
   .u-section-1 .u-form-1 {
     width: 320px;
+  }
+}
+/* Flexbox for student-info grouping */
+.student-info {
+  display: flex;
+  gap: 20px;
+}
+
+/* By default, fields stack below each other (mobile-first) */
+.student-info .u-form-group {
+  flex: 1 1 100%;
+}
+
+/* On larger screens, place name and email fields side by side */
+@media (min-width: 768px) {
+  .student-info {
+    flex-direction: row;
+  }
+
+  .student-info .u-form-group {
+    flex: 1 1 50%; /* Take up 50% of the available width */
   }
 }
