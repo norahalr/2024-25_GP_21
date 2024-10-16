@@ -1135,7 +1135,7 @@ a {
 }
 .u-underline,
 .u-underline:hover {
-  text-decoration: underline;
+  text-decoration: ;
   border-bottom-width: 0;
 }
 .u-no-underline,
@@ -25792,6 +25792,7 @@ h6 {
 li.active > .u-button-style.u-active-none {
   color: inherit !important;
   background-color: transparent !important;
+
 }
 .u-button-style.u-border-none,
 .u-button-style.u-border-hover-none:hover,

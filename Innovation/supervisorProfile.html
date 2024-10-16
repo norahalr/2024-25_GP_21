@@ -18,7 +18,11 @@
     <script type="application/ld+json">{
 		"@context": "http://schema.org",
 		"@type": "Organization",
-		"name": "Site1"
+		"name": "Site1",
+		"sameAs": [
+				"https://ccis.ksu.edu.sa/ar",
+				"https://x.com/fccis_ksu?s=11&t=U-hrOO7JjdBm0Zm8XnUG6A"
+		]
 }</script>
     <meta name="theme-color" content="#478ac9">
     <meta property="og:title" content="supervisorProfile">
@@ -35,9 +39,10 @@
           </a>
         </div>
         <div class="u-custom-menu u-nav-container">
-          <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="SupervisorHomePage.html" style="padding: 10px 0px;">Supervisor home page</a>
-          </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="supervisorProfile.html">Profile</a>
-          </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.html">Log out</a>
+          <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="./" style="padding: 10px 0px;">Home</a>
+</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;">Sign Up</a>
+</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;">Login</a>
+</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="externalForm.html">Request Project from CCIS</a>
 </li></ul>
         </div>
         <div class="u-custom-menu u-nav-container-collapse">
@@ -68,7 +73,7 @@
     </div></header>
     <section class="u-align-center u-clearfix u-container-align-center u-white u-section-1" id="sec-55fc">
       <div class="u-clearfix u-sheet u-sheet-1">
-        <h1 class="u-text u-text-custom-color-3 u-text-default u-text-1">Supervisor Profile</h1>
+        <h1 class="u-text u-text-custom-color-3 u-text-default u-text-1" >Supervisor Profile</h1>
         <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-0 u-layout-wrap u-layout-wrap-1">
           <div class="u-layout" style="">
             <div class="u-layout-row" style="">
@@ -105,8 +110,12 @@
                             <label for="textarea-a10a" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5">Interest</label>
                             <textarea rows="4" cols="50" id="textarea-a10a" name="textarea" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5" required="" placeholder="Please enter your interest about GP projects"></textarea>
                           </div>
-                          <div class="u-form-group u-form-submit u-label-left u-form-group-6">
-                            <label class="u-label u-spacing-0 u-label-6"></label>
+                          <div class="u-form-group u-form-textarea u-label-left u-form-group-6">
+                            <label for="textarea-6d9e" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-6">Idea</label>
+                            <textarea rows="4" cols="50" id="textarea-6d9e" name="textarea-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-6" placeholder="Write down your idea if you have specific one"></textarea>
+                          </div>
+                          <div class="u-form-group u-form-submit u-label-left u-form-group-7">
+                            <label class="u-label u-spacing-0 u-label-7"></label>
                             <input type="submit" value="submit" class="u-form-control-hidden" wfd-id="id118">
                             <div class="u-align-right u-btn-submit-container">
                               <a href="#" class="u-active-palette-1-light-3 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1">Edit </a>
@@ -125,24 +134,24 @@
                     <div class="u-container-layout u-container-layout-3">
                       <div class="custom-expanded u-form u-form-2">
                         <form action="https://forms.nicepagesrv.com/v2/form/process" class="u-clearfix u-form-spacing-30 u-form-vertical u-inner-form" source="email" name="form" style="padding: 15px;">
-                          <div class="u-form-group u-form-textarea u-label-left u-form-group-7">
-                            <label for="textarea-a10a" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-7">GP group</label>
-                            <textarea rows="4" cols="50" id="textarea-a10a" name="textarea" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-6" required="" placeholder="Students names"></textarea>
-                          </div>
-                          <div class="u-form-group u-form-partition-factor-2 u-label-left u-form-group-8">
-                            <label for="text-505a" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-8">Leader</label>
-                            <input type="text" placeholder="Email" id="text-505a" name="text" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-7">
+                          <div class="u-form-group u-form-textarea u-label-left u-form-group-8">
+                            <label for="textarea-a10a" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-8">GP group</label>
+                            <textarea rows="4" cols="50" id="textarea-a10a" name="textarea" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-7" required="" placeholder="Students names"></textarea>
                           </div>
                           <div class="u-form-group u-form-partition-factor-2 u-label-left u-form-group-9">
-                            <label for="text-1c02" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-9">Phone number</label>
-                            <input type="text" placeholder="Leader phone number" id="text-1c02" name="text-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-8">
+                            <label for="text-505a" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-9">Leader</label>
+                            <input type="text" placeholder="Email" id="text-505a" name="text" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-8">
                           </div>
-                          <div class="u-form-group u-label-left u-form-group-10">
-                            <label for="text-6ab4" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-10">Project title</label>
-                            <input type="text" placeholder="Fill in" id="text-6ab4" name="text-2" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-9">
+                          <div class="u-form-group u-form-partition-factor-2 u-label-left u-form-group-10">
+                            <label for="text-1c02" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-10">Phone number</label>
+                            <input type="text" placeholder="Leader phone number" id="text-1c02" name="text-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-9">
                           </div>
-                          <div class="u-form-group u-form-submit u-label-left u-form-group-11">
-                            <label class="u-label u-spacing-0 u-label-11"></label>
+                          <div class="u-form-group u-label-left u-form-group-11">
+                            <label for="text-6ab4" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-11">Project title</label>
+                            <input type="text" placeholder="Fill in" id="text-6ab4" name="text-2" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-10">
+                          </div>
+                          <div class="u-form-group u-form-submit u-label-left u-form-group-12">
+                            <label class="u-label u-spacing-0 u-label-12"></label>
                             <input type="submit" value="submit" class="u-form-control-hidden" wfd-id="id118">
                             <div class="u-align-right u-btn-submit-container">
                               <a href="#" class="u-active-palette-1-light-3 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-3">Edit </a>
@@ -167,7 +176,7 @@
     
     
     
-    
+   
 <footer class="u-clearfix u-custom-color-3 u-footer" id="sec-9e3e"><div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
   <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-30 u-layout-wrap u-layout-wrap-1">
     <div class="u-gutter-0 u-layout">
@@ -198,5 +207,6 @@
     </div>
   </div>
 </div></footer>
+    
   
 </body></html>
