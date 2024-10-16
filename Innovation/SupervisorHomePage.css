@@ -12,7 +12,7 @@
   --animation-custom_in-opacity: 0;
   --animation-custom_in-rotate: 0deg;
   --animation-custom_in-scale: 0.3;
-  margin: 60px auto 0 0;
+  margin: 3% auto 0 0;
 }
 
 .u-section-1 .u-list-1 {
@@ -687,4 +687,85 @@
     margin-left: auto;
     margin-right: auto;
   }
+}
+.u-active-white {
+  background-color: white !important;
+}
+
+.u-align-center {
+  text-align: center !important;
+}
+
+.u-border-2 {
+  border-width: 2px !important;
+}
+
+.u-border-active-palette-1-base:active {
+  border-color: var(--palette-1-base) !important;
+}
+
+.u-border-hover-palette-1-base:hover {
+  border-color: var(--palette-1-base) !important;
+}
+
+.u-border-palette-1-base {
+  border-color: var(--palette-1-base) !important;
+}
+
+.u-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10% auto 0 0;
+
+}
+
+.u-btn-round {
+  border-radius: 50px !important;
+}
+
+.u-button-style {
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.u-hover-white:hover {
+  background-color: white !important;
+}
+
+.u-palette-1-base {
+  background-color: var(--palette-1-base) !important;
+  color: var(--palette-text-color) !important;
+}
+
+.u-radius {
+  border-radius: 10px !important;
+}
+
+.u-text-active-black:active {
+  color: black !important;
+}
+
+.u-text-body-alt-color {
+  color: var(--text-body-alt-color) !important;
+}
+
+.u-text-hover-black:hover {
+  color: black !important;
+}
+
+.u-block-5fc4-58 {
+  display: block !important;
+  width: 50%;
+  margin: 3% auto 0 0;
+}
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.u-text-1 {
+  flex-grow: 1; 
+  flex-shrink: 1;/* Ensures h2 takes up the remaining space */
 }
