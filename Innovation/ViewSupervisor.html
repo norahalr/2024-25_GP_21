@@ -24,7 +24,37 @@
     <meta name="theme-color" content="#478ac9">
     <meta property="og:title" content="VeiwSupervisor">
     <meta property="og:type" content="website">
-  <meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
+  <meta data-intl-tel-input-cdn-path="intlTelInput/">
+<style>
+  .u-repeater {
+    display: grid;
+    grid-template-columns: repeat(4, 25%);
+}
+
+.u-repeater-item {
+  flex: 1 1 100%; /* Full width by default */
+  margin: 10px; /* Optional: Add some spacing */
+}
+
+@media (min-width: 1024px) {
+  .u-repeater-item {
+    flex: 1 1 24%; /* Adjust based on how many items per row you want on laptop */
+  }
+}
+
+.u-container-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.u-image {
+  width: 50%;
+  height: auto;
+}
+
+</style></head>
   <body data-path-to-root="./" data-include-products="true" class="u-body u-xl-mode" data-lang="en"><header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
         <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" data-responsive-from="MD">
           <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px; font-weight: 700; text-transform: uppercase;">
@@ -153,8 +183,8 @@
                         </div>Project Name
                       </li>
                     </ul>
-                    <a href="#" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">REQUEST SUPERVISORS </a>
-                      <a href="#" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-3 u-radius u-btn-2">BACK </a>
+                    <a href="RequestSupervisor.html" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">REQUEST SUPERVISORS </a>
+                      <a href="StudentHomePage.html" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-3 u-radius u-btn-2">BACK </a>
                     </div>
 </div>
                 </div>
@@ -184,6 +214,12 @@
               </div>
             </div>
             <div class="u-align-left u-container-align-left u-container-style u-list-item u-repeater-item">
+              <div class="u-container-layout u-similar-container u-valign-top u-container-layout-3">
+                <img class="u-expanded-width u-image u-image-default u-image-3" alt="" data-image-width="512" data-image-height="512" src="images/Icon.webp">
+                <h4 class="u-align-left u-text u-text-5">Sample Headline</h4>
+                <a href="#" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">View </a>
+              </div>
+            </div><div class="u-align-left u-container-align-left u-container-style u-list-item u-repeater-item">
               <div class="u-container-layout u-similar-container u-valign-top u-container-layout-3">
                 <img class="u-expanded-width u-image u-image-default u-image-3" alt="" data-image-width="512" data-image-height="512" src="images/Icon.webp">
                 <h4 class="u-align-left u-text u-text-5">Sample Headline</h4>

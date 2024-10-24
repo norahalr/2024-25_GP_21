@@ -34,7 +34,7 @@
 }
 
 .u-section-1 .u-layout-cell-1 {
-  min-height: 1077px;
+  min-height: auto;
   --animation-custom_in-translate_x: 300px;
   --animation-custom_in-translate_y: 0px;
   --animation-custom_in-opacity: 0;
@@ -182,7 +182,7 @@
   }
 
   .u-section-1 .u-layout-cell-1 {
-    min-height: 100px;
+    min-height: auto;
   }
 
   .u-section-1 .u-group-2 {
