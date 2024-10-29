@@ -2424,7 +2424,7 @@ a {
   min-width: 0px;
 }
 .u-label-none:not(.u-form-agree):not(.u-form-checkbox) > label {
-  display: none !important;
+  display:contents !important;
 }
 .u-form-horizontal .input-group {
   width: auto;

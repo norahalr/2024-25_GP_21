@@ -20,6 +20,32 @@
   margin-left: 0;
 }
 
+
+
+  .chatbot-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000; /* Ensure it appears on top */
+  }
+
+  .u-file-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px; /* Adjust as needed for circle size */
+    height: 60px; /* Ensure it's a circle by keeping width and height equal */
+    border-radius: 50%; /* Makes the span a circle */
+    overflow: hidden;
+  }
+
+  .u-file-icon img {
+    width: 70%; /* Adjust as needed */
+    height: 70%;
+    object-fit: contain;
+  }
+
+
 .u-section-1 .u-btn-1 {
   padding-top: 10px;
   padding-bottom: 10px;
@@ -90,7 +116,7 @@
 .u-section-2 .u-image-1 {
   width: 174px;
   height: 174px;
-  background-image: url("images/ec6da3db-d4a7-cbc8-c959-57cb2f78738d.jpg");
+  background-image: url("images/image.png");
   background-position: 50% 50%;
   margin: -12px auto 0 0;
 }
@@ -164,7 +190,7 @@
 .u-section-2 .u-image-2 {
   width: 174px;
   height: 174px;
-  background-image: url("images/ec6da3db-d4a7-cbc8-c959-57cb2f78738d.jpg");
+  background-image: url("images/image.png");
   background-position: 50% 50%;
   margin: -12px auto 0 0;
 }
@@ -238,7 +264,7 @@
 .u-section-2 .u-image-3 {
   width: 174px;
   height: 174px;
-  background-image: url("images/ec6da3db-d4a7-cbc8-c959-57cb2f78738d.jpg");
+  background-image: url("images/image.png");
   background-position: 50% 50%;
   margin: -12px auto 0 0;
 }
@@ -312,7 +338,7 @@
 .u-section-2 .u-image-4 {
   width: 174px;
   height: 174px;
-  background-image: url("images/ec6da3db-d4a7-cbc8-c959-57cb2f78738d.jpg");
+  background-image: url("images/image.png");
   background-position: 50% 50%;
   margin: -12px auto 0 0;
 }
@@ -386,7 +412,7 @@
 .u-section-2 .u-image-5 {
   width: 174px;
   height: 174px;
-  background-image: url("images/ec6da3db-d4a7-cbc8-c959-57cb2f78738d.jpg");
+  background-image: url("images/image.png");
   background-position: 50% 50%;
   margin: -12px auto 0 0;
 }
@@ -460,7 +486,7 @@
 .u-section-2 .u-image-6 {
   width: 174px;
   height: 174px;
-  background-image: url("images/ec6da3db-d4a7-cbc8-c959-57cb2f78738d.jpg");
+  background-image: url("images/image.png");
   background-position: 50% 50%;
   margin: -12px auto 0 0;
 }
