@@ -117,8 +117,9 @@
                     </div>
                   </div>
                 </div>
-                <a href="#" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-2 u-radius u-btn-1">REJECT </a>
-                <a href="#" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-2"> ACCEPT </a>
+                <a href="#" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-2 u-radius u-btn-1" onclick="handleButtonClick('reject')">REJECT</a>
+                <a href="#" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-2" onclick="handleButtonClick('accept')">ACCEPT</a>
+
               </div>
             </div>
           </div>
@@ -360,4 +361,16 @@
     right: 20px;
   }
 }</style>
+<script>
+  function handleButtonClick(action) {
+    if (action === 'accept') {
+      alert('You have accepted the project request.');
+      // You can add additional code here for further actions (e.g., sending a request to the server).
+    } else if (action === 'reject') {
+      alert('You have rejected the project request.');
+      // You can add additional code here for further actions (e.g., sending a request to the server).
+    }
+  }
+</script>
+
 </body></html>
