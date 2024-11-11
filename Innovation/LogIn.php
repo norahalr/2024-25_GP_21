@@ -1,3 +1,9 @@
+<?php
+  ob_start();
+  session_start();
+  require_once 'config/connect.php';
+?>
+
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en"><head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -79,10 +85,10 @@
           </a>
         </div>
         <div class="u-custom-menu u-nav-container">
-          <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="index.html" style="padding: 10px 0px;">Home</a>
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="Register.html">Sign Up</a>
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="LogIn.html">Login</a>
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="externalForm.html">Request Project from CCIS</a>
+          <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="index.php" style="padding: 10px 0px;">Home</a>
+</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="Register.php">Sign Up</a>
+</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="LogIn.php">Login</a>
+</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="externalForm.php">Request Project from CCIS</a>
 </li></ul>
         </div>
         <div class="u-custom-menu u-nav-container-collapse">
@@ -90,10 +96,10 @@
             <div class="u-inner-container-layout u-sidenav-overflow">
               <div class="u-menu-close"></div>
               <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2">
-                <li class="u-nav-item"><a class="u-button-style u-nav-link" href="index.html">Home</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="Register.html" >Sign Up</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="LogIn.html">Login</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="externalForm.html">Request Project from CCIS</a>
+                <li class="u-nav-item"><a class="u-button-style u-nav-link" href="index.php">Home</a>
+</li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="Register.php" >Sign Up</a>
+</li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="LogIn.php">Login</a>
+</li><li class="u-nav-item"><a class="u-button-style u-nav-link" href="externalForm.php">Request Project from CCIS</a>
 </li></ul>
             </div>
           </div>
@@ -118,7 +124,48 @@
         <div class="u-align-left u-container-align-left u-container-style u-expanded-width u-group u-radius u-shape-round u-white u-group-1">
           <div class="u-container-layout u-valign-top u-container-layout-1">
             <div class="custom-expanded data-layout-selected u-clearfix u-layout-wrap u-layout-wrap-1">
-              <div class="u-layout">
+              
+<?php 
+if($_SERVER['REQUEST_METHOD']=='POST'){
+  $type= $_POST['type'];
+  $email=$_POST['email'];
+  $password=$_POST['password'];
+
+  if ($type == 1) { // Supervisor
+    $stmt = $con->prepare("SELECT password FROM supervisors WHERE email = :email");
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($result && password_verify($password, $result['password'])) {
+      $_SESSION['user_id'] = $result['id'];
+      $_SESSION['email'] = $email;
+      $_SESSION['user_type'] = 'supervisor';
+        header("Location: SupervisorHomePage.php");
+        exit();
+    } else {
+        echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">Invalid email or password.</div>';
+    }
+} else { // Student
+    $stmt = $con->prepare("SELECT password FROM students WHERE email = :email");
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($result && password_verify($password, $result['password'])) {
+      $_SESSION['user_id'] = $result['id'];
+      $_SESSION['email'] = $email;
+      $_SESSION['user_type'] = 'student';
+        header("Location: StudentHomePage.php");
+        exit();
+    } else {
+        echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">Invalid email or password.</div>';
+    }
+}
+
+}
+?>
+            <div class="u-layout">
                 <div class="u-layout-row">
                   <div class="u-container-style u-layout-cell u-size-60 u-layout-cell-1" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="500">
                     <div class="u-container-layout u-container-layout-2">
@@ -164,6 +211,8 @@
                           <div class="u-form u-form-1">
                             
 <!-- Add Radio Buttons to choose between Supervisor or Student -->
+
+
                         <div class="radio-btn-container">
                             <input type="radio" name="user-role" id="supervisor" value="supervisor" checked>
                             <input type="radio" name="user-role" id="student" value="student">
@@ -174,8 +223,8 @@
                         </div>
 
                         
-
-                        <form action="SupervisorHomePage.html" id="supervisor-login-form" class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form" style="padding: 10px" source="email" name="form-2">
+                        <form action="LogIn.php" method="POST" id="supervisor-login-form" >                        
+                        <input type="hidden" name="type" value="1" />
                             <h1 class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">Supervisor Login </h1>
                             <div class="u-form-group u-form-name">
                               <label for="email-da99" class="u-label">Email</label>
@@ -183,24 +232,20 @@
                             </div>
                             <div class="u-form-group u-label-none u-form-group-2">
                               <label for="text-5a78" class="u-label">Password</label>
-                              <input type="text" placeholder="Password" id="text-5a78" name="text" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
+                              <input type="text" placeholder="Password" id="text-5a78" name="password" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
                             </div>
                             <div class="u-align-right u-form-group u-form-submit">
-                              <a href="#" class="frpass">Forget password?</a>
-                              <a href="SupervisorHomePage.html" class="u-active-palette-1-light-1 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1">Submit</a>
-                              <input type="submit" value="submit" class="u-form-control-hidden">
+                              <a href="Forget.php" class="frpass">Forget password?</a>
+                              <button type="submit" class="u-active-palette-1-light-1 u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1">Login</button>
                             </div>
-                            <!-- <div class="u-form-send-message u-form-send-success"> Thank you! Your message has been sent. </div>
-                            <div class="u-form-send-error u-form-send-message"> Unable to send your message. Please fix errors then try again. </div>
-                            <input type="hidden" value="" name="recaptchaResponse"> -->
-                            <input type="hidden" name="formServices" value="288a2770-31f5-dbbd-4ba6-cbffa36f438a">
-                          </form>
+                        </form>
 
 
 
-                        
 
-                        <form action="StudentHomePage.html" id="student-login-form" class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form" style="padding: 10px" source="email" name="form-2">
+
+                        <form action="LogIn.php" method="POST" id="student-login-form" >
+                            <input type="hidden" name="type" value="2" />
                             <h1 class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">Students Login </h1>
                             <div class="u-form-group u-label-none">
                               <label for="email-da97" class="u-label">Email</label>
@@ -208,22 +253,17 @@
                             </div>
                             <div class="u-form-group u-label-none u-form-group-2">
                               <label for="text-5a78" class="u-label">Password</label>
-                              <input type="text" placeholder="Password" id="text-5a78" name="text" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
+                              <input type="text" placeholder="Password" id="text-5a78" name="password" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
                             </div>
                             <div class="u-align-right u-form-group u-form-submit">
-                              <a href="#" class="frpass">Forget password?</a>
-                              <a href="StudentHomePage.css" class="u-active-palette-1-light-1 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1">Submit</a>
-                              <input type="submit" value="submit" class="u-form-control-hidden">
+                              <a href="Forget.php" class="frpass">Forget password?</a>
+                              <button type="submit" class="u-active-palette-1-light-1 u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1">Login</button>
                             </div>
-                            <!-- <div class="u-form-send-message u-form-send-success"> Thank you! Your message has been sent. </div>
-                            <div class="u-form-send-error u-form-send-message"> Unable to send your message. Please fix errors then try again. </div> -->
-                            <input type="hidden" value="" name="recaptchaResponse">
-                            <input type="hidden" name="formServices" value="288a2770-31f5-dbbd-4ba6-cbffa36f438a">
                           </form>
 
 
                           </div>
-                          <a href="Register.html" class="u-active-none u-border-5 u-border-active-palette-2-dark-1 u-border-hover-custom-color-1 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-btn u-button-style u-hover-none u-none u-text-active-palette-1-light-1 u-text-hover-palette-1-dark-2 u-text-palette-1-dark-1 u-btn-2">Do not have an account? Register</a>
+                          <a href="Register.php" class="u-active-none u-border-5 u-border-active-palette-2-dark-1 u-border-hover-custom-color-1 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-btn u-button-style u-hover-none u-none u-text-active-palette-1-light-1 u-text-hover-palette-1-dark-2 u-text-palette-1-dark-1 u-btn-2">Do not have an account? Register</a>
                           
 
                         </div>

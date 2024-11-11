@@ -38,11 +38,11 @@
           </a>
         </div>
         <div class="u-custom-menu u-nav-container">
-          <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.html" style="padding: 10px 0px;">Student Home page</a>
-  </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentProfile.html">Profile</a>
-  </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentRequest.html">Request list</a>
+          <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.php" style="padding: 10px 0px;">Student Home page</a>
+  </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentProfile.php">Profile</a>
+  </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentRequest.php">Request list</a>
   
-  </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.html">Log out</a>
+  </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.php">Log out</a>
   </li></ul>
         </div>
         <div class="u-custom-menu u-nav-container-collapse">
@@ -129,7 +129,7 @@
                 <div class="u-clearfix u-group-elements u-group-elements-1">
                   <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2">Nat Reynolds</h5>
                   <div alt="" class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-1" data-image-width="309" data-image-height="309"></div>
-                  <a href="ViewSupervisor.html" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View </a>
+                  <a href="ViewSupervisor.php" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View </a>
                   <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-3">Email@ksu.edu.sa </h6>
                   <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-4">Interest: </h6>
                   <ul class="u-align-left u-text u-text-5">
@@ -139,7 +139,7 @@
                     <li> Glavi amet ritnisl l
                     </li>
                   </ul>
-                  <a href="RequestSupervisor.html" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">REQUEST </a>
+                  <a href="RequestSupervisor.php" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">REQUEST </a>
                   <h6 class="u-align-center-xs u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-custom-font u-font-oswald u-text u-text-custom-color-5 u-text-6">Available ​&nbsp;<span class="u-file-icon u-icon u-text-custom-color-5 u-icon-1"><img src="images/3699459-d2dcaf9f.png" alt=""></span>
                   </h6>
                 </div>
@@ -150,7 +150,7 @@
                 <div class="u-clearfix u-group-elements u-group-elements-2">
                   <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-7">Nat Reynolds</h5>
                   <div alt="" class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-2" data-image-width="309" data-image-height="309"></div>
-                  <a href="ViewSupervisor.html" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-3">View </a>
+                  <a href="ViewSupervisor.php" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-3">View </a>
                   <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-8">Email@ksu.edu.sa </h6>
                   <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-9">Interest: </h6>
                   <ul class="u-align-left u-text u-text-5">
@@ -160,7 +160,7 @@
                     <li> Glavi amet ritnisl l
                     </li>
                   </ul>
-                  <a href="RequestSupervisor.html" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-4">REQUEST </a>
+                  <a href="RequestSupervisor.php" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-4">REQUEST </a>
                   <h6 class="u-align-center-xs u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-custom-font u-font-oswald u-text u-text-custom-color-5 u-text-11">Available ​&nbsp;<span class="u-file-icon u-icon u-text-custom-color-5 u-icon-2"><img src="images/3699459-d2dcaf9f.png" alt=""></span>
                   </h6>
                 </div>
@@ -171,7 +171,7 @@
                 <div class="u-clearfix u-group-elements u-group-elements-3">
                   <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-12">Nat Reynolds</h5>
                   <div alt="" class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-3" data-image-width="309" data-image-height="309"></div>
-                  <a href="VeiwSupervisor.html" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-5">View </a>
+                  <a href="VeiwSupervisor.php" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-5">View </a>
                   <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-13">Email@ksu.edu.sa </h6>
                   <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-14">Interest: </h6>
                   <ul class="u-align-left u-text u-text-5">
@@ -181,7 +181,7 @@
                     <li> Glavi amet ritnisl l
                     </li>
                   </ul>
-                  <a href="RequestSupervisor.html" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-6">REQUEST </a>
+                  <a href="RequestSupervisor.php" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-6">REQUEST </a>
                   <h6 class="u-align-center-xs u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-custom-font u-font-oswald u-text u-text-custom-color-5 u-text-16">Available ​&nbsp;<span class="u-file-icon u-icon u-text-custom-color-5 u-icon-3"><img src="images/3699459-d2dcaf9f.png" alt=""></span>
                   </h6>
                 </div>
@@ -192,7 +192,7 @@
                 <div class="u-clearfix u-group-elements u-group-elements-4">
                   <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-17">Nat Reynolds</h5>
                   <div alt="" class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-4" data-image-width="309" data-image-height="309"></div>
-                  <a href="ViewSupervisor.html" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-7">View </a>
+                  <a href="ViewSupervisor.php" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-7">View </a>
                   <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-18">Email@ksu.edu.sa </h6>
                   <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-19">Interest: </h6>
                   <ul class="u-align-left u-text u-text-5">
@@ -202,7 +202,7 @@
                     <li> Glavi amet ritnisl l
                     </li>
                   </ul>
-                  <a href="RequestSupervisor.html" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-8">REQUEST </a>
+                  <a href="RequestSupervisor.php" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-8">REQUEST </a>
                   <h6 class="u-align-center-xs u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-custom-font u-font-oswald u-text u-text-custom-color-5 u-text-21">Available ​&nbsp;<span class="u-file-icon u-icon u-text-custom-color-5 u-icon-4"><img src="images/3699459-d2dcaf9f.png" alt=""></span>
                   </h6>
                 </div>
@@ -213,7 +213,7 @@
                 <div class="u-clearfix u-group-elements u-group-elements-5">
                   <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-22">Nat Reynolds</h5>
                   <div alt="" class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-5" data-image-width="309" data-image-height="309"></div>
-                  <a href="ViewSupervisor.html" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-9">View </a>
+                  <a href="ViewSupervisor.php" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-9">View </a>
                   <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-23">Email@ksu.edu.sa </h6>
                   <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-24">Interest: </h6>
                   <ul class="u-align-left u-text u-text-5">
@@ -223,7 +223,7 @@
                     <li> Glavi amet ritnisl l
                     </li>
                   </ul>
-                  <a href="RequestSupervisor.html" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-10">REQUEST </a>
+                  <a href="RequestSupervisor.php" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-10">REQUEST </a>
                   <h6 class="u-align-center-xs u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-custom-font u-font-oswald u-text u-text-custom-color-5 u-text-26">Available ​&nbsp;<span class="u-file-icon u-icon u-text-custom-color-5 u-icon-5"><img src="images/3699459-d2dcaf9f.png" alt=""></span>
                   </h6>
                 </div>
@@ -234,7 +234,7 @@
                 <div class="u-clearfix u-group-elements u-group-elements-6">
                   <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-27">Nat Reynolds</h5>
                   <div alt="" class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-6" data-image-width="309" data-image-height="309"></div>
-                  <a href="ViewSupervisor.html" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-11">View </a>
+                  <a href="ViewSupervisor.php" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-11">View </a>
                   <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-28">Email@ksu.edu.sa </h6>
                   <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-29">Interest: </h6>
                   <ul class="u-align-left u-text u-text-5">
@@ -244,7 +244,7 @@
                     <li> Glavi amet ritnisl l
                     </li>
                   </ul>
-                  <a href="RequestSupervisor.html" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-12">REQUEST </a>
+                  <a href="RequestSupervisor.php" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-12">REQUEST </a>
                   <h6 class="u-align-center-xs u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-custom-font u-font-oswald u-text u-text-custom-color-5 u-text-31">Available ​&nbsp;<span class="u-file-icon u-icon u-text-custom-color-5 u-icon-6"><img src="images/3699459-d2dcaf9f.png" alt=""></span>
                   </h6>
                 </div>

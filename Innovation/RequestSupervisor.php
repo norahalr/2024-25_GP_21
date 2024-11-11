@@ -1,3 +1,6 @@
+<?php
+  require_once 'config/connect.php';
+?>
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en">
 <head>
@@ -1194,11 +1197,11 @@
         </a>
       </div>
       <div class="u-custom-menu u-nav-container">
-        <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.html" style="padding: 10px 0px;">Student Home page</a>
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentProfile.html">Profile</a>
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentRequest.html">Request list</a>
+        <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.php" style="padding: 10px 0px;">Student Home page</a>
+</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentProfile.php">Profile</a>
+</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentRequest.php">Request list</a>
 
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.html">Log out</a>
+</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.php">Log out</a>
 </li></ul>
       </div>
       <div class="u-custom-menu u-nav-container-collapse">
@@ -1228,12 +1231,10 @@
     </a>
   </div></header>
     
-    <section class="u-clearfix u-palette-1-light-1 u-section-1">
+    <!-- <section class="u-clearfix u-palette-1-light-1 u-section-1">
         <div class="u-clearfix u-sheet u-sheet-1">
-            <!-- Request Form -->
             <div class="u-align-left u-container-style u-expanded-width u-group u-white u-radius u-shape-round u-group-1">
                 <div class="u-container-layout u-valign-top u-container-layout-1">
-                    <!-- Supervisor Information -->
                     <div class="u-container-style u-layout-cell u-size-30 u-white">
                       <div class="u-custom-font u-font-oswald u-text-palette-1-dark-2">
                           <h2 class="u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-2 u-text-1">Supervisor Name </h2>
@@ -1243,7 +1244,6 @@
                         </div>
                     </div>
 
-                    <!-- Student Information -->
                     <div class="u-container-style u-layout-cell u-size-30 u-white">
                         <div class="u-container-layout">
                             <h2 class="u-custom-font u-font-oswald u-text-palette-1-dark-2">Student Information</h2>
@@ -1278,7 +1278,7 @@
                         </div>
                     </div>
 
-                    <!-- Form Section -->
+                   
                     <div class="u-form">
                       <form action="https://forms.nicepagesrv.com/v2/form/process" method="POST" class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form" source="email" data-services="5b2c2fa98341ebfafacab05d9cb29269" name="form" style="padding: 10px;">
                         <input type="hidden" id="siteId" name="siteId" value="9881637">
@@ -1309,7 +1309,7 @@
                         <div class="u-align-left u-form-group u-form-submit u-label-top u-block-d7f8-70">
                             
                           <a href="#" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">REQUEST SUPERVISORS </a>
-                          <a href="ViewSupervisor.html" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-3 u-radius u-btn-2">BACK </a>
+                          <a href="ViewSupervisor.php" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-3 u-radius u-btn-2">BACK </a>
                         
                         <div class="u-form-send-message u-form-send-success">
                             Thank you! Your message has been sent.
@@ -1324,7 +1324,94 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
+
+    <section class="u-clearfix u-palette-1-light-1 u-section-1">
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <!-- Request Form -->
+        <div class="u-align-left u-container-style u-expanded-width u-group u-white u-radius u-shape-round u-group-1">
+            <div class="u-container-layout u-valign-top u-container-layout-1">
+                <!-- Supervisor Information -->
+                <?php
+                // Fetch supervisor data from the database
+                $supervisor_email = 'aabeer@KSU.EDU.SA'; // Example ID; adjust as necessary
+                $stmt = $con->prepare("SELECT name, email, track FROM supervisors WHERE email = :id");
+                $stmt->bindParam(':id', $supervisor_email);
+                $stmt->execute();
+                $supervisor = $stmt->fetch(PDO::FETCH_ASSOC);
+                ?>
+                
+                <div class="u-container-style u-layout-cell u-size-30 u-white">
+                    <div class="u-custom-font u-font-oswald u-text-palette-1-dark-2">
+                        <h2 class="u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-2 u-text-1">
+                            Supervisor Name: <?= htmlspecialchars($supervisor['name']) ?>
+                        </h2>
+                        <h2 class="u-align-left u-custom-font u-font-oswald u-subtitle u-text u-text-palette-1-dark-1 u-text-2">
+                            <?= htmlspecialchars($supervisor['email']) ?>
+                        </h2>
+                        <h5 class="u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-1 u-text-3">
+                        TRACK: <?= htmlspecialchars($supervisor['track'] ?? 'Unspecified') ?>
+                        </h5>
+                    </div>
+                </div>
+
+                <!-- Student Information -->
+                <?php
+                // Fetch student data from the database
+                $stmt = $con->prepare("SELECT name, email FROM students WHERE team_email = :team_email");
+                $stmt->bindParam(':team_email', $supervisor['email']); // assuming the supervisor's email links to the student team
+                $stmt->execute();
+                $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                ?>
+
+                <div class="u-container-style u-layout-cell u-size-30 u-white">
+                    <div class="u-container-layout">
+                        <h2 class="u-custom-font u-font-oswald u-text-palette-1-dark-2">Student Information</h2>
+                        <div class="u-list">
+                            <div class="u-repeater">
+                                <?php foreach ($students as $student): ?>
+                                    <div class="u-list-item">
+                                        <h4>Student Name:</h4>
+                                        <p><?= htmlspecialchars($student['name']) ?></p>
+                                    </div>
+                                    <div class="u-list-item">
+                                        <h4>Student Email:</h4>
+                                        <p><?= htmlspecialchars($student['email']) ?></p>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Section -->
+                <div class="u-form">
+                    <form action="https://forms.nicepagesrv.com/v2/form/process" method="POST" class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form" source="email" data-services="5b2c2fa98341ebfafacab05d9cb29269" name="form" style="padding: 10px;">
+                        <input type="hidden" id="siteId" name="siteId" value="9881637">
+                        <input type="hidden" id="pageId" name="pageId" value="2646728883">
+                        <div class="u-form-group u-form-select u-label-top u-block-d7f8-58">
+                            <label for="select-e666" class="u-label u-block-d7f8-59">Select your project preference:</label>
+                            <div class="u-form-select-wrapper">
+                                <select id="select-e666" name="select" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-4">
+                                    <option value="Supervisor Idea" selected="selected">Supervisor Idea</option>
+                                    <option value="Your Own Idea">Your Own Idea</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="u-form-group u-form-message u-label-top u-block-d7f8-67">
+                            <label for="message-8910" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5">Idea</label>
+                            <textarea placeholder="​" rows="4" cols="50" id="message-8910" name="Idea" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"></textarea>
+                        </div>
+                        <div class="u-align-left u-form-group u-form-submit u-label-top u-block-d7f8-70">
+                            <button type="submit" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">REQUEST SUPERVISORS</button>
+                            <a href="ViewSupervisor.php" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-3 u-radius u-btn-2">BACK</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
     <footer class="u-clearfix u-custom-color-3 u-footer" id="sec-9e3e"><div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
       <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-30 u-layout-wrap u-layout-wrap-1">
