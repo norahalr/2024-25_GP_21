@@ -1,4 +1,9 @@
 <?php
+  ob_start();
+  session_start();
+  $userId = $_SESSION['user_id'] ?? "alanoud.ahmed@example.com"
+  ; // Get user ID from session
+
   require_once 'config/connect.php';
 ?>
 <!DOCTYPE html>
@@ -1332,34 +1337,48 @@
         <div class="u-align-left u-container-style u-expanded-width u-group u-white u-radius u-shape-round u-group-1">
             <div class="u-container-layout u-valign-top u-container-layout-1">
                 <!-- Supervisor Information -->
-                <?php
-                // Fetch supervisor data from the database
-                $supervisor_email = 'aabeer@KSU.EDU.SA'; // Example ID; adjust as necessary
+  
+                
+                <div class="u-container-style u-layout-cell u-size-30 u-white">
+                    <div class="u-custom-font u-font-oswald u-text-palette-1-dark-2">
+                    <?php
+                
+                if ($userId) {
+                  // Prepare and execute the query to fetch supervisor data
+                  $supervisor_email = 'aabeer@KSU.EDU.SA'; // Example ID; adjust as necessary
                 $stmt = $con->prepare("SELECT name, email, track FROM supervisors WHERE email = :id");
                 $stmt->bindParam(':id', $supervisor_email);
                 $stmt->execute();
                 $supervisor = $stmt->fetch(PDO::FETCH_ASSOC);
-                ?>
+              
+                  if ($supervisor) {
+                      // Display supervisor information
+                      $track = htmlspecialchars($supervisor['track'] ?? 'Unspecified');
+                      $email = htmlspecialchars($supervisor['email']);
+              
+                      echo "
+                      <h2 class='u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-2 u-text-1'>Supervisor Name: " . htmlspecialchars($supervisor['name']) . "</h2>
+                      <h2 class='u-align-left u-custom-font u-font-oswald u-subtitle u-text u-text-palette-1-dark-1 u-text-2'>Email: $email</h2>
+                      <h5 class='u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-1 u-text-3'>TRACK: $track</h5>";
+                  } else {
+                      echo "No supervisor data found.";
+                  }
+              } else {
+                  echo "User not logged in.";
+              }
+
+                // Fetch supervisor data from the database
                 
-                <div class="u-container-style u-layout-cell u-size-30 u-white">
-                    <div class="u-custom-font u-font-oswald u-text-palette-1-dark-2">
-                        <h2 class="u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-2 u-text-1">
-                            Supervisor Name: <?= htmlspecialchars($supervisor['name']) ?>
-                        </h2>
-                        <h2 class="u-align-left u-custom-font u-font-oswald u-subtitle u-text u-text-palette-1-dark-1 u-text-2">
-                            <?= htmlspecialchars($supervisor['email']) ?>
-                        </h2>
-                        <h5 class="u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-1 u-text-3">
-                        TRACK: <?= htmlspecialchars($supervisor['track'] ?? 'Unspecified') ?>
-                        </h5>
+                ?>
                     </div>
                 </div>
 
                 <!-- Student Information -->
                 <?php
+
                 // Fetch student data from the database
                 $stmt = $con->prepare("SELECT name, email FROM students WHERE team_email = :team_email");
-                $stmt->bindParam(':team_email', $supervisor['email']); // assuming the supervisor's email links to the student team
+                $stmt->bindParam(':team_email', $userId); // assuming the supervisor's email links to the student team
                 $stmt->execute();
                 $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 ?>
@@ -1369,16 +1388,32 @@
                         <h2 class="u-custom-font u-font-oswald u-text-palette-1-dark-2">Student Information</h2>
                         <div class="u-list">
                             <div class="u-repeater">
-                                <?php foreach ($students as $student): ?>
-                                    <div class="u-list-item">
-                                        <h4>Student Name:</h4>
-                                        <p><?= htmlspecialchars($student['name']) ?></p>
-                                    </div>
-                                    <div class="u-list-item">
-                                        <h4>Student Email:</h4>
-                                        <p><?= htmlspecialchars($student['email']) ?></p>
-                                    </div>
-                                <?php endforeach; ?>
+                            <?php if (!empty($students)): ?>
+    <!-- Display leader's information -->
+    <div class="u-list-item">
+        <h4>Leader Name:</h4>
+        <p><?= htmlspecialchars($students[0]['name']) ?></p>
+    </div>
+    <div class="u-list-item">
+        <h4>Leader Email:</h4>
+        <p><?= htmlspecialchars($students[0]['email']) ?></p>
+    </div>
+
+    <!-- Display other students' information -->
+    <?php foreach (array_slice($students, 1) as $student): ?>
+        <div class="u-list-item">
+            <h4>Student Name:</h4>
+            <p><?= htmlspecialchars($student['name']) ?></p>
+        </div>
+        <div class="u-list-item">
+            <h4>Student Email:</h4>
+            <p><?= htmlspecialchars($student['email']) ?></p>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p>No student data available.</p>
+<?php endif; ?>
+
                             </div>
                         </div>
                     </div>

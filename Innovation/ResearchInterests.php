@@ -5,7 +5,8 @@
   require_once 'config/connect.php';
 
   $sql = "SELECT id, name FROM technologies";
-$result = $conn->query($sql);
+$stmt = $con->prepare($sql);
+$stmt->execute();
 ?>
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en"><head>
@@ -117,33 +118,40 @@ $result = $conn->query($sql);
     </section>  -->
     
     
-<section class="u-clearfix u-palette-1-light-1 u-section-1" id="sec-7108">
-<div class="u-clearfix u-sheet u-sheet-1">
+    <section class="u-clearfix u-palette-1-light-1 u-section-1" id="sec-7108">
+    <div class="u-clearfix u-sheet u-sheet-1">
         <div class="u-expanded-width u-flip-horizontal u-shape u-shape-svg u-text-white u-shape-1">
-          <svg class="u-svg-link" preserveAspectRatio="none" viewBox="0 0 160 150" style=""><use xlink:href="#svg-a8e1"></use></svg>
-          <svg class="u-svg-content" viewBox="0 0 160 150" x="0px" y="0px" id="svg-a8e1"><path d="M43.2,126.9c14.2,1.3,27.6,7,39.1,15.6c8.3,6.1,19.4,10.3,32.7,5.3c11.7-4.4,18.6-17.4,21-30.2c2.6-13.3,8.1-25.9,15.7-37.1
-	c8.3-12.1,10.8-27.9,5.3-42.7C150.5,20.3,134.6,9,117,7.6C107.9,6.9,98.8,5,90.1,1.9C83-0.6,75-0.7,67.4,2.1
-	c-9.9,3.7-17,11.6-20.1,21c-3.3,10.1-10.9,18-20.6,22.2c-0.1,0-0.1,0.1-0.2,0.1c-20.3,8.9-31,32-24.6,53.2
-	C6.9,115.6,25.2,125.2,43.2,126.9z"></path></svg>
+            <svg class="u-svg-link" preserveAspectRatio="none" viewBox="0 0 160 150" style=""><use xlink:href="#svg-a8e1"></use></svg>
+            <svg class="u-svg-content" viewBox="0 0 160 150" x="0px" y="0px" id="svg-a8e1">
+                <path d="M43.2,126.9c14.2,1.3,27.6,7,39.1,15.6c8.3,6.1,19.4,10.3,32.7,5.3c11.7-4.4,18.6-17.4,21-30.2c2.6-13.3,8.1-25.9,15.7-37.1
+                c8.3-12.1,10.8-27.9,5.3-42.7C150.5,20.3,134.6,9,117,7.6C107.9,6.9,98.8,5,90.1,1.9C83-0.6,75-0.7,67.4,2.1
+                c-9.9,3.7-17,11.6-20.1,21c-3.3,10.1-10.9,18-20.6,22.2c-0.1,0-0.1,0.1-0.2,0.1c-20.3,8.9-31,32-24.6,53.2
+                C6.9,115.6,25.2,125.2,43.2,126.9z"></path>
+            </svg>
         </div>
         <h2 class="u-text u-text-custom-color-3 u-text-1">What fields are you interested in?</h2>
-        
-        <form action="process_interests.php" method="POST">
-            <?php while ($row = $result->fetch_assoc()): ?>
-                <div class="u-list-item">
-                    <label>
-                        <input type="checkbox" name="interests[]" value="<?= htmlspecialchars($row['id']) ?>">
-                        <?= htmlspecialchars($row['name']) ?>
-                    </label>
-                </div>
-            <?php endwhile; ?>
 
-            <button type="submit" class="u-btn u-button-style u-none u-text-hover-palette-1-light-2 u-text-palette-1-base">
-                Submit
+        <form action="process_interests.php" method="POST">
+            <div class="form-container">
+                <div class="interest-container">
+                    <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
+                        <div class="interest-item">
+                            <label class="u-btn u-btn-round u-button-style u-palette-1-light-3 u-radius u-text-palette-1-dark-2 interest-button">
+                                <input type="checkbox" name="interests[]" value="<?= htmlspecialchars($row['id']) ?>" style="display: none;">
+                                <?= htmlspecialchars($row['name']) ?>
+                            </label>
+                        </div>
+                    <?php endwhile; ?>
+                </div>
+            </div>
+            <button type="submit" class="u-btn u-button-style u-none u-text-hover-palette-1-light-2 u-text-palette-1-base u-btn-14">
+                Next
             </button>
         </form>
     </div>
 </section>
+
+
     
     
     
@@ -178,4 +186,73 @@ $result = $conn->query($sql);
   </div>
 </div></footer>
   
-</body></html>
+</body>
+<style>
+  /* Centering the form and limiting its width */
+.form-container {
+    max-width: 900px; /* Set a maximum width for the form */
+    margin: 0 auto; /* Center the form horizontally */
+    padding: 20px;
+}
+
+/* Grid layout with wrapping for interest items */
+.interest-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Ensures flexible wrapping */
+    gap: 7%; /* Space between items */
+    margin-top: 20px;
+    box-sizing: border-box; /* Ensures padding is included in width calculation */
+}
+
+/* Style for individual interest items */
+.interest-item {
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+}
+
+/* Style for the label to look like a button */
+.interest-button {
+    display: block;
+    padding: 20px 30px; /* Increased padding for bigger boxes */
+    text-align: center;
+    font-size: 16px; /* Increased font size */
+    font-weight: bold; /* Made the font bolder */
+    cursor: pointer;
+    border: 1px solid transparent; /* Border to match button styling */
+    background-color: #f0f0f0; /* Background color for inactive state */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin: 0; /* Remove any additional margins */
+    box-sizing: border-box; /* Ensure border and padding are within the element's box */
+}
+
+/* Hover effect for interest items */
+.interest-button:hover {
+    background-color: #e2e2e2; /* Hover color */
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+/* Selected checkbox style */
+.interest-button input[type="checkbox"]:checked + span {
+    background-color: #478ac9; /* Darker blue for selected state */
+    color: white; /* Ensure text color contrasts with the background */
+}
+
+/* Style for the submit button */
+button.u-btn.u-button-style.u-btn-14 {
+    background-color: #478ac9 !important;
+    color: white !important; /* Ensure the text is visible on the blue background */
+    border: none !important; /* Remove any default borders */
+    padding: 10px 20px !important; /* Adjust padding for better appearance */
+    font-size: 16px !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease !important; /* Smooth transition for hover effect */
+}
+
+button.u-btn.u-button-style.u-btn-14:hover {
+    background-color: #357f9b !important; /* Darker shade for hover effect */
+}
+
+</style>
+
+</html>
