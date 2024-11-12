@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="keywords" content="Welcome ..., project name/number">
     <meta name="description" content="">
-    <title>SupervisorHomePage</title>
+    <title>View Specific Request</title>
     <link rel="stylesheet" href="nicepage.css" media="screen">
 <link rel="stylesheet" href="SupervisorHomePage.css" media="screen">
     <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
@@ -26,8 +26,7 @@
     <meta property="og:title" content="SupervisorHomePage">
     <meta property="og:type" content="website">
   <meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
-  <body data-path-to-root="./" data-include-products="true" class="u-body u-xl-mode" data-lang="en">
-    <header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
+  <body data-path-to-root="./" data-include-products="true" class="u-body u-xl-mode" data-lang="en"><header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
         <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" data-responsive-from="MD">
           <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px; font-weight: 700; text-transform: uppercase;">
             <a class="u-button-style u-custom-active-border-color u-custom-active-color u-custom-border u-custom-border-color u-custom-borders u-custom-hover-border-color u-custom-hover-color u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-nav-link" href="#" style="padding: 0px; font-size: calc(1em + 0.5px);">
@@ -37,9 +36,11 @@
             </a>
           </div>
           <div class="u-custom-menu u-nav-container">
-            <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="SupervisorHomePage.html" style="padding: 10px 0px;">Supervisor home page</a>
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="supervisorProfile.html">Profile</a>
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.html">Log out</a>
+            <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="SupervisorHomePage.php" style="padding: 10px 0px;">Supervisor home page</a>
+            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="supervisorProfile.php">Profile</a>
+            </li>
+            </li>
+            <li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.php">Log out</a>
 </li></ul>
           </div>
           <div class="u-custom-menu u-nav-container-collapse">
@@ -68,51 +69,96 @@
           <img src="images/logo_GP-noname.png" class="u-logo-image u-logo-image-1">
         </a>
       </div></header>
-    <section class="u-clearfix u-container-align-center-xs u-gradient u-section-1" id="carousel_adc9">
-      <div class="u-clearfix u-sheet u-sheet-1">
-        <div class="header-container">
-          <h2 class="u-align-left u-text u-text-default u-text-1" data-animation-name="customAnimationIn" data-animation-duration="1200" data-animation-delay="0">Welcome ...</h2> 
-          <a href="supervisorProfile.html" class="u-active-white u-align-center u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-base u-border-palette-1-base u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black u-block-5fc4-58" data-animation-name="" data-animation-duration="0" data-animation-delay="0" data-animation-direction="">Add an idea</a>
-        </div>
-        
-        <div class="u-expanded-width u-layout-grid u-list u-list-1">
-          <div class="u-repeater u-repeater-1">
-            <div class="u-list-item u-radius u-repeater-item u-shape-round u-white u-list-item-1" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="200">
-              <div class="u-container-layout u-similar-container u-valign-top u-container-layout-1">
-                <img src="images/image13.png" alt="" class="u-expanded-width u-image u-image-contain u-image-round u-radius u-image-1" data-image-width="256" data-image-height="256">
-                <h5 class="u-align-center u-text u-text-2">REQUEST Number </h5>
-                <h4 class="u-align-center u-text u-text-palette-1-base u-text-3">Group leader Name&nbsp;</h4>
-                <p class="u-align-left u-text u-text-4"> &nbsp;Dictum non consectetur a erat nam at. Aliquam malesuada bibendum arcu vitae elementum curabitur vitae. Tellus mauris a diam maecenas sed enim ut sem ....</p>
-                <a href="ViewSpecificRequest.html" class="u-active-white u-align-center u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-base u-border-palette-1-base u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black u-btn-1" data-animation-name="" data-animation-duration="0" data-animation-delay="0" data-animation-direction=""> view REQUEST </a>
-              </div>
-            </div>
-            <div class="u-list-item u-radius u-repeater-item u-shape-round u-white u-list-item-2" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="200">
-              <div class="u-container-layout u-similar-container u-valign-top u-container-layout-2">
-                <img src="images/image13.png" alt="" class="u-expanded-width u-image u-image-contain u-image-round u-radius u-image-2" data-image-width="256" data-image-height="256">
-                <h5 class="u-align-center u-text u-text-5"> REQUEST Number </h5>
-                <h4 class="u-align-center u-text u-text-palette-1-base u-text-6"> Group leader Name&nbsp;</h4>
-                <p class="u-align-left u-text u-text-7"> &nbsp;Dictum non consectetur a erat nam at. Aliquam malesuada bibendum arcu vitae elementum curabitur vitae. Tellus mauris a diam maecenas sed enim ut sem ....</p>
-                <a href="ViewSpecificRequest.html" class="u-active-white u-align-center u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-base u-border-palette-1-base u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black u-btn-2" data-animation-name="" data-animation-duration="0" data-animation-delay="0" data-animation-direction="">view REQUEST </a>
-              </div>
-            </div>
-            <div class="u-list-item u-radius u-repeater-item u-shape-round u-white u-list-item-3" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="200">
-              <div class="u-container-layout u-similar-container u-valign-top u-container-layout-3">
-                <img src="images/image13.png" alt="" class="u-expanded-width u-image u-image-contain u-image-round u-radius u-image-3" data-image-width="256" data-image-height="256">
-                <h5 class="u-align-center u-text u-text-8"> REQUEST Number </h5>
-                <h4 class="u-align-center u-text u-text-palette-1-base u-text-9"> Group leader Name&nbsp;</h4>
-                <p class="u-align-left u-text u-text-10"> &nbsp;Dictum non consectetur a erat nam at. Aliquam malesuada bibendum arcu vitae elementum curabitur vitae. Tellus mauris a diam maecenas sed enim ut sem ....</p>
-                <a href="ViewSpecificRequest.html" class="u-active-white u-align-center u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-base u-border-palette-1-base u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black u-btn-3" data-animation-name="" data-animation-duration="0" data-animation-delay="0" data-animation-direction=""> view REQUEST </a>
+
+    <section class="u-align-center u-clearfix u-container-align-center u-section-2" id="carousel_506f">
+      <div class="u-clearfix u-sheet u-sheet-1"><!--product--><!--product_options_json--><!--{"source":"5"}--><!--/product_options_json-->
+        <div class="u-container-style u-expanded-width u-product u-product-1" data-products-datasource="site" data-product-id="5">
+          <div class="u-container-layout u-valign-bottom-lg u-valign-bottom-xl u-container-layout-1"><!--product_image-->
+            <img alt="" class="u-expanded-width-md u-expanded-width-sm u-expanded-width-xs u-image u-image-default u-product-control u-image-1" src="images/bec4780631e6204803c2c76ed0388bdff62ee08c75e5765d228e81fbbb5a1c573c70d6009559dcd56eb3d2714a753747269119e4218281bf90f6ee_1280.jpg"><!--/product_image-->
+            <div class="custom-expanded u-container-style u-group u-shape-rectangle u-group-1">
+              <div class="u-container-layout u-container-layout-2"><!--product_title-->
+                <h2 class="u-align-center u-custom-font u-font-playfair-display u-product-control u-text u-text-1">project Name/Number</h2><!--/product_title--><!--product_description-->
+                <div class="u-product-control u-product-full-desc u-text u-text-2">Idea:  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div><!--/product_description-->
+                <div class="custom-expanded u-layout-grid u-list u-list-1">
+                  <div class="u-repeater u-repeater-1">
+                    <div class="u-container-style u-list-item u-repeater-item">
+                      <div class="u-container-layout u-similar-container u-container-layout-3">
+                        <h4 class="u-text u-text-3">Leader Name:&nbsp;</h4>
+                        <p class="u-text u-text-4"> Sample text.</p>
+                      </div>
+                    </div>
+                    <div class="u-container-style u-list-item u-repeater-item">
+                      <div class="u-container-layout u-similar-container u-container-layout-4">
+                        <h4 class="u-text u-text-5"> Leader Email:&nbsp;</h4>
+                        <p class="u-text u-text-6"> Sample text.</p>
+                      </div>
+                    </div><div class="u-container-style u-list-item u-repeater-item">
+                      <div class="u-container-layout u-similar-container u-container-layout-3">
+                        <h4 class="u-text u-text-3">Student Name:&nbsp;</h4>
+                        <p class="u-text u-text-4"> Sample text.</p>
+                      </div>
+                    </div>
+                    <div class="u-container-style u-list-item u-repeater-item">
+                      <div class="u-container-layout u-similar-container u-container-layout-4">
+                        <h4 class="u-text u-text-5"> Student Name:&nbsp;</h4>
+                        <p class="u-text u-text-6"> Sample text.</p>
+                      </div>
+                    </div><div class="u-container-style u-list-item u-repeater-item">
+                      <div class="u-container-layout u-similar-container u-container-layout-3">
+                        <h4 class="u-text u-text-3">Student Name:&nbsp;</h4>
+                        <p class="u-text u-text-4"> Sample text.</p>
+                      </div>
+                    </div>
+                    <div class="u-container-style u-list-item u-repeater-item">
+                      <div class="u-container-layout u-similar-container u-container-layout-4">
+                        <h4 class="u-text u-text-5"> Project Name:&nbsp;</h4>
+                        <p class="u-text u-text-6"> Sample text.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <a href="#" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-2 u-radius u-btn-1">REJECT </a>
+                <a href="#" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-2"> ACCEPT </a>
               </div>
             </div>
           </div>
-        </div>
+        </div><!--/product-->
       </div>
     </section>
     
     
     
     
-    
+<footer class="u-clearfix u-custom-color-3 u-footer" id="sec-9e3e"><div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+  <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-30 u-layout-wrap u-layout-wrap-1">
+    <div class="u-gutter-0 u-layout">
+      <div class="u-layout-row">
+        <div class="u-align-left u-container-style u-layout-cell u-left-cell u-size-60 u-layout-cell-1">
+          <div class="u-container-layout u-container-layout-1">
+            <h5 class="u-align-center u-text u-text-default u-text-1">Thank you for visiting our website!<br>If you have any suggestions, please do not hesitate to contact us
+            </h5><!--position-->
+            <div data-position="" class="u-position u-position-1"><!--block-->
+              <div class="u-block">
+                <div class="u-block-container u-clearfix"><!--block_header-->
+                  <h5 class="u-block-header u-text"><!--block_header_content--><!--/block_header_content--></h5><!--/block_header--><!--block_content-->
+                  <div class="u-block-content u-text"><!--block_content_content--><!--/block_content_content--></div><!--/block_content-->
+                </div>
+              </div><!--/block-->
+            </div><!--/position-->
+            <div class="u-social-icons u-spacing-10 u-social-icons-1" data-animation-name="" data-animation-duration="0" data-animation-direction="">
+              <a class="u-social-url" title="Email" target="_blank" href=""><span class="u-file-icon u-icon u-social-facebook u-social-icon u-icon-1"><img src="images/542740.png" alt=""></span>
+              </a>
+              <a class="u-social-url" title="department website" target="_blank" href="https://ccis.ksu.edu.sa/ar"><span class="u-file-icon u-icon u-social-icon u-social-linkedin u-icon-2"><img src="images/3308395.png" alt=""></span>
+              </a>
+              <a class="u-social-url" title="twitter" target="_blank" href="https://x.com/fccis_ksu?s=11&amp;t=U-hrOO7JjdBm0Zm8XnUG6A"><span class="u-file-icon u-icon u-social-icon u-social-twitter u-icon-3"><img src="images/11823292.png" alt=""></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></footer>
   <section class="u-black u-clearfix u-container-style u-dialog-block u-opacity u-opacity-70 u-payment-dialog u-valign-middle u-dialog-section-5" id="sec-fe6a">
       <div class="u-align-center u-container-align-center u-container-style u-dialog u-radius-25 u-shape-round u-white u-dialog-1">
         <div class="u-container-layout u-valign-top u-container-layout-1">
@@ -176,37 +222,7 @@
           </div>
         </div><button class="u-dialog-close-button u-icon u-text-grey-40 u-icon-1"><svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 16 16" style=""><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-efe9"></use></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xml:space="preserve" class="u-svg-content" viewBox="0 0 16 16" x="0px" y="0px" id="svg-efe9"><rect x="7" y="0" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -3.3138 8.0002)" width="2" height="16"></rect><rect x="0" y="7" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -3.3138 8.0002)" width="16" height="2"></rect></svg></button>
       </div>
-    </section>
-    <footer class="u-clearfix u-custom-color-3 u-footer" id="sec-9e3e"><div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
-            <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-30 u-layout-wrap u-layout-wrap-1">
-              <div class="u-gutter-0 u-layout">
-                <div class="u-layout-row">
-                  <div class="u-align-left u-container-style u-layout-cell u-left-cell u-size-60 u-layout-cell-1">
-                    <div class="u-container-layout u-container-layout-1">
-                      <h5 class="u-align-center u-text u-text-default u-text-1">Thank you for visiting our website!<br>If you have any suggestions, please do not hesitate to contact us
-                      </h5><!--position-->
-                      <div data-position="" class="u-position u-position-1"><!--block-->
-                        <div class="u-block">
-                          <div class="u-block-container u-clearfix"><!--block_header-->
-                            <h5 class="u-block-header u-text"><!--block_header_content--><!--/block_header_content--></h5><!--/block_header--><!--block_content-->
-                            <div class="u-block-content u-text"><!--block_content_content--><!--/block_content_content--></div><!--/block_content-->
-                          </div>
-                        </div><!--/block-->
-                      </div><!--/position-->
-                      <div class="u-social-icons u-spacing-10 u-social-icons-1" data-animation-name="" data-animation-duration="0" data-animation-direction="">
-                        <a class="u-social-url" title="Email" target="_blank" href=""><span class="u-file-icon u-icon u-social-facebook u-social-icon u-icon-1"><img src="images/542740.png" alt=""></span>
-                        </a>
-                        <a class="u-social-url" title="department website" target="_blank" href="https://ccis.ksu.edu.sa/ar"><span class="u-file-icon u-icon u-social-icon u-social-linkedin u-icon-2"><img src="images/3308395.png" alt=""></span>
-                        </a>
-                        <a class="u-social-url" title="twitter" target="_blank" href="https://x.com/fccis_ksu?s=11&amp;t=U-hrOO7JjdBm0Zm8XnUG6A"><span class="u-file-icon u-icon u-social-icon u-social-twitter u-icon-3"><img src="images/11823292.png" alt=""></span>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div></footer><style>.u-dialog-section-5 .u-dialog-1 {
+    </section><style>.u-dialog-section-5 .u-dialog-1 {
   width: 570px;
   min-height: 578px;
   height: auto;

@@ -1,3 +1,6 @@
+<?php
+  require_once 'config/connect.php';
+?>
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en"><head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,7 +31,7 @@
     <meta property="og:title" content="Home">
     <meta property="og:type" content="website">
   <meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
-  <body data-home-page="Home.html" data-home-page-title="Home" data-path-to-root="./" data-include-products="true" class="u-body u-xl-mode" data-lang="en">
+  <body data-home-page="Home.php" data-home-page-title="Home" data-path-to-root="./" data-include-products="true" class="u-body u-xl-mode" data-lang="en">
     <header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
         <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" data-responsive-from="MD">
           <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px; font-weight: 700; text-transform: uppercase;">
@@ -39,10 +42,10 @@
             </a>
           </div>
           <div class="u-custom-menu u-nav-container">
-            <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="index.html" style="padding: 10px 0px;">Home</a>
-            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="Register.html">Sign Up</a>
-            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="LogIn.html">Login</a>
-            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="externalForm.html">Request Project from CCIS</a>
+            <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="index.php" style="padding: 10px 0px;">Home</a>
+            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="Register.php">Sign Up</a>
+            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="LogIn.php">Login</a>
+            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="externalForm.php">Request Project from CCIS</a>
             </li></ul>
           </div>
           <div class="u-custom-menu u-nav-container-collapse">
@@ -93,7 +96,7 @@
 Engine</a>
             </h2>
             <p class="u-text u-text-2"> Innovation Engine, a comprehensive platform designed to streamline the graduation project process for CCIS senior students and supervisor</p>
-            <a  href="Register.html" class="u-active-palette-1-dark-2 u-black u-border-active-black u-border-hover-black u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-radius-50 u-text-active-white u-text-body-alt-color u-text-hover-white u-btn-2" >Start Now </a>
+            <a  href="Register.php" class="u-active-palette-1-dark-2 u-black u-border-active-black u-border-hover-black u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-radius-50 u-text-active-white u-text-body-alt-color u-text-hover-white u-btn-2" >Start Now </a>
           </div>
         </div>
       </div>
@@ -103,36 +106,29 @@ Engine</a>
         <div class="u-expanded-width u-layout-horizontal u-list u-list-1">
           <h2 class="u-text u-text-1" style=" color: rgb(11 58 101);">Our leading Supervisors</h2>
           <div class="u-repeater u-repeater-1">
-            <div class="u-align-left u-container-align-left u-container-style u-list-item u-repeater-item">
-              <div class="u-container-layout u-similar-container u-valign-top u-container-layout-1">
-                <img class="u-expanded-width u-image u-image-default u-image-1" alt="" data-image-width="512" data-image-height="512" src="images/image.png">
-                <h4 class="u-align-left u-text u-text-1" style="text-align: center;color: rgb(11 58 101);">Nawal Almutairi</h4>
-                <p class="u-align-left u-text u-text-2">Dr. Nawal AlMutairi, an Assistant Professor at KSU, specializes in data security, privacy-preserving machine learning</p>
-              </div>
-            </div>
-            <div class="u-align-left u-container-align-left u-container-style u-list-item u-repeater-item">
-              <div class="u-container-layout u-similar-container u-valign-top u-container-layout-2">
-                <img class="u-expanded-width u-image u-image-default u-image-2" alt="" data-image-width="512" data-image-height="512" src="images/image.png">
-                <h4 class="u-align-left u-text u-text-3" style="text-align: center;color: rgb(11 58 101);">Qatrunnada Alsmail</h4>
-                <p class="u-align-left u-text u-text-4">An Assistant Professor in IT at King Saud University, specializing in cybersecurity, online privacy, and the security of mobile and wearable devices.</p>
-              </div>
-            </div>
-            <div class="u-align-left u-container-align-left u-container-style u-list-item u-repeater-item">
-              <div class="u-container-layout u-similar-container u-valign-top u-container-layout-3">
-                <img class="u-expanded-width u-image u-image-default u-image-3" alt="" data-image-width="512" data-image-height="512" src="images/Yousra.jpg">
-                <h4 class="u-align-left u-text u-text-5" style="text-align: center;color: rgb(11 58 101);">Yousra Almathami</h4>
-                
-                <p class="u-align-left u-text u-text-6">
-                  An Assistant Vice Dean at King Saud University in Riyadh, with a Ph.D. in Computer Science and Engineering from the University of Connecticut,</p>
-              </div>
-            </div>
-            <div class="u-align-left u-container-align-left u-container-style u-list-item u-repeater-item">
-              <div class="u-container-layout u-similar-container u-valign-top u-container-layout-4">
-                <img class="u-expanded-width u-image u-image-default u-image-4" alt="" data-image-width="2836" data-image-height="1875" src="images/image.png">
-                <h4 class="u-align-center u-text u-text-7" style="text-align: center;color: rgb(11 58 101);">Sample Headline</h4>
-                <p class="u-align-left u-text u-text-8">Sample text. Click to select the text box. Click again or double click to start editing the text.</p>
-              </div>
-            </div>
+            
+          <?php
+              $stmt = $con->prepare("SELECT * FROM `supervisors` LIMIT 9 ");
+              $stmt->execute();
+              $rows = $stmt->fetchAll();
+              if (! empty($rows)) {
+                foreach($rows as $row){
+                  echo '
+                  <div class="u-align-left u-container-align-left u-container-style u-list-item u-repeater-item">
+                    <div class="u-container-layout u-similar-container u-valign-top u-container-layout-1">
+                      <img class="u-expanded-width u-image u-image-default u-image-1" alt="" data-image-width="512" data-image-height="512" src="images/image.png">
+                      <h4 class="u-align-left u-text u-text-1" style="text-align: center;color: rgb(11 58 101);">
+                        '.$row['name'].'
+                      </h4>
+                      <p class="u-align-left u-text u-text-2">
+                        '.substr($row['interest'], 0, 100).'...
+                      </p>
+                    </div>
+                  </div>';
+                }
+              }
+          ?>
+
           </div>
           <a class="u-absolute-vcenter u-gallery-nav u-gallery-nav-prev u-grey-70 u-icon-circle u-opacity u-opacity-70 u-spacing-10 u-text-white u-gallery-nav-1" href="#" role="button">
             <span aria-hidden="true">
@@ -173,7 +169,7 @@ c6.177,6.18,9.262,14.271,9.262,22.366C354.708,234.018,351.617,242.115,345.441,24
                     <h2 class="u-text u-text-default u-text-palette-1-light-2 u-text-1"> Request Technical Expertise from CCIS </h2>
                     <p class="u-text u-text-grey-40 u-text-2"> If you're a faculty member at KSU seeking technical support for your projects, we're here to connect you with the expertise of the CCIS department. Simply fill out the form, and our team will facilitate the collaboration to meet your project’s needs.</p>
                     <p class="u-text u-text-grey-40 u-text-3"></p>
-                    <a href="externalForm.html" class="u-btn u-button-style u-hover-palette-5-dark-2 u-palette-1-base u-btn-1">REQUEST project </a>
+                    <a href="externalForm.php" class="u-btn u-button-style u-hover-palette-5-dark-2 u-palette-1-base u-btn-1">REQUEST project </a>
                   </div>
                 </div>
               </div>

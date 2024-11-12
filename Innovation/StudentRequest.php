@@ -34,11 +34,11 @@
             </a>
           </div>
           <div class="u-custom-menu u-nav-container">
-            <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.html" style="padding: 10px 0px;">Student Home page</a>
-            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentProfile.html">Profile</a>
-            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentRequest.html">Request list</a>
+            <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.php" style="padding: 10px 0px;">Student Home page</a>
+            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentProfile.php">Profile</a>
+            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentRequest.php">Request list</a>
             
-            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.html">Log out</a>
+            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.php">Log out</a>
           </div>
           <div class="u-custom-menu u-nav-container-collapse">
             <div class="u-container-style u-inner-container-layout u-opacity u-opacity-95 u-palette-1-dark-2 u-sidenav">
@@ -68,7 +68,7 @@
       </div></header>
     <section class="u-align-center u-clearfix u-container-align-center u-section-1" id="carousel_2094">
       <div class="u-clearfix u-sheet u-sheet-1">
-        <a href="StudentHomePage.html" class="u-active-palette-1-light-3 u-border-none u-btn u-button-style u-hover-palette-1-light-1 u-palette-1-base u-text-white u-btn-1">Add​&nbsp;<span class="u-file-icon u-icon u-text-palette-1-light-1"><img src="images/1665629-c9014b65.png" alt=""></span>
+        <a href="StudentHomePage.php" class="u-active-palette-1-light-3 u-border-none u-btn u-button-style u-hover-palette-1-light-1 u-palette-1-base u-text-white u-btn-1">Add​&nbsp;<span class="u-file-icon u-icon u-text-palette-1-light-1"><img src="images/1665629-c9014b65.png" alt=""></span>
         </a>
         <h1 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1">Your Group Requests</h1><!--blog--><!--blog_options_json--><!--{"type":"Recent","source":"","tags":"","count":""}--><!--/blog_options_json-->
         <div class="u-blog u-expanded-width u-blog-1">
@@ -76,51 +76,51 @@
           <div class="u-repeater u-repeater-1"><!--blog_post-->
             <div class="u-blog-post u-repeater-item">
               <div class="u-container-layout u-similar-container u-valign-bottom-xs u-container-layout-1">
-                <a class="u-post-header-link" href="blog/request-numbername-2.html"><!--blog_post_image-->
+                <a class="u-post-header-link" href="blog/request-numbername-2.php"><!--blog_post_image-->
                   <img src="images/bec4780631e6204803c2c76ed0388bdff62ee08c75e5765d228e81fbbb5a1c573c70d6009559dcd56eb3d2714a753747269119e4218281bf90f6ee_1280.jpg" alt="" class="u-blog-control u-image u-image-default u-image-1" data-image-width="1280" data-image-height="852"><!--/blog_post_image-->
                 </a><!--blog_post_header-->
                 <h2 class="u-blog-control u-text u-text-2">
-                  <a class="u-post-header-link" href="blog/request-numbername-2.html">Request Number/name</a>
+                  <a class="u-post-header-link" href="blog/request-numbername-2.php">Request Number/name</a>
                 </h2><!--/blog_post_header--><!--blog_post_content-->
                 <div class="u-blog-control u-post-content u-text u-text-3 fr-view">project idea: Sample small text. Lorem ipsum dolor sit amet.</div><!--/blog_post_content--><!--blog_post_metadata-->
                 <div class="u-blog-control u-metadata u-metadata-1"><!--blog_post_metadata_date-->
                   <span class="u-meta-date u-meta-icon">Oct 12, 2024</span><!--/blog_post_metadata_date-->
                 </div><!--/blog_post_metadata--><!--blog_post_readmore-->
-                <a href="blog/request-numbername-2.html" class="u-blog-control u-border-2 u-border-grey-dark-1 u-btn u-btn-rectangle u-button-style u-none u-btn-2"><!--blog_post_readmore_content--><!--options_json--><!--{"content":"In progress ​","defaultValue":"Read More"}--><!--/options_json-->In progress <!--/blog_post_readmore_content--></a><!--/blog_post_readmore--><!--blog_post_tags-->
+                <a href="blog/request-numbername-2.php" class="u-blog-control u-border-2 u-border-grey-dark-1 u-btn u-btn-rectangle u-button-style u-none u-btn-2"><!--blog_post_readmore_content--><!--options_json--><!--{"content":"In progress ​","defaultValue":"Read More"}--><!--/options_json-->In progress <!--/blog_post_readmore_content--></a><!--/blog_post_readmore--><!--blog_post_tags-->
                 <div class="u-blog-control u-post-tags u-post-tags-1"><!--blog_post_tags_content-->
                   <a>Tag 1</a>,<a>Tag 2</a>,<a>Tag 3</a><!--/blog_post_tags_content-->
                 </div><!--/blog_post_tags-->
               </div>
             </div><div class="u-blog-post u-repeater-item">
               <div class="u-container-layout u-similar-container u-valign-bottom-xs u-container-layout-2">
-                <a class="u-post-header-link" href="blog/request-numbername-1.html"><!--blog_post_image-->
+                <a class="u-post-header-link" href="blog/request-numbername-1.php"><!--blog_post_image-->
                   <img src="images/bec4780631e6204803c2c76ed0388bdff62ee08c75e5765d228e81fbbb5a1c573c70d6009559dcd56eb3d2714a753747269119e4218281bf90f6ee_1280.jpg" alt="" class="u-blog-control u-image u-image-default u-image-2" data-image-width="1280" data-image-height="852"><!--/blog_post_image-->
                 </a><!--blog_post_header-->
                 <h2 class="u-blog-control u-text u-text-4">
-                  <a class="u-post-header-link" href="blog/request-numbername-1.html">Request Number/name</a>
+                  <a class="u-post-header-link" href="blog/request-numbername-1.php">Request Number/name</a>
                 </h2><!--/blog_post_header--><!--blog_post_content-->
                 <div class="u-blog-control u-post-content u-text u-text-5 fr-view">project idea: Sample small text. Lorem ipsum dolor sit amet.</div><!--/blog_post_content--><!--blog_post_metadata-->
                 <div class="u-blog-control u-metadata u-metadata-2"><!--blog_post_metadata_date-->
                   <span class="u-meta-date u-meta-icon">Oct 12, 2024</span><!--/blog_post_metadata_date-->
                 </div><!--/blog_post_metadata--><!--blog_post_readmore-->
-                <a href="blog/request-numbername-1.html" class="u-blog-control u-border-2 u-border-grey-dark-1 u-btn u-btn-rectangle u-button-style u-none u-btn-3"><!--blog_post_readmore_content--><!--options_json--><!--{"content":"In progress ​","defaultValue":"Read More"}--><!--/options_json-->In progress <!--/blog_post_readmore_content--></a><!--/blog_post_readmore--><!--blog_post_tags-->
+                <a href="blog/request-numbername-1.php" class="u-blog-control u-border-2 u-border-grey-dark-1 u-btn u-btn-rectangle u-button-style u-none u-btn-3"><!--blog_post_readmore_content--><!--options_json--><!--{"content":"In progress ​","defaultValue":"Read More"}--><!--/options_json-->In progress <!--/blog_post_readmore_content--></a><!--/blog_post_readmore--><!--blog_post_tags-->
                 <div class="u-blog-control u-post-tags u-post-tags-2"><!--blog_post_tags_content-->
                   <a>Tag 1</a>,<a>Tag 2</a>,<a>Tag 3</a><!--/blog_post_tags_content-->
                 </div><!--/blog_post_tags-->
               </div>
             </div><div class="u-blog-post u-repeater-item">
               <div class="u-container-layout u-similar-container u-valign-bottom-xs u-container-layout-3">
-                <a class="u-post-header-link" href="blog/request-numbername.html"><!--blog_post_image-->
+                <a class="u-post-header-link" href="blog/request-numbername.php"><!--blog_post_image-->
                   <img src="images/bec4780631e6204803c2c76ed0388bdff62ee08c75e5765d228e81fbbb5a1c573c70d6009559dcd56eb3d2714a753747269119e4218281bf90f6ee_1280.jpg" alt="" class="u-blog-control u-image u-image-default u-image-3" data-image-width="1280" data-image-height="852"><!--/blog_post_image-->
                 </a><!--blog_post_header-->
                 <h2 class="u-blog-control u-text u-text-6">
-                  <a class="u-post-header-link" href="blog/request-numbername.html">Request Number/name</a>
+                  <a class="u-post-header-link" href="blog/request-numbername.php">Request Number/name</a>
                 </h2><!--/blog_post_header--><!--blog_post_content-->
                 <div class="u-blog-control u-post-content u-text u-text-7 fr-view">project idea: Sample small text. Lorem ipsum dolor sit amet.</div><!--/blog_post_content--><!--blog_post_metadata-->
                 <div class="u-blog-control u-metadata u-metadata-3"><!--blog_post_metadata_date-->
                   <span class="u-meta-date u-meta-icon">Oct 12, 2024</span><!--/blog_post_metadata_date-->
                 </div><!--/blog_post_metadata--><!--blog_post_readmore-->
-                <a href="blog/request-numbername.html" class="u-blog-control u-border-2 u-border-grey-dark-1 u-btn u-btn-rectangle u-button-style u-none u-btn-4"><!--blog_post_readmore_content--><!--options_json--><!--{"content":"In progress ​","defaultValue":"Read More"}--><!--/options_json-->In progress <!--/blog_post_readmore_content--></a><!--/blog_post_readmore--><!--blog_post_tags-->
+                <a href="blog/request-numbername.php" class="u-blog-control u-border-2 u-border-grey-dark-1 u-btn u-btn-rectangle u-button-style u-none u-btn-4"><!--blog_post_readmore_content--><!--options_json--><!--{"content":"In progress ​","defaultValue":"Read More"}--><!--/options_json-->In progress <!--/blog_post_readmore_content--></a><!--/blog_post_readmore--><!--blog_post_tags-->
                 <div class="u-blog-control u-post-tags u-post-tags-3"><!--blog_post_tags_content-->
                   <a>Tag 1</a>,<a>Tag 2</a>,<a>Tag 3</a><!--/blog_post_tags_content-->
                 </div><!--/blog_post_tags-->
