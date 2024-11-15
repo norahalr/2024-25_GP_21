@@ -1,3 +1,24 @@
+<?php
+  ob_start();
+  session_start();
+  $userEmail = $_SESSION['user_id'] ?? "alanoud.ahmed@example.com"; // Get user ID from session
+
+  require_once 'config/connect.php';
+  
+  try {
+    // Prepare the SQL statement to fetch requests for the logged-in student
+    $stmt = $con->prepare("SELECT id, project_name, description, status FROM team_idea_request WHERE team_email = :team_email");
+    $stmt->execute(['team_email' => $userEmail]);
+
+    // Fetch all results
+    $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Uncomment this section once you have data in the database for testing
+    // $stmt->execute(); 
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
+  ?>
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en"><head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,7 +45,8 @@
     <meta property="og:title" content="StudentRequest">
     <meta property="og:type" content="website">
   <meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
-  <body data-path-to-root="./" data-include-products="true" class="u-body u-xl-mode" data-lang="en"><header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
+  <body data-path-to-root="./" data-include-products="true" class="u-body u-xl-mode" data-lang="en">
+    <header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
         <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" data-responsive-from="MD">
           <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px; font-weight: 700; text-transform: uppercase;">
             <a class="u-button-style u-custom-active-border-color u-custom-active-color u-custom-border u-custom-border-color u-custom-borders u-custom-hover-border-color u-custom-hover-color u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-nav-link" href="#" style="padding: 0px; font-size: calc(1em + 0.5px);">
@@ -66,73 +88,60 @@
           <img src="images/logo_GP-noname.png" class="u-logo-image u-logo-image-1">
         </a>
       </div></header>
-    <section class="u-align-center u-clearfix u-container-align-center u-section-1" id="carousel_2094">
-      <div class="u-clearfix u-sheet u-sheet-1">
-        <a href="StudentHomePage.php" class="u-active-palette-1-light-3 u-border-none u-btn u-button-style u-hover-palette-1-light-1 u-palette-1-base u-text-white u-btn-1">Add​&nbsp;<span class="u-file-icon u-icon u-text-palette-1-light-1"><img src="images/1665629-c9014b65.png" alt=""></span>
-        </a>
-        <h1 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1">Your Group Requests</h1><!--blog--><!--blog_options_json--><!--{"type":"Recent","source":"","tags":"","count":""}--><!--/blog_options_json-->
+
+
+      <section class="u-align-center u-clearfix u-container-align-center u-section-1" id="carousel_2094">
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <a href="StudentHomePage.php" class="u-active-palette-1-light-3 u-border-none u-btn u-button-style u-hover-palette-1-light-1 u-palette-1-base u-text-white u-btn-1">Add​&nbsp;<span class="u-file-icon u-icon u-text-palette-1-light-1"><img src="images/1665629-c9014b65.png" alt=""></span></a>
+        <h1 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1">Your Group Requests</h1>
         <div class="u-blog u-expanded-width u-blog-1">
-          <div class="u-list-control"></div>
-          <div class="u-repeater u-repeater-1"><!--blog_post-->
-            <div class="u-blog-post u-repeater-item">
-              <div class="u-container-layout u-similar-container u-valign-bottom-xs u-container-layout-1">
-                <a class="u-post-header-link" href="blog/request-numbername-2.php"><!--blog_post_image-->
-                  <img src="images/bec4780631e6204803c2c76ed0388bdff62ee08c75e5765d228e81fbbb5a1c573c70d6009559dcd56eb3d2714a753747269119e4218281bf90f6ee_1280.jpg" alt="" class="u-blog-control u-image u-image-default u-image-1" data-image-width="1280" data-image-height="852"><!--/blog_post_image-->
-                </a><!--blog_post_header-->
-                <h2 class="u-blog-control u-text u-text-2">
-                  <a class="u-post-header-link" href="blog/request-numbername-2.php">Request Number/name</a>
-                </h2><!--/blog_post_header--><!--blog_post_content-->
-                <div class="u-blog-control u-post-content u-text u-text-3 fr-view">project idea: Sample small text. Lorem ipsum dolor sit amet.</div><!--/blog_post_content--><!--blog_post_metadata-->
-                <div class="u-blog-control u-metadata u-metadata-1"><!--blog_post_metadata_date-->
-                  <span class="u-meta-date u-meta-icon">Oct 12, 2024</span><!--/blog_post_metadata_date-->
-                </div><!--/blog_post_metadata--><!--blog_post_readmore-->
-                <a href="blog/request-numbername-2.php" class="u-blog-control u-border-2 u-border-grey-dark-1 u-btn u-btn-rectangle u-button-style u-none u-btn-2"><!--blog_post_readmore_content--><!--options_json--><!--{"content":"In progress ​","defaultValue":"Read More"}--><!--/options_json-->In progress <!--/blog_post_readmore_content--></a><!--/blog_post_readmore--><!--blog_post_tags-->
-                <div class="u-blog-control u-post-tags u-post-tags-1"><!--blog_post_tags_content-->
-                  <a>Tag 1</a>,<a>Tag 2</a>,<a>Tag 3</a><!--/blog_post_tags_content-->
-                </div><!--/blog_post_tags-->
-              </div>
-            </div><div class="u-blog-post u-repeater-item">
-              <div class="u-container-layout u-similar-container u-valign-bottom-xs u-container-layout-2">
-                <a class="u-post-header-link" href="blog/request-numbername-1.php"><!--blog_post_image-->
-                  <img src="images/bec4780631e6204803c2c76ed0388bdff62ee08c75e5765d228e81fbbb5a1c573c70d6009559dcd56eb3d2714a753747269119e4218281bf90f6ee_1280.jpg" alt="" class="u-blog-control u-image u-image-default u-image-2" data-image-width="1280" data-image-height="852"><!--/blog_post_image-->
-                </a><!--blog_post_header-->
-                <h2 class="u-blog-control u-text u-text-4">
-                  <a class="u-post-header-link" href="blog/request-numbername-1.php">Request Number/name</a>
-                </h2><!--/blog_post_header--><!--blog_post_content-->
-                <div class="u-blog-control u-post-content u-text u-text-5 fr-view">project idea: Sample small text. Lorem ipsum dolor sit amet.</div><!--/blog_post_content--><!--blog_post_metadata-->
-                <div class="u-blog-control u-metadata u-metadata-2"><!--blog_post_metadata_date-->
-                  <span class="u-meta-date u-meta-icon">Oct 12, 2024</span><!--/blog_post_metadata_date-->
-                </div><!--/blog_post_metadata--><!--blog_post_readmore-->
-                <a href="blog/request-numbername-1.php" class="u-blog-control u-border-2 u-border-grey-dark-1 u-btn u-btn-rectangle u-button-style u-none u-btn-3"><!--blog_post_readmore_content--><!--options_json--><!--{"content":"In progress ​","defaultValue":"Read More"}--><!--/options_json-->In progress <!--/blog_post_readmore_content--></a><!--/blog_post_readmore--><!--blog_post_tags-->
-                <div class="u-blog-control u-post-tags u-post-tags-2"><!--blog_post_tags_content-->
-                  <a>Tag 1</a>,<a>Tag 2</a>,<a>Tag 3</a><!--/blog_post_tags_content-->
-                </div><!--/blog_post_tags-->
-              </div>
-            </div><div class="u-blog-post u-repeater-item">
-              <div class="u-container-layout u-similar-container u-valign-bottom-xs u-container-layout-3">
-                <a class="u-post-header-link" href="blog/request-numbername.php"><!--blog_post_image-->
-                  <img src="images/bec4780631e6204803c2c76ed0388bdff62ee08c75e5765d228e81fbbb5a1c573c70d6009559dcd56eb3d2714a753747269119e4218281bf90f6ee_1280.jpg" alt="" class="u-blog-control u-image u-image-default u-image-3" data-image-width="1280" data-image-height="852"><!--/blog_post_image-->
-                </a><!--blog_post_header-->
-                <h2 class="u-blog-control u-text u-text-6">
-                  <a class="u-post-header-link" href="blog/request-numbername.php">Request Number/name</a>
-                </h2><!--/blog_post_header--><!--blog_post_content-->
-                <div class="u-blog-control u-post-content u-text u-text-7 fr-view">project idea: Sample small text. Lorem ipsum dolor sit amet.</div><!--/blog_post_content--><!--blog_post_metadata-->
-                <div class="u-blog-control u-metadata u-metadata-3"><!--blog_post_metadata_date-->
-                  <span class="u-meta-date u-meta-icon">Oct 12, 2024</span><!--/blog_post_metadata_date-->
-                </div><!--/blog_post_metadata--><!--blog_post_readmore-->
-                <a href="blog/request-numbername.php" class="u-blog-control u-border-2 u-border-grey-dark-1 u-btn u-btn-rectangle u-button-style u-none u-btn-4"><!--blog_post_readmore_content--><!--options_json--><!--{"content":"In progress ​","defaultValue":"Read More"}--><!--/options_json-->In progress <!--/blog_post_readmore_content--></a><!--/blog_post_readmore--><!--blog_post_tags-->
-                <div class="u-blog-control u-post-tags u-post-tags-3"><!--blog_post_tags_content-->
-                  <a>Tag 1</a>,<a>Tag 2</a>,<a>Tag 3</a><!--/blog_post_tags_content-->
-                </div><!--/blog_post_tags-->
-              </div>
-            </div><!--/blog_post--><!--blog_post-->
-            <!--/blog_post--><!--blog_post-->
-            <!--/blog_post-->
-          </div>
-          <div class="u-list-control"></div>
-        </div><!--/blog-->
-      </div>
-    </section>
+            <div class="u-list-control"></div>
+            <div class="u-repeater u-repeater-1">
+                <?php if (!empty($requests)): ?>
+                    <?php foreach ($requests as $request): ?>
+                        <div class="u-blog-post u-repeater-item">
+                            <div class="u-container-layout u-similar-container u-valign-bottom-xs u-container-layout-<?= $request['id'] ?>">
+                                <a class="u-post-header-link" href="blog/request-<?= $request['id'] ?>.php">
+                                    <img src="images/bulb_idea_knowledge_light_read_icon.png" alt="" class="u-blog-control u-image u-image-default u-image-1" data-image-width="1280" data-image-height="852">
+                                </a>
+                                <h2 class="u-blog-control u-text u-text-2">
+                                    <a class="u-post-header-link" href="blog/request-<?= $request['id'] ?>.php"><?= htmlspecialchars($request['project_name']) ?></a>
+                                </h2>
+                                <div class="u-blog-control u-post-content u-text u-text-3 fr-view">
+                                    Project Idea: <?= htmlspecialchars($request['description']) ?>
+                                </div>
+                                <div class="u-blog-control u-metadata u-metadata-1">
+                                    <!-- Status with color coding -->
+                                    <span class="u-meta-date u-meta-icon" style="color: 
+                                        <?php 
+                                        if ($request['status'] == 'Approved') {
+                                            echo 'lightgreen';
+                                        } elseif ($request['status'] == 'Rejected') {
+                                            echo 'red';
+                                        } else {
+                                            echo 'black';
+                                        } 
+                                        ?>">
+                                        <?= htmlspecialchars($request['status']) ?>
+                                    </span>
+                                </div>
+                                
+                                <div class="u-blog-control u-post-tags u-post-tags-1">
+                                    <!-- Replace with actual date -->
+                                    <span><?= htmlspecialchars($request['request_date']) ?></span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No requests found.</p>
+                <?php endif; ?>
+            </div>
+            <div class="u-list-control"></div>
+        </div>
+    </div>
+</section>
     
     
     

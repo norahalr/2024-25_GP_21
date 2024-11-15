@@ -279,70 +279,101 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
       }
 }else { // Student Register
-  $num_students = $_POST['num-students'];
-  $leader_name = $_POST['leader-name'];
-  $leader_email = $_POST['leader-email'];
-  $student_name_1 = $_POST['student-name-1'];
-  $student_email_1 = $_POST['student-email-1'];
-  $password = $_POST['password'];
-  $reenter_password = $_POST['re-enter-password'];
-  $errors = [];
+    $num_students = $_POST['num-students'];
+$leader_name = $_POST['leader-name'];
+$leader_email = $_POST['leader-email'];
+$password = $_POST['password'];
+$reenter_password = $_POST['re-enter-password'];
+$student_names = []; // Array to store student names
+$student_emails = []; // Array to store student emails
 
-  if (empty($num_students)) {
-      $errors[] = "Number of students is required.";
-  }
-  if (empty($leader_name)) {
-      $errors[] = "Leader name is required.";
-  }
-  if (empty($leader_email)) {
-      $errors[] = "Leader email is required.";
-  }
-  if (empty($student_name_1)) {
-      $errors[] = "Student name is required.";
-  }
-  if (empty($student_email_1)) {
-      $errors[] = "Student email is required.";
-  } elseif (!preg_match("/@student\.ksu\.edu\.sa$/", $student_email_1)) {
-      $errors[] = "Student email must be from the domain @student.ksu.edu.sa.";
-  }
-  if (empty($password)) {
-      $errors[] = "Password is required.";
-  } elseif (!preg_match("/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/", $password)) {
-      $errors[] = "Password must be at least 8 characters long, contain an upper case letter, a lower case letter, a number, and a special character.";
-  }
-  if ($password !== $reenter_password) {
-      $errors[] = "Password and password confirmation do not match.";
-  }
+// Collecting student names and emails dynamically based on the number of students
+for ($i = 1; $i <= $num_students - 1; $i++) {
+    $student_names[] = $_POST['student-name-' . $i];
+    $student_emails[] = $_POST['student-email-' . $i];
+}
 
-  
-        $stmt = $con->prepare("SELECT COUNT(*) FROM teams WHERE email = :leader_email");
-        $stmt->bindParam(':leader_email', $leader_email);
-        $stmt->execute();
-        $leaderExists = $stmt->fetchColumn();
+$errors = [];
 
-        if (!$leaderExists) {
-            $errors[] = "Leader email does not exist in the teams table.";
+// Validation checks
+if (empty($num_students)) {
+    $errors[] = "Number of students is required.";
+}
+if (empty($leader_name)) {
+    $errors[] = "Leader name is required.";
+}
+if (empty($leader_email)) {
+    $errors[] = "Leader email is required.";
+}
+if (empty($student_names[0])) {
+    $errors[] = "At least one student name is required.";
+}
+if (empty($student_emails[0])) {
+    $errors[] = "At least one student email is required.";
+} elseif (!preg_match("/@student\.ksu\.edu\.sa$/", $student_emails[0])) {
+    $errors[] = "Student email must be from the domain @student.ksu.edu.sa.";
+}
+if (empty($password)) {
+    $errors[] = "Password is required.";
+} elseif (!preg_match("/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/", $password)) {
+    $errors[] = "Password must be at least 8 characters long, contain an upper case letter, a lower case letter, a number, and a special character.";
+}
+if ($password !== $reenter_password) {
+    $errors[] = "Password and password confirmation do not match.";
+}
+
+if (empty($errors)) {
+    // Hash the password
+    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+    // Insert the leader into the teams table
+    $stmt = $con->prepare("INSERT INTO teams (email, name, password) VALUES (:email, :name, :password)");
+    $stmt->bindParam(':email', $leader_email);
+    $stmt->bindParam(':name', $leader_name);
+    $stmt->bindParam(':password', $hashedPassword);
+
+    if ($stmt->execute()) {
+        // Loop to insert the leader and students into the students table
+        $team_email = $leader_email; // All students will have the leader's email as team_email
+        $all_registered = true;
+
+        // Insert leader as student first
+        $stmt = $con->prepare("INSERT INTO students (name, email, team_email) VALUES (:name, :email, :team_email)");
+        $stmt->bindParam(':name', $leader_name);
+        $stmt->bindParam(':email', $leader_email);
+        $stmt->bindParam(':team_email', $team_email);
+
+        if (!$stmt->execute()) {
+            $all_registered = false;
         }
 
+        // Insert students
+        for ($i = 0; $i < $num_students - 1; $i++) {
+            $stmt = $con->prepare("INSERT INTO students (name, email, team_email) VALUES (:name, :email, :team_email)");
+            $stmt->bindParam(':name', $student_names[$i]);
+            $stmt->bindParam(':email', $student_emails[$i]);
+            $stmt->bindParam(':team_email', $team_email);
 
-  if (empty($errors)) {
-      $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-      $stmt = $con->prepare("INSERT INTO students (name, email, team_email, phone_number, password) VALUES (:name, :email, :team_email, '', :password)");
-      $stmt->bindParam(':name', $student_name_1);
-      $stmt->bindParam(':email', $student_email_1);
-      $stmt->bindParam(':team_email', $leader_email);
-      $stmt->bindParam(':password', $hashedPassword);
+            if (!$stmt->execute()) {
+                $all_registered = false;
+            }
+        }
 
-      if ($stmt->execute()) {
-          echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-message u-form-send-success"> Thank you! Your registration has been successful. </div>';
-      } else {
-          echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message"> Unable to register. Please try again later. </div>';
-      }
-  } else {
-      foreach ($errors as $error) {
-          echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">' . htmlspecialchars($error) . '</div>';
-      }
-  }
+        // Display appropriate message
+        if ($all_registered) {
+            echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-message u-form-send-success"> Thank you! Your registration has been successful. </div>';
+        } else {
+            echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message"> Unable to register. Please try again later. </div>';
+        }
+    } else {
+        echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message"> Unable to add leader to the teams table. Please try again later. </div>';
+    }
+} else {
+    foreach ($errors as $error) {
+        echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">' . htmlspecialchars($error) . '</div>';
+    }
+}
+
 }
 }
 ?>

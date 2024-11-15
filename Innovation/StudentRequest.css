@@ -10,14 +10,20 @@
 }
 
 .u-section-1 .u-text-1 {
-  margin: -98px auto 0;
+  margin: -98px auto 10%;
 }
 
 .u-section-1 .u-blog-1 {
   margin-top: 19px;
   margin-bottom: 60px;
 }
+.u-meta-icon{
+  border-style: solid;
+  font-weight: 700;
+  padding: 7px 15px;
+  border-width: 2px;
 
+}
 .u-section-1 .u-repeater-1 {
   grid-auto-columns: 100%;
   grid-template-columns: repeat(1, 100%);
@@ -30,8 +36,8 @@
 }
 
 .u-section-1 .u-image-1 {
-  height: 216px;
-  width: 301px;
+  height: 300px;
+  width: 300px;
   margin: 0 auto 0 0;
 }
 
