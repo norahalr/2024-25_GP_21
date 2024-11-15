@@ -28511,13 +28511,13 @@ section.u-palette-1-light-1:before,
   color: #ffffff;
   background-color: #77aad9;
 }
-.u-input.u-palette-1-light-1,
+/* .u-input.u-palette-1-light-1,
 .u-field-input.u-palette-1-light-1,
 .u-button-style.u-palette-1-light-1,
 .u-button-style.u-palette-1-light-1[class*="u-border-"] {
   color: #ffffff !important;
   background-color: #77aad9 !important;
-}
+} */
 .u-button-style.u-palette-1-light-1:hover,
 .u-button-style.u-palette-1-light-1[class*="u-border-"]:hover,
 .u-button-style.u-palette-1-light-1:focus,

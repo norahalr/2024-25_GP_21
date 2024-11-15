@@ -1,9 +1,7 @@
 <?php
   ob_start();
   session_start();
-  $userId = $_SESSION['user_id'] ?? "alanoud.ahmed@example.com"
-  ; // Get user ID from session
-
+  $userId = $_SESSION['user_id'] ?? "alanoud.ahmed@example.com"; // Get user ID from session
   require_once 'config/connect.php';
 ?>
 <!DOCTYPE html>

@@ -1,3 +1,173 @@
+<?php
+  ob_start();
+  session_start();
+  $userEmail = $_SESSION['user_id'] ?? "alanoud.ahmed@example.com"; // Get user ID from session
+
+  require_once 'config/connect.php';
+
+  // Check if the session has a user ID; otherwise, redirect to login
+  // if (!isset($_SESSION['user_id'])) {
+  //   header("Location: login.php");
+  //   exit();
+  // }
+
+  // Retrieve the user email from the session
+  //$userEmail = $_SESSION['user_id'];
+
+  // Fetch existing idea
+$stmt = $con->prepare("SELECT draft_ideas FROM teams WHERE email = :email");
+$stmt->bindParam(':email', $userEmail);
+$stmt->execute();
+$existingIdea = $stmt->fetchColumn(); // Fetch the single column value (idea) if it exists
+
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $idea = $_POST['textarea'];
+
+
+        // Update existing idea
+        $updateStmt = $con->prepare("UPDATE teams SET draft_ideas = :idea WHERE email = :email");
+        $updateStmt->bindParam(':idea', $idea);
+        $updateStmt->bindParam(':email', $userEmail);
+        $updateStmt->execute();
+        echo "Idea updated successfully.";
+    
+
+}
+  if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['group_logo'])) {
+    $file = $_FILES['group_logo'];
+    
+    if ($file['error'] == 0) {
+        $fileName = $file['name'];
+        $fileTmpName = $file['tmp_name'];
+        $fileSize = $file['size'];
+        $fileType = $file['type'];
+        
+        $allowed = ['image/jpeg', 'image/png', 'image/jpg'];
+        if (in_array($fileType, $allowed)) {
+            $uploadDir = 'uploads/logos/';
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            $fileNewName = uniqid('', true) . "_" . basename($fileName);
+            $fileDestination = $uploadDir . $fileNewName;
+
+            if (move_uploaded_file($fileTmpName, $fileDestination)) {
+                $userEmail = $_SESSION['user_email'] ?? "alanoud.ahmed@example.com";
+                
+                // Update the logo path in the database using PDO
+                $stmt = $con->prepare("UPDATE teams SET logo = :logo WHERE email = :email");
+                $stmt->bindParam(':logo', $fileDestination);
+                $stmt->bindParam(':email', $userEmail);
+                
+                if ($stmt->execute()) {
+                    echo "Logo uploaded and saved!";
+                } else {
+                    echo "Error updating database.";
+                }
+            } else {
+                echo "Failed to move the uploaded file.";
+            }
+        } else {
+            echo "Only JPG, JPEG, and PNG files are allowed.";
+        }
+    } else {
+        echo "Error uploading file.";
+    }
+} else {
+    echo "No file uploaded.";
+}
+
+
+
+
+
+
+
+
+$leaderEmail = $userEmail; // Set this from the session or wherever the leader's email is stored
+
+// Fetch leader information from the teams table
+$leaderStmt = $con->prepare("SELECT name,email, supervisor_email FROM teams WHERE email = :email");
+$leaderStmt->bindParam(':email', $leaderEmail);
+$leaderStmt->execute();
+$leader = $leaderStmt->fetch(PDO::FETCH_ASSOC);
+
+$leaderName = $leader['name'];
+$leaderEmail = $leader['email'];
+
+// Fetch students information from the students table (team_email matches leader's email)
+$studentsStmt = $con->prepare("SELECT name, email FROM students WHERE team_email = :team_email");
+$studentsStmt->bindParam(':team_email', $leaderEmail);
+$studentsStmt->execute();
+$students = $studentsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch project details from team_idea_request table
+$projectStmt = $con->prepare("SELECT project_name, description FROM team_idea_request WHERE team_email = :team_email AND status = 'accepted'");
+$projectStmt->bindParam(':team_email', $leaderEmail);
+$projectStmt->execute();
+$project = $projectStmt->fetch(PDO::FETCH_ASSOC);
+
+// Fetch supervisor name from supervisors table using supervisor_email
+$supervisorStmt = $con->prepare("SELECT name FROM supervisors WHERE email = :supervisor_email");
+$supervisorStmt->bindParam(':supervisor_email', $leader['supervisor_email']);
+$supervisorStmt->execute();
+$supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
+
+
+
+
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  // Fetch updated data from the form
+  
+  
+  // Loop through students and update their names and emails
+  $studentNames = [];
+  $studentEmails = [];
+  foreach ($_POST as $key => $value) {
+      if (strpos($key, 'name-') === 0) {
+          $index = substr($key, 5);  // Extract the student index
+          $studentNames[$index] = $value;
+      }
+      if (strpos($key, 'email-') === 0) {
+          $index = substr($key, 6);  // Extract the student index
+          $studentEmails[$index] = $value;
+      }
+  }
+
+  try {
+      // Start a transaction
+      $con->beginTransaction();
+
+      // Update leader's name and email
+      $stmt = $con->prepare("UPDATE teams SET name = :leaderName, email = :leaderEmail WHERE email = :leaderEmail");
+      $stmt->execute(['leaderName' => $leaderName, 'leaderEmail' => $leaderEmail]);
+
+      // Update each student's name and email
+      foreach ($studentNames as $index => $name) {
+          $email = $studentEmails[$index];
+          $stmt = $con->prepare("UPDATE students SET name = :name, email = :email WHERE email = :email");
+          $stmt->execute(['name' => $name, 'email' => $email]);
+      }
+
+      // Commit the transaction
+      $con->commit();
+      
+      // Redirect or inform the user
+      echo "Changes saved successfully!";
+  } catch (Exception $e) {
+      $con->rollBack();
+      echo "Error: " . $e->getMessage();
+  }
+}
+
+
+?>
+
+
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en"><head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +177,8 @@
     <title>groupProfile</title>
     <link rel="stylesheet" href="nicepage2.css" media="screen">
 <link rel="stylesheet" href="groupProfile.css" media="screen">
-    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
-    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <!-- <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script> -->
     <meta name="generator" content="Nicepage 6.19.6, nicepage.com">
     <meta name="referrer" content="origin">
     <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
@@ -77,29 +247,49 @@
               <div class="u-align-center u-container-align-center u-container-style u-layout-cell u-left-cell u-palette-1-light-3 u-radius u-shape-round u-size-30 u-size-xs-60 u-layout-cell-1" src="">
                 <div class="u-container-layout u-valign-top u-container-layout-1">
                   <div class="u-expanded-width u-form u-form-1">
-                    <form action="https://forms.nicepagesrv.com/v2/form/process" class="u-clearfix u-form-spacing-15 u-form-vertical u-inner-form" style="padding: 15px;" source="email" name="form">
-                      <div class="u-form-group u-form-textarea u-label-none u-form-group-1">
-                        <label for="textarea-0d3e" class="u-label">Textarea</label>
-                        <textarea rows="4" cols="50" id="textarea-0d3e" name="textarea" class="u-input u-input-rectangle" required="" placeholder="Write down your ideas to save them for you! (Draft)"></textarea>
-                      </div>
-                      <div class="u-align-right u-form-group u-form-submit">
-                        <a href="#" class="u-border-none u-btn u-btn-submit u-button-style u-hover-palette-1-light-1 u-palette-1-light-2 u-btn-1">Save</a>
-                        <input type="submit" value="submit" class="u-form-control-hidden">
-                      </div>
-                      <div class="u-form-send-message u-form-send-success">Thank you! Your message has been sent.</div>
-                      <div class="u-form-send-error u-form-send-message">Unable to send your message. Please fix errors then try again.</div>
-                      <input type="hidden" value="" name="recaptchaResponse">
-                      <input type="hidden" name="formServices" value="288a2770-31f5-dbbd-4ba6-cbffa36f438a">
-                    </form>
+
+                  <form action="StudentProfile.php" method="POST" class="u-clearfix u-form-spacing-15 u-form-vertical u-inner-form" style="padding: 15px;"  name="form"> 
+    <div class="u-form-group u-form-textarea u-label-none u-form-group-1">
+        <label for="textarea-0d3e" class="u-label">Idea: </label>
+        <textarea rows="4" cols="50" id="textarea-0d3e" name="textarea" class="u-input u-input-rectangle" required placeholder="Write down your ideas to save them for you! (Draft)">
+            <?php echo $existingIdea ?: ''; ?>
+        </textarea>
+         </div>
+    <div class="u-align-right u-form-group u-form-submit">
+        <button type="submit" class="u-border-none u-btn u-btn-submit u-button-style u-hover-palette-1-light-1 u-palette-1-light-2 u-btn-1">Save</button>
+    </div>
+</form>
                   </div>
                 </div>
               </div>
-              <div class="u-align-center u-container-align-center u-container-style u-layout-cell u-radius u-right-cell u-shape-round u-size-30 u-size-xs-60 u-layout-cell-2" src="">
-                <div class="u-border-1 u-border-custom-color-3 u-container-layout u-valign-middle u-container-layout-2" src="">
-                  <a href="#" class="u-border-1 u-border-active-custom-color-1 u-border-custom-color-3 u-border-hover-palette-1-light-2 u-border-no-left u-border-no-right u-border-no-top u-btn u-button-style u-none u-text-palette-1-base u-btn-2"><span class="u-file-icon u-icon u-icon-1"><img src="images/7973420.png" alt=""></span>&nbsp;<br>Add Group Logo 
-                  </a>
-                </div>
-              </div>
+              <div class="u-align-center u-container-align-center u-container-style u-layout-cell u-radius u-right-cell u-shape-round u-size-30 u-size-xs-60 u-layout-cell-2">
+              <?php
+                $stmt = $con->prepare("SELECT logo FROM teams WHERE email = :email");
+                $stmt->bindParam(':email', $userEmail);
+                $stmt->execute();
+                
+                // Set default logo path in case no logo is found
+                $logoPath = 'images/7973420.png'; // Default logo image
+                
+                if ($stmt->rowCount() > 0) {
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if (!empty($row['logo'])) {
+                        $logoPath = $row['logo'];
+                    }
+                }
+                 ?>
+    <div class="u-border-1 u-border-custom-color-3 u-container-layout u-valign-middle u-container-layout-2">
+        <form action="StudentProfile.php" method="POST" enctype="multipart/form-data" style="display:inline;">
+        <label class="u-border-1 u-border-active-custom-color-1 u-border-custom-color-3 u-border-hover-palette-1-light-2 u-border-no-left u-border-no-right u-border-no-top u-btn u-button-style u-none u-text-palette-1-base u-btn-2">
+        <span class="u-file-icon u-icon u-icon-1">
+            <img src="<?php echo $logoPath; ?>" alt="Group Logo" style="max-width: auto; max-height: auto;">
+        </span>&nbsp;<br>Add Group Logo
+        <input type="file" name="group_logo" style="display: none;" onchange="this.form.submit()">
+    </label>
+        </form>
+    </div>
+</div>
+
             </div>
           </div>
         </div>
@@ -107,62 +297,103 @@
           <div class="u-container-layout u-container-layout-3">
             <h3 class="u-text u-text-custom-color-3 u-text-default u-text-2">Group Information </h3>
             <div class="custom-expanded u-form u-form-2">
-              <form action="https://forms.nicepagesrv.com/v2/form/process" class="u-clearfix u-form-spacing-30 u-form-vertical u-inner-form" source="email" name="form" style="padding: 15px;">
-                <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-3">
-                  <label for="name-8e54" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-2">Leader Name</label>
-                  <input type="text" placeholder="Leader name" id="name-8e54" name="name-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-2" required="">
-                </div>
-                <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-4">
-                  <label for="email-c6a3" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-3">Email</label>
-                  <input type="text" placeholder="Leader email" id="email-c6a3" name="email" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-3" required="required">
-                </div>
-                <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-5">
-                  <label for="name-8e54" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-4">Student name</label>
-                  <input type="text" placeholder="Student name" id="name-8e54" name="name-2" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-4" required="">
-                </div>
-                <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-6">
-                  <label for="text-b1da" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5">Email</label>
-                  <input type="text" id="text-b1da" name="email-2" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5" placeholder="Student email" required="required">
-                </div>
-                <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-7">
-                  <label for="text-c511" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-6">Student name</label>
-                  <input type="text" placeholder="Student name" id="text-c511" name="name-3" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-6" required="required">
-                </div>
-                <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-8">
-                  <label for="text-b1e7" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-7">Email</label>
-                  <input type="text" placeholder="Student email" id="text-b1e7" name="email-3" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-7" required="required">
-                </div>
-                <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-9">
-                  <label for="text-bbe7" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-8">Student name</label>
-                  <input type="text" placeholder="Student name" id="text-bbe7" name="name-4" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-8">
-                </div>
-                <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-10">
-                  <label for="text-27b1" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-9">Email</label>
-                  <input type="text" placeholder="Student email" id="text-27b1" name="email-4" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-9" required="required">
-                </div>
-                <div class="u-form-group u-label-none u-form-group-11">
-                  <label for="text-df08" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-10">supervisor</label>
-                  <input type="text" placeholder="Current supervisor " id="text-df08" name="text" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-10">
-                </div>
-                <div class="u-form-group u-label-none u-form-group-12">
-                  <label for="text-59cc" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-11">Project title</label>
-                  <input type="text" placeholder="Project title" id="text-59cc" name="text-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-11">
-                </div>
-                <div class="u-form-group u-form-textarea u-label-none u-form-group-13">
-                  <label for="textarea-a10a" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-12">Project Idea</label>
-                  <textarea rows="4" cols="50" id="textarea-a10a" name="textarea" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-12" required="" placeholder="A brief about your project"></textarea>
-                </div>
-                <div class="u-align-right u-form-group u-form-submit u-label-none u-form-group-14">
-                  <input type="submit" value="submit" class="u-form-control-hidden" wfd-id="id118">
-                  <a href="#" class="u-active-palette-1-light-3 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-3">Edit </a>
-                </div>
-                <div class="u-form-send-message u-form-send-success"> Thank you! Your message has been sent. </div>
-                <div class="u-form-send-error u-form-send-message"> Unable to send your message. Please fix errors then try again. </div>
-                <input type="hidden" value="" name="recaptchaResponse" wfd-id="id119">
-                <input type="hidden" name="formServices" value="288a2770-31f5-dbbd-4ba6-cbffa36f438a">
-              </form>
+            <form action="StudentProfile.php" class="u-clearfix u-form-spacing-30 u-form-vertical u-inner-form" source="email" name="form" style="padding: 15px;">
+    <!-- Leader Name -->
+    <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-3">
+        <label for="name-8e541" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-2">Leader Name</label>
+        <input type="text" placeholder="Leader name" id="name-8e541" name="name-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-2" required value="<?php echo htmlspecialchars($leaderName); ?>" readonly>
+    </div>
+
+    <!-- Leader Email -->
+    <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-4">
+        <label for="email-c6a3" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-3">Email</label>
+        <input type="text" placeholder="Leader email" id="email-c6a3" name="email" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-3" required="required" value="<?php echo htmlspecialchars($leaderEmail); ?>" readonly>
+    </div>
+
+    <!-- Display Students -->
+    <?php foreach ($students as $index => $student): ?>
+        <!-- Skip leader if already added -->
+        <?php if ($student['email'] !== $leader['email']): ?>
+            <!-- Student Name -->
+            <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-<?php echo $index + 5; ?>">
+                <label for="name-<?php echo $index + 8; ?>" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-<?php echo $index + 4; ?>">Student Name</label>
+                <input type="text" placeholder="Student name" id="name-<?php echo $index + 8; ?>" name="name-<?php echo $index + 1; ?>" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-<?php echo $index + 4; ?>" required value="<?php echo htmlspecialchars($student['name']); ?>" readonly>
             </div>
-            <a href="#" class="u-border-1 u-border-active-custom-color-3 u-border-custom-color-3 u-border-hover-palette-1-base u-border-no-left u-border-no-right u-border-no-top u-btn u-button-style u-none u-text-palette-1-base u-btn-4">Save </a>
+
+            <!-- Student Email -->
+            <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-<?php echo $index + 6; ?>">
+                <label for="email-<?php echo $index + 8; ?>" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-<?php echo $index + 5; ?>">Student Email</label>
+                <input type="text" placeholder="Student email" id="email-<?php echo $index + 8; ?>" name="email-<?php echo $index + 1; ?>" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-<?php echo $index + 5; ?>" required="required" value="<?php echo htmlspecialchars($student['email']); ?>" readonly>
+            </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
+
+    <!-- Supervisor (Read-Only) -->
+    <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-11">
+        <label for="text-df08" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-10">Supervisor</label>
+        <input type="text" placeholder="Current supervisor" id="text-df08" name="text" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-10" value="<?php echo htmlspecialchars($supervisor['name'] ?? ''); ?>" readonly>
+    </div>
+
+    <!-- Project Title (Read-Only) -->
+    <div class="u-form-group u-label-none u-form-group-12">
+        <label for="text-59cc" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-11">Project Title</label>
+        <input type="text" placeholder="Project title" id="text-59cc" name="text-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-11" value="<?php echo htmlspecialchars($project['project_name'] ?? ''); ?>" readonly>
+    </div>
+
+    <!-- Project Idea (Read-Only) -->
+    <div class="u-form-group u-form-textarea u-label-none u-form-group-13">
+        <label for="textarea-a10a" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-12">Project Idea</label>
+        <textarea rows="4" cols="50" id="textarea-a10a" name="textarea" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-12" placeholder="A brief about your project" readonly><?php echo htmlspecialchars($project['description'] ?? ''); ?></textarea>
+    </div>
+
+    <!-- Edit Button -->
+    <div class="u-align-right u-form-group u-form-submit u-label-none u-form-group-14">
+        <!-- Hidden Submit Button -->
+<input type="submit" value="Save" style="display:none;" class="u-form-control-hidden">
+
+        <a href="#" class="u-active-palette-1-light-3 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-3" id="editBtn">Edit</a>
+    </div>
+</form>
+
+<!-- JavaScript to Enable/Disable Fields -->
+<script>
+  const editBtn = document.getElementById("editBtn");
+const form = document.querySelector("form");
+const saveBtn = document.querySelector('input[type="submit"]');  // Hidden submit button
+
+// Enable all fields for editing (except supervisor and project idea)
+const inputs = document.querySelectorAll('input[type="text"], textarea');
+
+editBtn.addEventListener("click", function(event) {
+    event.preventDefault();  // Prevent default link action (no page reload)
+
+    // Enable fields that can be edited
+    inputs.forEach(input => {
+        if (input.id !== "text-df08" && input.id !== "textarea-a10a") {
+            input.removeAttribute("readonly");
+        }
+    });
+
+    // Change the Edit button text to Save
+    editBtn.textContent = "Save";  
+    editBtn.removeAttribute("href");  // Remove the link behavior
+
+    // Show the Save button by triggering its 'click' event (form will be submitted)
+    saveBtn.style.display = "block";  // Make the Save button visible
+});
+
+// Listen for the form submission
+form.addEventListener("submit", function(event) {
+    event.preventDefault();  // Prevent immediate form submission
+
+    // Now that the fields are enabled, submit the form
+    form.submit();  // Trigger form submission
+});
+
+
+</script>
+
+            </div>
           </div>
         </div>
       </div>

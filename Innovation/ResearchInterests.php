@@ -9,7 +9,7 @@ $stmt = $con->prepare($sql);
 $stmt->execute();
 ?>
 <!DOCTYPE html>
-<html style="font-size: 16px;" lang="en"><head>
+< style="font-size: 16px;" lang="en"><head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
     <meta name="keywords" content="What fields are you ​interested in?">
@@ -132,22 +132,23 @@ $stmt->execute();
         <h2 class="u-text u-text-custom-color-3 u-text-1">What fields are you interested in?</h2>
 
         <form action="process_interests.php" method="POST">
-            <div class="form-container">
-                <div class="interest-container">
-                    <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
-                        <div class="interest-item">
-                            <label class="u-btn u-btn-round u-button-style u-palette-1-light-3 u-radius u-text-palette-1-dark-2 interest-button">
-                                <input type="checkbox" name="interests[]" value="<?= htmlspecialchars($row['id']) ?>" style="display: none;">
-                                <?= htmlspecialchars($row['name']) ?>
-                            </label>
-                        </div>
-                    <?php endwhile; ?>
+    <div class="form-container">
+        <div class="interest-container">
+            <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
+                <div class="interest-item">
+                    <label class="u-btn u-btn-round u-button-style u-palette-1-light-3 u-radius u-text-palette-1-dark-2 interest-button">
+                        <input type="checkbox" name="interests[]" value="<?= htmlspecialchars($row['id']) ?>" style="display: none;">
+                        <span><?= htmlspecialchars($row['name']) ?></span>
+                    </label>
                 </div>
-            </div>
-            <button type="submit" class="u-btn u-button-style u-none u-text-hover-palette-1-light-2 u-text-palette-1-base u-btn-14">
-                Next
-            </button>
-        </form>
+            <?php endwhile; ?>
+        </div>
+    </div>
+    <button type="submit" class="u-btn u-button-style u-none u-text-hover-palette-1-light-2 u-text-palette-1-base u-btn-14">
+        Next
+    </button>
+</form>
+
     </div>
 </section>
 
@@ -188,71 +189,86 @@ $stmt->execute();
   
 </body>
 <style>
-  /* Centering the form and limiting its width */
+/* Centering the form and limiting its width */
 .form-container {
-    max-width: 900px; /* Set a maximum width for the form */
-    margin: 0 auto; /* Center the form horizontally */
+    max-width: 900px;
+    margin: 0 auto;
     padding: 20px;
 }
 
 /* Grid layout with wrapping for interest items */
 .interest-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Ensures flexible wrapping */
-    gap: 7%; /* Space between items */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 7%;
     margin-top: 20px;
-    box-sizing: border-box; /* Ensures padding is included in width calculation */
+    box-sizing: border-box;
 }
 
 /* Style for individual interest items */
 .interest-item {
     display: flex;
     justify-content: center;
-    box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+    box-sizing: border-box;
+   
 }
 
 /* Style for the label to look like a button */
 .interest-button {
     display: block;
-    padding: 20px 30px; /* Increased padding for bigger boxes */
+    padding: 20px 30px;
     text-align: center;
-    font-size: 16px; /* Increased font size */
-    font-weight: bold; /* Made the font bolder */
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
-    border: 1px solid transparent; /* Border to match button styling */
-    background-color: #f0f0f0; /* Background color for inactive state */
+    border: 1px solid transparent;
+    background-color:#c2dbf0 !important ;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    margin: 0; /* Remove any additional margins */
-    box-sizing: border-box; /* Ensure border and padding are within the element's box */
+    margin: 0;
+    box-sizing: border-box;
 }
 
 /* Hover effect for interest items */
 .interest-button:hover {
-    background-color: #e2e2e2; /* Hover color */
-    transform: translateY(-2px); /* Slight lift on hover */
+    background-color: #94bce0;
+    transform: translateY(-2px);
 }
 
-/* Selected checkbox style */
+/* Selected effect when checkbox is checked */
 .interest-button input[type="checkbox"]:checked + span {
-    background-color: #478ac9; /* Darker blue for selected state */
-    color: white; /* Ensure text color contrasts with the background */
+    background-color: #7dafdb; /* Darker color for selected state */
+    color: white;
+    padding: 5%; /* Ensure padding is applied for selected state */
+    
+}
+.u-input.u-palette-1-light-3, .u-field-input.u-palette-1-light-3,
+ .u-button-style.u-palette-1-light-3,
+.u-button-style.u-palette-1-light-3[class*="u-border-"]:checked + span{
+  background-color: transparent !important; /* Darker color for selected state */
+}
+
+.u-input.u-palette-1-light-3,
+.u-field-input.u-palette-1-light-3,
+.u-button-style.u-palette-1-light-3,
+.u-button-style.u-palette-1-light-3[class*="u-border-"] {
+  color: #111111 !important;
+  background-color: transparent !important;
 }
 
 /* Style for the submit button */
 button.u-btn.u-button-style.u-btn-14 {
     background-color: #478ac9 !important;
-    color: white !important; /* Ensure the text is visible on the blue background */
-    border: none !important; /* Remove any default borders */
-    padding: 10px 20px !important; /* Adjust padding for better appearance */
+    color: white !important;
+    border: none !important;
+    padding: 10px 20px !important;
     font-size: 16px !important;
     cursor: pointer !important;
-    transition: background-color 0.3s ease !important; /* Smooth transition for hover effect */
+    transition: background-color 0.3s ease !important;
 }
 
 button.u-btn.u-button-style.u-btn-14:hover {
-    background-color: #357f9b !important; /* Darker shade for hover effect */
+    background-color: #357f9b !important;
 }
-
 </style>
 
 </html>

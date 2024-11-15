@@ -225,7 +225,7 @@
                   -->
 
 
-                                        <?php
+ <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    if ($_POST['type'] == 1) { // Supervisor Register
     $sname = $_POST['sname-1'];
@@ -437,7 +437,7 @@ id="supervisor-signup-form">
   <label for="text-b089"
       class="u-custom-font u-font-georgia u-label">Password
       <span style="color:red;">*</span></label>
-  <input type="text" placeholder="Please enter valid password"
+  <input type="password" placeholder="Please enter valid password"
       id="text-b089" name="pass"
       class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
       required="required">
@@ -446,7 +446,7 @@ id="supervisor-signup-form">
   <label for="text-8c1a"
       class="u-custom-font u-font-georgia u-label">Re-enter
       password <span style="color:red;">*</span></label>
-  <input type="text" id="text-8c1a" name="passcheck"
+  <input type="password" id="text-8c1a" name="passcheck"
       class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
       required="required">
 </div>

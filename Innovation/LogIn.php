@@ -149,7 +149,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
         echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">Invalid email or password.</div>';
     }
 } else { // Student
-    $stmt = $con->prepare("SELECT password FROM students WHERE email = :email");
+    $stmt = $con->prepare("SELECT password FROM teams WHERE email = :email");
     $stmt->bindParam(':email', $email);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -234,7 +234,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                             </div>
                             <div class="u-form-group u-label-none u-form-group-2">
                               <label for="text-5a78" class="u-label">Password</label>
-                              <input type="text" placeholder="Password" id="text-5a78" name="password" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
+                              <input type="password" placeholder="Password" id="text-5a78" name="password" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
                             </div>
                             <div class="u-align-right u-form-group u-form-submit">
                               <a href="Forget.php" class="frpass">Forget password?</a>
@@ -255,7 +255,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                             </div>
                             <div class="u-form-group u-label-none u-form-group-2">
                               <label for="text-5a78" class="u-label">Password</label>
-                              <input type="text" placeholder="Password" id="text-5a78" name="password" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
+                              <input type="password" placeholder="Password" id="text-5a78" name="password" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
                             </div>
                             <div class="u-align-right u-form-group u-form-submit">
                               <a href="Forget.php" class="frpass">Forget password?</a>
