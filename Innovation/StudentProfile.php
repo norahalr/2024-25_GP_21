@@ -1,32 +1,34 @@
 <?php
   ob_start();
   session_start();
-  $userEmail = $_SESSION['user_id'] ?? "alanoud.ahmed@example.com"; // Get user ID from session
 
   require_once 'config/connect.php';
 
   // Check if the session has a user ID; otherwise, redirect to login
-  // if (!isset($_SESSION['user_id'])) {
-  //   header("Location: login.php");
-  //   exit();
-  // }
+  if (!isset($_SESSION['user_id'])) {
+    echo "Error: User is not logged in.";
+    exit();
+}
+$userEmail = $_SESSION['user_id'] ; // Get user ID from session
 
-  // Retrieve the user email from the session
-  //$userEmail = $_SESSION['user_id'];
+ 
 
   // Fetch existing idea
-$stmt = $con->prepare("SELECT draft_ideas FROM teams WHERE email = :email");
-$stmt->bindParam(':email', $userEmail);
-$stmt->execute();
-$existingIdea = $stmt->fetchColumn(); // Fetch the single column value (idea) if it exists
+  $stmt = $con->prepare("SELECT logo, draft_ideas FROM teams WHERE leader_email = :email");
+  $stmt->bindParam(':email', $userEmail);
+  $stmt->execute();
+  $teamData = $stmt->fetch(PDO::FETCH_ASSOC);
+  
+  $existingIdea = $teamData['draft_ideas'] ?? '';
+  $logoPath = $teamData['logo'] ?? 'images/7973420.png'; // Default logo
 
 // Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['textarea'])) {
     $idea = $_POST['textarea'];
 
 
         // Update existing idea
-        $updateStmt = $con->prepare("UPDATE teams SET draft_ideas = :idea WHERE email = :email");
+        $updateStmt = $con->prepare("UPDATE teams SET draft_ideas = :idea WHERE leader_email = :email");
         $updateStmt->bindParam(':idea', $idea);
         $updateStmt->bindParam(':email', $userEmail);
         $updateStmt->execute();
@@ -38,46 +40,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $file = $_FILES['group_logo'];
     
     if ($file['error'] == 0) {
-        $fileName = $file['name'];
-        $fileTmpName = $file['tmp_name'];
-        $fileSize = $file['size'];
-        $fileType = $file['type'];
+        $maxFileSize = 2 * 1024 * 1024; // 2MB
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
         
-        $allowed = ['image/jpeg', 'image/png', 'image/jpg'];
-        if (in_array($fileType, $allowed)) {
+        if ($file['size'] > $maxFileSize) {
+            echo "File size exceeds the 2MB limit.";
+        } elseif (in_array($file['type'], $allowedTypes)) {
             $uploadDir = 'uploads/logos/';
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
 
-            $fileNewName = uniqid('', true) . "_" . basename($fileName);
+            $fileNewName = uniqid('', true) . "_" . basename($file['name']);
             $fileDestination = $uploadDir . $fileNewName;
 
-            if (move_uploaded_file($fileTmpName, $fileDestination)) {
-                $userEmail = $_SESSION['user_email'] ?? "alanoud.ahmed@example.com";
-                
-                // Update the logo path in the database using PDO
-                $stmt = $con->prepare("UPDATE teams SET logo = :logo WHERE email = :email");
+            if (move_uploaded_file($file['tmp_name'], $fileDestination)) {
+                $stmt = $con->prepare("UPDATE teams SET logo = :logo WHERE leader_email = :email");
                 $stmt->bindParam(':logo', $fileDestination);
                 $stmt->bindParam(':email', $userEmail);
-                
+
                 if ($stmt->execute()) {
                     echo "Logo uploaded and saved!";
                 } else {
-                    echo "Error updating database.";
+                    echo "Database update failed.";
                 }
             } else {
-                echo "Failed to move the uploaded file.";
+                echo "Failed to upload the file.";
             }
         } else {
-            echo "Only JPG, JPEG, and PNG files are allowed.";
+            echo "Unsupported file type. Please upload JPG, JPEG, or PNG.";
         }
     } else {
-        echo "Error uploading file.";
+        echo "Error during file upload.";
     }
-} else {
-    echo "No file uploaded.";
 }
+
 
 
 
@@ -89,13 +86,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $leaderEmail = $userEmail; // Set this from the session or wherever the leader's email is stored
 
 // Fetch leader information from the teams table
-$leaderStmt = $con->prepare("SELECT name,email, supervisor_email FROM teams WHERE email = :email");
+$leaderStmt = $con->prepare("SELECT name, leader_email, supervisor_email FROM teams WHERE leader_email = :email");
 $leaderStmt->bindParam(':email', $leaderEmail);
 $leaderStmt->execute();
 $leader = $leaderStmt->fetch(PDO::FETCH_ASSOC);
 
 $leaderName = $leader['name'];
-$leaderEmail = $leader['email'];
+$leaderEmail = $leader['leader_email'];
 
 // Fetch students information from the students table (team_email matches leader's email)
 $studentsStmt = $con->prepare("SELECT name, email FROM students WHERE team_email = :team_email");
@@ -143,13 +140,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $con->beginTransaction();
 
       // Update leader's name and email
-      $stmt = $con->prepare("UPDATE teams SET name = :leaderName, email = :leaderEmail WHERE email = :leaderEmail");
+      $stmt = $con->prepare("UPDATE teams SET name = :leaderName WHERE leader_email = :leaderEmail");
       $stmt->execute(['leaderName' => $leaderName, 'leaderEmail' => $leaderEmail]);
 
       // Update each student's name and email
       foreach ($studentNames as $index => $name) {
           $email = $studentEmails[$index];
-          $stmt = $con->prepare("UPDATE students SET name = :name, email = :email WHERE email = :email");
+          $stmt = $con->prepare("UPDATE students SET name = :name, email = :email WHERE leader_email = :email");
           $stmt->execute(['name' => $name, 'email' => $email]);
       }
 
@@ -252,8 +249,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="u-form-group u-form-textarea u-label-none u-form-group-1">
         <label for="textarea-0d3e" class="u-label">Idea: </label>
         <textarea rows="4" cols="50" id="textarea-0d3e" name="textarea" class="u-input u-input-rectangle" required placeholder="Write down your ideas to save them for you! (Draft)">
-            <?php echo $existingIdea ?: ''; ?>
-        </textarea>
+    <?= htmlspecialchars($existingIdea) ?>
+</textarea>
          </div>
     <div class="u-align-right u-form-group u-form-submit">
         <button type="submit" class="u-border-none u-btn u-btn-submit u-button-style u-hover-palette-1-light-1 u-palette-1-light-2 u-btn-1">Save</button>
@@ -264,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </div>
               <div class="u-align-center u-container-align-center u-container-style u-layout-cell u-radius u-right-cell u-shape-round u-size-30 u-size-xs-60 u-layout-cell-2">
               <?php
-                $stmt = $con->prepare("SELECT logo FROM teams WHERE email = :email");
+                $stmt = $con->prepare("SELECT logo FROM teams WHERE leader_email = :email");
                 $stmt->bindParam(':email', $userEmail);
                 $stmt->execute();
                 
@@ -313,7 +310,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Display Students -->
     <?php foreach ($students as $index => $student): ?>
         <!-- Skip leader if already added -->
-        <?php if ($student['email'] !== $leader['email']): ?>
+        <?php if ($student['email'] !== $leader['leader_email']): ?>
             <!-- Student Name -->
             <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-<?php echo $index + 5; ?>">
                 <label for="name-<?php echo $index + 8; ?>" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-<?php echo $index + 4; ?>">Student Name</label>

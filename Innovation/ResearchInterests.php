@@ -1,15 +1,62 @@
 <?php
   ob_start();
   session_start();
-  $userId = $_SESSION['user_id'] ?? "alanoud.ahmed@example.com"; // Get user ID from session
   require_once 'config/connect.php';
 
   $sql = "SELECT id, name FROM technologies";
 $stmt = $con->prepare($sql);
 $stmt->execute();
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  // Ensure the user is logged in
+  if (!isset($_SESSION['user_id'])) {
+      echo "Error: User is not logged in.";
+      exit();
+  }
+
+  $leader_email = $_SESSION['user_id']; // Retrieve leader email from session
+  $interests = isset($_POST['interests']) ? $_POST['interests'] : []; // Get selected interests
+  $errors = [];
+
+  // Validate interests
+  if (empty($interests)) {
+      $errors[] = "Please select at least one interest.";
+  }
+
+  if (empty($errors)) {
+      try {
+          // Prepare interest data for insertion
+          $interestsString = implode(',', $interests); // Convert array to comma-separated string
+
+          // Update the teams table with the selected interests
+          $stmt = $con->prepare("UPDATE teams SET interest = :interests WHERE leader_email = :email");
+          $stmt->bindParam(':interests', $interestsString);
+          $stmt->bindParam(':email', $leader_email);
+
+          if ($stmt->execute()) {
+              echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-message u-form-send-success"> Interests updated successfully! </div>';
+
+              // Redirect to the next page or a success page
+              header("Location: StudentHomePage.php");
+              exit();
+          } else {
+              echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message"> Unable to update interests. Please try again later. </div>';
+          }
+      } catch (PDOException $e) {
+          echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message"> Database error: ' . htmlspecialchars($e->getMessage()) . '</div>';
+      }
+  } else {
+      foreach ($errors as $error) {
+          echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">' . htmlspecialchars($error) . '</div>';
+      }
+  }
+}
+
+
 ?>
 <!DOCTYPE html>
-< style="font-size: 16px;" lang="en"><head>
+<html style="font-size: 16px;" lang="en"><head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
     <meta name="keywords" content="What fields are you ​interested in?">
@@ -131,7 +178,7 @@ $stmt->execute();
         </div>
         <h2 class="u-text u-text-custom-color-3 u-text-1">What fields are you interested in?</h2>
 
-        <form action="process_interests.php" method="POST">
+        <form action="ResearchInterests.php" method="POST">
     <div class="form-container">
         <div class="interest-container">
             <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): ?>

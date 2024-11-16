@@ -1,5 +1,8 @@
 <?php
   require_once 'config/connect.php';
+  session_start();
+  ob_start();
+
 ?>
 
 <!DOCTYPE html>
@@ -327,7 +330,7 @@ if (empty($errors)) {
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
     // Insert the leader into the teams table
-    $stmt = $con->prepare("INSERT INTO teams (email, name, password) VALUES (:email, :name, :password)");
+    $stmt = $con->prepare("INSERT INTO teams (leader_email, name, password) VALUES (:email, :name, :password)");
     $stmt->bindParam(':email', $leader_email);
     $stmt->bindParam(':name', $leader_name);
     $stmt->bindParam(':password', $hashedPassword);
@@ -361,8 +364,14 @@ if (empty($errors)) {
 
         // Display appropriate message
         if ($all_registered) {
-            echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-message u-form-send-success"> Thank you! Your registration has been successful. </div>';
-        } else {
+            $_SESSION['user_id'] = $leader_email; // Set session variable
+            setcookie('leader_email', $leader_email, time() + 3600, "/"); // Set cookie for 1 hour
+
+            // Redirect to ResearchInterests.php
+            header("Location: ResearchInterests.php");
+            exit();
+        }
+            else {
             echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message"> Unable to register. Please try again later. </div>';
         }
     } else {
