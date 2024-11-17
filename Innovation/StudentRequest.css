@@ -17,6 +17,66 @@
   margin-top: 19px;
   margin-bottom: 60px;
 }
+
+/* Style for the blog post container */
+.u-blog-post {
+  border: 2px solid #ddd;  /* Light border around each post */
+  margin-bottom: 20px;  /* Space between posts */
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #56acf32d;
+}
+
+/* Style for the project description */
+.u-blog-post .u-post-content {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;  /* Dark color for project description */
+  margin-top: 10px;
+}
+
+/* Style for the date and status section */
+.u-blog-post .u-blog-control.u-post-tags {
+  font-size: 14px;
+  color: #888;
+  margin-top: 10px;
+}
+
+.u-blog-post .u-blog-control.u-metadata {
+  margin-top: 10px;
+}
+
+/* Status colors */
+.u-blog-post .u-meta-date {
+  font-weight: bold;
+}
+
+.u-blog-post .u-meta-date[style="color: lightgreen"] {
+  color: lightgreen;
+}
+
+.u-blog-post .u-meta-date[style="color: red"] {
+  color: red;
+}
+
+.u-blog-post .u-meta-date[style="color: black"] {
+  color: black;
+}
+
+/* Add borders and spacing for better separation */
+.u-blog-post .u-container-layout {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.u-blog-post hr {
+  border: none;
+  border-top: 2px solid #ddd;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
 .u-meta-icon{
   border-style: solid;
   font-weight: 700;

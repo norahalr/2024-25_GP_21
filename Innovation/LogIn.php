@@ -1,7 +1,6 @@
 <?php
   ob_start();
   session_start();
-  $userId = $_SESSION['user_id'];
 
   require_once 'config/connect.php';
 ?>
