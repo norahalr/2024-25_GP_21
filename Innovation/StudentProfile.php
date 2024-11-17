@@ -77,7 +77,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['textarea'])) {
     }
 }
 
+// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//   try {
+//       $con->beginTransaction();
 
+//       // Loop through each student name input
+//       foreach ($_POST as $key => $value) {
+//           if (preg_match('/^name-(\d+)$/', $key, $matches)) {
+//               $studentIndex = $matches[1];
+//               $updatedName = $value;
+//               $studentEmail = $_POST["email-$studentIndex"]; // Corresponding email for this student
+
+//               if (filter_var($studentEmail, FILTER_VALIDATE_EMAIL)) { // Validate email
+//                   // Update the student's name in the database
+//                   $updateStudentStmt = $con->prepare("UPDATE students SET name = :name WHERE email = :email");
+//                   $updateStudentStmt->execute(['name' => $updatedName, 'email' => $studentEmail]);
+//               } else {
+//                   throw new Exception("Invalid email provided for student index $studentIndex.");
+//               }
+//           }
+//       }
+
+//       $con->commit();
+//       echo json_encode(['status' => 'success']);
+//   } catch (Exception $e) {
+//       $con->rollBack();
+//       echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+//   }
+//   exit;
+// }
 
 
 
@@ -119,48 +147,8 @@ $supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
 
 
 
-// Determine if the user is a leader
-$stmt = $con->prepare("SELECT leader_email FROM teams WHERE leader_email = :email");
-$stmt->bindParam(':email', $userEmail);
-$stmt->execute();
-$isLeader = $stmt->rowCount() > 0;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get form data
-    $updatedName = $_POST['name'] ?? null;
-    $updatedProjectName = $_POST['project_name'] ?? null;
 
-    try {
-        // Start transaction
-        $con->beginTransaction();
-
-        if ($isLeader) {
-            // Update leader name in the `teams` table
-            $updateLeaderStmt = $con->prepare("UPDATE teams SET name = :name WHERE leader_email = :email");
-            $updateLeaderStmt->execute(['name' => $updatedName, 'email' => $userEmail]);
-
-            // Update project name in `team_idea_request` table
-            $updateProjectStmt = $con->prepare("UPDATE team_idea_request SET project_name = :project_name WHERE team_email = :email AND status = 'accepted'");
-            $updateProjectStmt->execute(['project_name' => $updatedProjectName, 'email' => $userEmail]);
-
-            // Update student name in the `students` table (leader is also a student)
-            $updateStudentStmt = $con->prepare("UPDATE students SET name = :name WHERE email = :email");
-            $updateStudentStmt->execute(['name' => $updatedName, 'email' => $userEmail]);
-        } else {
-            // Update student name in `students` table for non-leaders
-            $updateStudentStmt = $con->prepare("UPDATE students SET name = :name WHERE email = :email");
-            $updateStudentStmt->execute(['name' => $updatedName, 'email' => $userEmail]);
-        }
-
-        // Commit the transaction
-        $con->commit();
-        echo "Changes saved successfully!";
-    } catch (Exception $e) {
-        // Rollback transaction in case of error
-        $con->rollBack();
-        echo "Error: " . $e->getMessage();
-    }
-}
 
 
 ?>
@@ -246,7 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="u-container-layout u-valign-top u-container-layout-1">
                   <div class="u-expanded-width u-form u-form-1">
 
-                  <form action="StudentProfile.php" method="POST" class="u-clearfix u-form-spacing-15 u-form-vertical u-inner-form" style="padding: 15px;"  name="form"> 
+                  <form id="ideaForm" action="StudentProfile.php" method="POST" class="u-clearfix u-form-spacing-15 u-form-vertical u-inner-form" style="padding: 15px;"  name="form"> 
     <div class="u-form-group u-form-textarea u-label-none u-form-group-1">
         <label for="textarea-0d3e" class="u-label">Idea: </label>
         <textarea rows="4" cols="50" id="textarea-0d3e" name="textarea" class="u-input u-input-rectangle" required placeholder="Write down your ideas to save them for you! (Draft)">
@@ -254,7 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </textarea>
          </div>
     <div class="u-align-right u-form-group u-form-submit">
-        <button type="submit" class="u-border-none u-btn u-btn-submit u-button-style u-hover-palette-1-light-1 u-palette-1-light-2 u-btn-1">Save</button>
+    <button type="submit" class="u-btn u-btn-submit">Save</button>
     </div>
 </form>
                   </div>
@@ -295,7 +283,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="u-container-layout u-container-layout-3">
             <h3 class="u-text u-text-custom-color-3 u-text-default u-text-2">Group Information </h3>
             <div class="custom-expanded u-form u-form-2">
-            <form action="StudentProfile.php" class="u-clearfix u-form-spacing-30 u-form-vertical u-inner-form" source="email" name="form" style="padding: 15px;">
+
+
+            <form id="studentForm" action="Edit_Student_Info.php" method="POST"class="u-clearfix u-form-spacing-30 u-form-vertical u-inner-form" source="email" name="form" style="padding: 15px;">
     <!-- Leader Name -->
     <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-3">
         <label for="name-8e541" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-2">Leader Name</label>
@@ -305,26 +295,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Leader Email -->
     <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-4">
         <label for="email-c6a3" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-3">Email</label>
-        <input type="text" placeholder="Leader email" id="email-c6a3" name="email" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-3" required="required" value="<?php echo htmlspecialchars($leaderEmail); ?>" readonly>
+        <input type="text" placeholder="Leader email" id="email-c6a3" name="email-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-3" required="required" value="<?php echo htmlspecialchars($leaderEmail); ?>" readonly>
     </div>
 
-    <!-- Display Students -->
     <?php foreach ($students as $index => $student): ?>
-        <!-- Skip leader if already added -->
-        <?php if ($student['email'] !== $leader['leader_email']): ?>
-            <!-- Student Name -->
-            <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-<?php echo $index + 5; ?>">
-                <label for="name-<?php echo $index + 8; ?>" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-<?php echo $index + 4; ?>">Student Name</label>
-                <input type="text" placeholder="Student name" id="name-<?php echo $index + 8; ?>" name="name-<?php echo $index + 1; ?>" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-<?php echo $index + 4; ?>" required value="<?php echo htmlspecialchars($student['name']); ?>" readonly>
-            </div>
+    <!-- Skip leader if already added -->
+    <?php if ($student['email'] !== $leader['leader_email']): ?>
+        <!-- Student Name -->
+        <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-<?php echo $index + 5; ?>">
+            <label for="name-<?php echo $index + 8; ?>" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-<?php echo $index + 4; ?>">Student Name</label>
+            <input type="text" 
+                   placeholder="Student name" 
+                   id="name-<?php echo $index + 8; ?>" 
+                   name="name-<?php echo $index + 1; ?>" 
+                   class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-<?php echo $index + 4; ?>" 
+                   required 
+                   value="<?php echo htmlspecialchars($student['name']); ?>">
+        </div>
 
-            <!-- Student Email -->
-            <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-<?php echo $index + 6; ?>">
-                <label for="email-<?php echo $index + 8; ?>" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-<?php echo $index + 5; ?>">Student Email</label>
-                <input type="text" placeholder="Student email" id="email-<?php echo $index + 8; ?>" name="email-<?php echo $index + 1; ?>" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-<?php echo $index + 5; ?>" required="required" value="<?php echo htmlspecialchars($student['email']); ?>" readonly>
-            </div>
-        <?php endif; ?>
-    <?php endforeach; ?>
+        <!-- Student Email (Read-Only) -->
+        <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-<?php echo $index + 6; ?>">
+            <label for="email-<?php echo $index + 8; ?>" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-<?php echo $index + 5; ?>">Student Email</label>
+            <input type="text" 
+                   placeholder="Student email" 
+                   id="email-<?php echo $index + 8; ?>" 
+                   name="email-<?php echo $index + 1; ?>" 
+                   class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-<?php echo $index + 5; ?>" 
+                   required 
+                   value="<?php echo htmlspecialchars($student['email']); ?>" 
+                   readonly>
+        </div>
+    <?php endif; ?>
+<?php endforeach; ?>
 
     <!-- Supervisor (Read-Only) -->
     <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-11">
@@ -346,48 +348,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Edit Button -->
     <div class="u-align-right u-form-group u-form-submit u-label-none u-form-group-14">
-        <!-- Hidden Submit Button -->
-<input type="submit" value="Save" style="display:none;" class="u-form-control-hidden">
+    <!-- Edit Button -->
+    <a href="#" class="u-active-palette-1-light-3 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-3" id="editBtn">Edit</a>
 
-        <a href="#" class="u-active-palette-1-light-3 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-3" id="editBtn">Edit</a>
-    </div>
+    <!-- Save Button (Hidden Initially) -->
+    <button type="button" id="saveBtn" class="u-btn u-btn-submit u-btn-round u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-3" style="display:none;">Save</button>
+</div>
 </form>
 
 <!-- JavaScript to Enable/Disable Fields -->
-<script>
-  const editBtn = document.getElementById("editBtn");
-const form = document.querySelector("form");
-const saveBtn = document.querySelector('input[type="submit"]');  // Hidden submit button
+ <script>
+console.log("JavaScript loaded");
 
-// Enable all fields for editing (except supervisor and project idea)
-const inputs = document.querySelectorAll('input[type="text"], textarea');
+document.addEventListener("DOMContentLoaded", function () {
+    const studentForm = document.getElementById("studentForm");
+    const editBtn = document.getElementById("editBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const nameInputs = studentForm.querySelectorAll('input[name^="name-"]');
+    const emailInputs = studentForm.querySelectorAll('input[name^="email-"]');
 
-editBtn.addEventListener("click", function(event) {
-    event.preventDefault();  // Prevent default link action (no page reload)
-
-    // Enable fields that can be edited
-    inputs.forEach(input => {
-        if (input.id !== "text-df08" && input.id !== "textarea-a10a") {
-            input.removeAttribute("readonly");
-        }
+    // When Edit button is clicked
+    editBtn.addEventListener("click", function (event) {
+        event.preventDefault();
+        // Enable name inputs for editing
+        nameInputs.forEach(input => input.removeAttribute("readonly"));
+        // Make email inputs readonly
+        emailInputs.forEach(input => input.setAttribute("readonly", "readonly"));
+        
+        // Show the Save button and change the Edit button to Save
+        saveBtn.style.display = "block";  // Show Save button
+        editBtn.style.display = "none";  // Hide Edit button
     });
 
-    // Change the Edit button text to Save
-    editBtn.textContent = "Save";  
-    editBtn.removeAttribute("href");  // Remove the link behavior
+    // When Save button is clicked, submit the form
+    saveBtn.addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent the default form submission
 
-    // Show the Save button by triggering its 'click' event (form will be submitted)
-    saveBtn.style.display = "block";  // Make the Save button visible
+        // Create FormData object to collect form data
+        const formData = new FormData(studentForm);
+        console.log("Form data:", Array.from(formData.entries()));
+
+        // Submit the form via AJAX (using fetch)
+        fetch(studentForm.action, {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.ok ? alert("Student information updated successfully!") : alert("Error updating student information."))
+        .catch(error => alert("Error: " + error.message));
+
+        // Optionally hide the Save button and show the Edit button again after saving
+        saveBtn.style.display = "none";  // Hide Save button
+        editBtn.style.display = "block";  // Show Edit button again
+    });
+
+    // Handle the Idea Form (Draft Saving)
+    const ideaForm = document.getElementById("ideaForm");
+    ideaForm.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission
+        alert("Idea saved successfully!");
+    });
 });
-
-// Listen for the form submission
-form.addEventListener("submit", function(event) {
-    event.preventDefault();  // Prevent immediate form submission
-
-    // Now that the fields are enabled, submit the form
-    form.submit();  // Trigger form submission
-});
-
 
 </script>
 
