@@ -1,24 +1,50 @@
-<?php
-  ob_start();
+<?php  
+  ob_start(); // Ensure no output is sent before headers
   session_start();
-  $userEmail = $_SESSION['user_id'] ?? "alanoud.ahmed@example.com"; // Get user ID from session
-
   require_once 'config/connect.php';
   
-  try {
-    // Prepare the SQL statement to fetch requests for the logged-in student
-    $stmt = $con->prepare("SELECT id, project_name, description, status FROM team_idea_request WHERE team_email = :team_email");
+  // Check if the session has a user ID; otherwise, redirect to login
+  if (!isset($_SESSION['user_id'])) {
+      $_SESSION['error'] = "You must be logged in to submit a request.";
+      header("Location: LogIn.php");
+      exit();
+  }
+  $userEmail = $_SESSION['user_id']; // Get user ID from session
+
+  try { 
+    // Prepare the SQL statement to fetch requests from both the team_idea_request and supervisor_idea_request tables
+    $stmt = $con->prepare("
+        SELECT 
+            id, 
+            IFNULL(project_name, CONCAT('Project #', id)) AS project_name, 
+            description, 
+            status, 
+            request_date	,
+            'team_idea_request' AS request_type 
+        FROM team_idea_request 
+        WHERE team_email = :team_email
+        UNION ALL
+        SELECT 
+            sir.id, 
+            CONCAT('Project #', sir.id) AS project_name,  -- Default project name for supervisor_idea_request
+            s.idea AS description,  -- Get description from supervisors table
+            sir.status, sir.request_date	,
+            'supervisor_idea_request' AS request_type
+        FROM supervisor_idea_request sir
+        JOIN supervisors s ON sir.supervisor_email = s.email  -- Join with supervisors table to get the idea (description)
+        WHERE sir.team_email = :team_email
+    ");
     $stmt->execute(['team_email' => $userEmail]);
 
     // Fetch all results
     $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Uncomment this section once you have data in the database for testing
-    // $stmt->execute(); 
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
 }
-  ?>
+
+   
+?>
+
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en"><head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -97,46 +123,47 @@
         <div class="u-blog u-expanded-width u-blog-1">
             <div class="u-list-control"></div>
             <div class="u-repeater u-repeater-1">
-                <?php if (!empty($requests)): ?>
-                    <?php foreach ($requests as $request): ?>
-                        <div class="u-blog-post u-repeater-item">
-                            <div class="u-container-layout u-similar-container u-valign-bottom-xs u-container-layout-<?= $request['id'] ?>">
-                                <a class="u-post-header-link" href="blog/request-<?= $request['id'] ?>.php">
-                                    <img src="images/bulb_idea_knowledge_light_read_icon.png" alt="" class="u-blog-control u-image u-image-default u-image-1" data-image-width="1280" data-image-height="852">
-                                </a>
-                                <h2 class="u-blog-control u-text u-text-2">
-                                    <a class="u-post-header-link" href="blog/request-<?= $request['id'] ?>.php"><?= htmlspecialchars($request['project_name']) ?></a>
-                                </h2>
-                                <div class="u-blog-control u-post-content u-text u-text-3 fr-view">
-                                    Project Idea: <?= htmlspecialchars($request['description']) ?>
-                                </div>
-                                <div class="u-blog-control u-metadata u-metadata-1">
-                                    <!-- Status with color coding -->
-                                    <span class="u-meta-date u-meta-icon" style="color: 
-                                        <?php 
-                                        if ($request['status'] == 'Approved') {
-                                            echo 'lightgreen';
-                                        } elseif ($request['status'] == 'Rejected') {
-                                            echo 'red';
-                                        } else {
-                                            echo 'black';
-                                        } 
-                                        ?>">
-                                        <?= htmlspecialchars($request['status']) ?>
-                                    </span>
-                                </div>
-                                
-                                <div class="u-blog-control u-post-tags u-post-tags-1">
-                                    <!-- Replace with actual date -->
-                                    <span><?= htmlspecialchars($request['request_date']) ?></span>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No requests found.</p>
-                <?php endif; ?>
+            <?php if (!empty($requests)): ?>
+    <?php foreach ($requests as $request): ?>
+        <div class="u-blog-post u-repeater-item">
+            <div class="u-container-layout u-similar-container u-valign-bottom-xs u-container-layout-<?= $request['id'] ?>">
+                <a class="u-post-header-link" href="blog/request-<?= $request['id'] ?>.php">
+                    <img src="images/bulb_idea_knowledge_light_read_icon.png" alt="" class="u-blog-control u-image u-image-default u-image-1" data-image-width="1280" data-image-height="852">
+                </a>
+                <h2 class="u-blog-control u-text u-text-2">
+                    <a class="u-post-header-link" href="blog/request-<?= $request['id'] ?>.php"><?= htmlspecialchars($request['project_name']) ?></a>
+                </h2>
+                <div class="u-blog-control u-post-content u-text u-text-3 fr-view">
+                    Project Idea: <?= htmlspecialchars($request['description']) ?>
+                </div>
+                <div class="u-blog-control u-post-tags u-post-tags-1">
+                    <!-- Replace with actual date -->
+                    <span><?= htmlspecialchars($request['request_date']) ?></span>
+                </div>
+                <div class="u-blog-control u-metadata u-metadata-1">
+                    <!-- Status with color coding -->
+                    <span class="u-meta-date u-meta-icon" style="color: 
+                        <?php 
+                        if ($request['status'] == 'Approved') {
+                            echo 'lightgreen';
+                        } elseif ($request['status'] == 'Rejected') {
+                            echo 'red';
+                        } else {
+                            echo 'black';
+                        } 
+                        ?>">
+                        <?= htmlspecialchars($request['status']) ?>
+                    </span>
+                </div>
+                
+                
+            </div>
+        </div>
+        <hr>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p>No requests found.</p>
+<?php endif; ?>
             </div>
             <div class="u-list-control"></div>
         </div>

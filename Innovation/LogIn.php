@@ -1,7 +1,7 @@
 <?php
   ob_start();
   session_start();
-  $userId = $_SESSION['user_id'] ?? 'alanoud.ahmed@example.com'; // Get user ID from session
+  $userId = $_SESSION['user_id'];
 
   require_once 'config/connect.php';
 ?>
@@ -149,13 +149,13 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
         echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">Invalid email or password.</div>';
     }
 } else { // Student
-    $stmt = $con->prepare("SELECT password FROM teams WHERE email = :email");
+    $stmt = $con->prepare("SELECT password FROM teams WHERE leader_email = :email");
     $stmt->bindParam(':email', $email);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($result && password_verify($password, $result['password'])) {
-      $_SESSION['user_id'] = $result['id'];
+      $_SESSION['user_id'] = $email;
       $_SESSION['email'] = $email;
       $_SESSION['user_type'] = 'student';
         header("Location: StudentHomePage.php");

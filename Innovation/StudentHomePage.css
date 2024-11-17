@@ -11,6 +11,14 @@
 .u-section-1 .u-form-group-1 {
   margin-left: 0;
 }
+.message {
+  padding: 10px;
+  margin: 20px 0;
+  background-color: #f4f4f4;
+  border: 1px solid #ccc;
+  color: #333;
+  font-size: 16px;
+}
 
 .u-section-1 .u-form-group-2 {
   margin-left: 0;

@@ -7,6 +7,8 @@
   // Check if the session has a user ID; otherwise, redirect to login
   if (!isset($_SESSION['user_id'])) {
     echo "Error: User is not logged in.";
+    header("Location: LogIn.php");
+
     exit();
 }
 $userEmail = $_SESSION['user_id'] ; // Get user ID from session
@@ -117,48 +119,47 @@ $supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
 
 
 
+// Determine if the user is a leader
+$stmt = $con->prepare("SELECT leader_email FROM teams WHERE leader_email = :email");
+$stmt->bindParam(':email', $userEmail);
+$stmt->execute();
+$isLeader = $stmt->rowCount() > 0;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Fetch updated data from the form
-  
-  
-  // Loop through students and update their names and emails
-  $studentNames = [];
-  $studentEmails = [];
-  foreach ($_POST as $key => $value) {
-      if (strpos($key, 'name-') === 0) {
-          $index = substr($key, 5);  // Extract the student index
-          $studentNames[$index] = $value;
-      }
-      if (strpos($key, 'email-') === 0) {
-          $index = substr($key, 6);  // Extract the student index
-          $studentEmails[$index] = $value;
-      }
-  }
+    // Get form data
+    $updatedName = $_POST['name'] ?? null;
+    $updatedProjectName = $_POST['project_name'] ?? null;
 
-  try {
-      // Start a transaction
-      $con->beginTransaction();
+    try {
+        // Start transaction
+        $con->beginTransaction();
 
-      // Update leader's name and email
-      $stmt = $con->prepare("UPDATE teams SET name = :leaderName WHERE leader_email = :leaderEmail");
-      $stmt->execute(['leaderName' => $leaderName, 'leaderEmail' => $leaderEmail]);
+        if ($isLeader) {
+            // Update leader name in the `teams` table
+            $updateLeaderStmt = $con->prepare("UPDATE teams SET name = :name WHERE leader_email = :email");
+            $updateLeaderStmt->execute(['name' => $updatedName, 'email' => $userEmail]);
 
-      // Update each student's name and email
-      foreach ($studentNames as $index => $name) {
-          $email = $studentEmails[$index];
-          $stmt = $con->prepare("UPDATE students SET name = :name, email = :email WHERE leader_email = :email");
-          $stmt->execute(['name' => $name, 'email' => $email]);
-      }
+            // Update project name in `team_idea_request` table
+            $updateProjectStmt = $con->prepare("UPDATE team_idea_request SET project_name = :project_name WHERE team_email = :email AND status = 'accepted'");
+            $updateProjectStmt->execute(['project_name' => $updatedProjectName, 'email' => $userEmail]);
 
-      // Commit the transaction
-      $con->commit();
-      
-      // Redirect or inform the user
-      echo "Changes saved successfully!";
-  } catch (Exception $e) {
-      $con->rollBack();
-      echo "Error: " . $e->getMessage();
-  }
+            // Update student name in the `students` table (leader is also a student)
+            $updateStudentStmt = $con->prepare("UPDATE students SET name = :name WHERE email = :email");
+            $updateStudentStmt->execute(['name' => $updatedName, 'email' => $userEmail]);
+        } else {
+            // Update student name in `students` table for non-leaders
+            $updateStudentStmt = $con->prepare("UPDATE students SET name = :name WHERE email = :email");
+            $updateStudentStmt->execute(['name' => $updatedName, 'email' => $userEmail]);
+        }
+
+        // Commit the transaction
+        $con->commit();
+        echo "Changes saved successfully!";
+    } catch (Exception $e) {
+        // Rollback transaction in case of error
+        $con->rollBack();
+        echo "Error: " . $e->getMessage();
+    }
 }
 
 

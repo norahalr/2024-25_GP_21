@@ -1,9 +1,110 @@
 <?php
-  ob_start();
-  session_start();
-  $userId = $_SESSION['user_id'] ?? "alanoud.ahmed@example.com"; // Get user ID from session
-  require_once 'config/connect.php';
+session_start();
+require_once 'config/connect.php';
+
+// Check if the session has a user ID; otherwise, redirect to login
+if (!isset($_SESSION['user_id'])) {
+    echo "Error: User is not logged in.";
+    header("Location: LogIn.php");
+    exit();
+}
+
+$userEmail = $_SESSION['user_id']; // Get user ID from session
+$supervisorEmail = $_POST['supervisor_email'] ?? 'aabeer@KSU.EDU.SA'; // Supervisor selected from the dropdown
+
+// Fetch supervisors with ideas
+$query = "SELECT idea FROM supervisors WHERE idea IS NOT NULL AND idea != '' AND email = :email ";
+$stmt = $con->prepare($query);
+$stmt->execute(['email' => $supervisorEmail]);
+$supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$hasSupervisorIdeas = count($supervisors) > 0;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $projectPreference = $_POST['select'];
+    $idea = trim($_POST['Idea']);
+    $requestDate = date('Y-m-d');
+    $status = 'Pending';
+
+    try {
+        // Check if the student already requested this supervisor
+        $query = "
+            SELECT COUNT(*) AS existing_requests 
+            FROM (
+                SELECT id FROM supervisor_idea_request WHERE team_email = :team_email AND supervisor_email = :supervisor_email
+                UNION ALL
+                SELECT id FROM team_idea_request WHERE team_email = :team_email AND supervisor_email = :supervisor_email
+            ) AS combined_requests";
+        $stmt = $con->prepare($query);
+        $stmt->execute([
+            'team_email' => $userEmail,
+            'supervisor_email' => $supervisorEmail
+        ]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row['existing_requests'] > 0) {
+            $_SESSION['message'] = "Error: You have already submitted a request to this supervisor.";
+            header("Location: StudentHomePage.php");
+            exit();
+        }
+
+        // Check the number of "on-progress" requests for the team
+        $query = "
+            SELECT COUNT(*) AS on_progress_count 
+            FROM (
+                SELECT id FROM supervisor_idea_request WHERE team_email = :team_email AND status = 'Pending'
+                UNION ALL
+                SELECT id FROM team_idea_request WHERE team_email = :team_email AND status = 'Pending'
+            ) AS combined_requests";
+        $stmt = $con->prepare($query);
+        $stmt->execute(['team_email' => $userEmail]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row['on_progress_count'] >= 3) {
+            $_SESSION['message'] = "Error: You cannot have more than 3 'on-progress' requests.";
+            header("Location: StudentHomePage.php");
+            exit();
+        }
+
+        // Insert into the appropriate table based on project preference
+        if ($projectPreference === 'Supervisor Idea') {
+            $query = "INSERT INTO supervisor_idea_request (status, team_email, supervisor_email, request_date) VALUES (:status, :team_email, :supervisor_email, :request_date)";
+            $stmt = $con->prepare($query);
+            $stmt->execute([
+                'status' => $status,
+                'team_email' => $userEmail,
+                'supervisor_email' => $supervisorEmail,
+                'request_date' => $requestDate
+            ]);
+            $_SESSION['message'] = "Request for supervisor's idea submitted successfully.";
+            header("Location: StudentHomePage.php");
+
+        } elseif ($projectPreference === 'Your Own Idea') {
+            $query = "INSERT INTO team_idea_request (project_name, description, status, team_email, supervisor_email, request_date) VALUES (:project_name, :description, :status, :team_email, :supervisor_email, :request_date)";
+            $stmt = $con->prepare($query);
+            $stmt->execute([
+                'project_name' => $idea,
+                'description' => $idea,
+                'status' => $status,
+                'team_email' => $userEmail,
+                'supervisor_email' => $supervisorEmail,
+                'request_date' => $requestDate
+            ]);
+            $_SESSION['message'] = "Request for your idea submitted successfully.";
+            header("Location: StudentHomePage.php");
+
+        } else {
+            $_SESSION['message'] = "Error: Invalid project preference selected.";
+            header("Location: StudentHomePage.php");
+        }
+    } catch (Exception $e) {
+        $_SESSION['message'] = "Error: " . $e->getMessage();
+        header("Location: StudentHomePage.php");
+    }
+}
 ?>
+
+
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en">
 <head>
@@ -15,8 +116,8 @@
     <link rel="stylesheet" href="nicepage.css" media="screen">
     <link rel="stylesheet" href="externalForm.css" media="screen">
     <link rel="stylesheet" href="VeiwSupervisor.css" media="screen">
-    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
-    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <!-- <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script> -->
     <meta name="generator" content="Nicepage 6.19.6, nicepage.com">
     <meta name="theme-color" content="#478ac9">
     <meta property="og:title" content="Request Supervisor">
@@ -1341,9 +1442,9 @@
                     <div class="u-custom-font u-font-oswald u-text-palette-1-dark-2">
                     <?php
                 
-                if ($userId) {
+                if ($userEmail) {
                   // Prepare and execute the query to fetch supervisor data
-                  $supervisor_email = 'aabeer@KSU.EDU.SA'; // Example ID; adjust as necessary
+                  $supervisor_email = $_SESSION['supervisor_ID']?? 'aabeer@KSU.EDU.SA'; // Example ID; adjust as necessary
                 $stmt = $con->prepare("SELECT name, email, track FROM supervisors WHERE email = :id");
                 $stmt->bindParam(':id', $supervisor_email);
                 $stmt->execute();
@@ -1376,7 +1477,7 @@
 
                 // Fetch student data from the database
                 $stmt = $con->prepare("SELECT name, email FROM students WHERE team_email = :team_email");
-                $stmt->bindParam(':team_email', $userId); // assuming the supervisor's email links to the student team
+                $stmt->bindParam(':team_email', $userEmail); // assuming the supervisor's email links to the student team
                 $stmt->execute();
                 $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 ?>
@@ -1419,27 +1520,39 @@
 
                 <!-- Form Section -->
                 <div class="u-form">
-                    <form action="https://forms.nicepagesrv.com/v2/form/process" method="POST" class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form" source="email" data-services="5b2c2fa98341ebfafacab05d9cb29269" name="form" style="padding: 10px;">
-                        <input type="hidden" id="siteId" name="siteId" value="9881637">
-                        <input type="hidden" id="pageId" name="pageId" value="2646728883">
-                        <div class="u-form-group u-form-select u-label-top u-block-d7f8-58">
-                            <label for="select-e666" class="u-label u-block-d7f8-59">Select your project preference:</label>
-                            <div class="u-form-select-wrapper">
-                                <select id="select-e666" name="select" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-4">
-                                    <option value="Supervisor Idea" selected="selected">Supervisor Idea</option>
-                                    <option value="Your Own Idea">Your Own Idea</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="u-form-group u-form-message u-label-top u-block-d7f8-67">
-                            <label for="message-8910" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5">Idea</label>
-                            <textarea placeholder="​" rows="4" cols="50" id="message-8910" name="Idea" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"></textarea>
-                        </div>
-                        <div class="u-align-left u-form-group u-form-submit u-label-top u-block-d7f8-70">
-                            <button type="submit" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">REQUEST SUPERVISORS</button>
-                            <a href="ViewSupervisor.php" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-3 u-radius u-btn-2">BACK</a>
-                        </div>
-                    </form>
+                <form action="RequestSupervisor.php" method="POST" class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form" source="email" data-services="5b2c2fa98341ebfafacab05d9cb29269" name="form" style="padding: 10px;">
+    <div class="u-form-group u-form-select u-label-top u-block-d7f8-58">
+        <label for="projectPreference" class="u-label u-block-d7f8-59">Select your project preference:</label>
+        <div class="u-form-select-wrapper">
+            <select id="projectPreference" name="select" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-4">
+                <?php if ($hasSupervisorIdeas): ?>
+                    <option value="Supervisor Idea" selected="selected">Supervisor Idea</option>
+                <?php endif; ?>
+                <option value="Your Own Idea">Your Own Idea</option>
+            </select>
+        </div>
+    </div>
+    <div class="u-form-group u-form-message u-label-top u-block-d7f8-67">
+        <label for="ideaTextarea" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5" id="textareaLabel">Supervisor Idea</label>
+        <textarea 
+            rows="4" 
+            cols="50" 
+            id="ideaTextarea" 
+            name="Idea" 
+            class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"
+            readonly="<?= $hasSupervisorIdeas ? 'true' : 'false' ?>"
+            placeholder="<?= $hasSupervisorIdeas ? '' : 'Write your idea here' ?>"
+        >
+            <?= $hasSupervisorIdeas ? htmlspecialchars($supervisors[0]['idea']) : '' ?>
+        </textarea>
+    </div>
+    <div class="u-align-left u-form-group u-form-submit u-label-top u-block-d7f8-70">
+        <button type="submit" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">REQUEST SUPERVISORS</button>
+        <a href="ViewSupervisor.php" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-3 u-radius u-btn-2">BACK</a>
+    </div>
+</form>
+
+
                 </div>
             </div>
         </div>
@@ -1476,5 +1589,22 @@
         </div>
       </div>
     </div></footer>
+    <script>
+    document.getElementById('projectPreference').addEventListener('change', function () {
+        const preference = this.value;
+        const textarea = document.getElementById('ideaTextarea');
+        const label = document.getElementById('textareaLabel');
+
+        if (preference === 'Your Own Idea') {
+            textarea.value = ''; // Clear the textarea
+            textarea.readOnly = false; // Allow the user to edit
+            label.textContent = 'Your Idea'; // Update label
+        } else {
+            textarea.value = `<?= htmlspecialchars($supervisors[0]['idea']) ?>`; // Show the supervisor's idea
+            textarea.readOnly = true; // Make it read-only
+            label.textContent = 'Supervisor Idea'; // Update label
+        }
+    });
+</script>
 </body>
 </html>
