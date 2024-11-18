@@ -1,14 +1,15 @@
 <?php
-// Database connection parameters
-$host = 'localhost';
-$dbname = 'InnovationEngine';
-$username = 'root';
-$password = 'root';
+session_start();
+
+if (isset($_SESSION['message'])) {
+    echo "<div class='message'>{$_SESSION['message']}</div>";
+    unset($_SESSION['message']);  // Clear the message after displaying
+}
+
+// Include the database connection
+require_once 'config/connect.php'; // Ensure the path is correct for your directory structure
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
     // Fetch distinct fields for field filter dropdown
     $fieldStmt = $con->prepare("SELECT DISTINCT field FROM past_projects");
     $fieldStmt->execute();
@@ -27,11 +28,13 @@ try {
 } catch (PDOException $e) {
     die("Error executing queries: " . $e->getMessage());
 }
+
 if (isset($_SESSION['message'])) {
     echo "<div class='message'>{$_SESSION['message']}</div>";
     unset($_SESSION['message']);  // Clear the message after displaying
 }
 ?>
+
 
 
 <!DOCTYPE html>
