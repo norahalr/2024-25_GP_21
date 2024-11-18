@@ -5,39 +5,37 @@ if (isset($_SESSION['message'])) {
     echo "<div class='message'>{$_SESSION['message']}</div>";
     unset($_SESSION['message']);  // Clear the message after displaying
 }
-// Database connection parameters
-$host = 'localhost';
-$dbname = 'InnovationEngine';
-$username = 'root';
-$password = 'root';
+
+// Include the database connection
+require_once 'config/connect.php'; // Ensure the path is correct for your directory structure
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
     // Fetch distinct fields for field filter dropdown
-    $fieldStmt = $pdo->prepare("SELECT DISTINCT field FROM past_projects");
+    $fieldStmt = $con->prepare("SELECT DISTINCT field FROM past_projects");
     $fieldStmt->execute();
     $fields = $fieldStmt->fetchAll(PDO::FETCH_COLUMN);
 
     // Fetch distinct technologies for technology filter dropdown
-    $techStmt = $pdo->prepare("SELECT DISTINCT name FROM technologies");
+    $techStmt = $con->prepare("SELECT DISTINCT name FROM technologies");
     $techStmt->execute();
     $technologies = $techStmt->fetchAll(PDO::FETCH_COLUMN);
 
     // Fetch initial list of supervisors
-    $supervisorStmt = $pdo->prepare("SELECT name, email, interest, availability FROM supervisors");
+    $supervisorStmt = $con->prepare("SELECT name, email, interest, availability FROM supervisors");
     $supervisorStmt->execute();
     $supervisors = $supervisorStmt->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
-    die("Could not connect to the database $dbname: " . $e->getMessage());
+    die("Error executing queries: " . $e->getMessage());
 }
+
 if (isset($_SESSION['message'])) {
     echo "<div class='message'>{$_SESSION['message']}</div>";
     unset($_SESSION['message']);  // Clear the message after displaying
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en">
