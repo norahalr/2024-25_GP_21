@@ -1,8 +1,14 @@
 <?php
-// Include the database connection
-require_once 'config/connect.php'; // Ensure the path is correct for your directory structure
+// Database connection parameters
+$host = 'localhost';
+$dbname = 'InnovationEngine';
+$username = 'root';
+$password = 'root';
 
 try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     // Fetch distinct fields for field filter dropdown
     $fieldStmt = $con->prepare("SELECT DISTINCT field FROM past_projects");
     $fieldStmt->execute();
@@ -20,6 +26,10 @@ try {
 
 } catch (PDOException $e) {
     die("Error executing queries: " . $e->getMessage());
+}
+if (isset($_SESSION['message'])) {
+    echo "<div class='message'>{$_SESSION['message']}</div>";
+    unset($_SESSION['message']);  // Clear the message after displaying
 }
 ?>
 
@@ -150,7 +160,7 @@ try {
                         <div class="u-container-layout u-similar-container u-container-layout-1">
                             <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2"><?= htmlspecialchars($supervisor['name']) ?></h5>
                             <div class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-2" style="margin-bottom: 35px;"></div>
-                            <a href="ViewSupervisor.php?email=<?= urlencode($supervisor['email']) ?>" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
+                            <a href="ViewSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
                             <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-3"><?= htmlspecialchars($supervisor['email']) ?></h6>
                             <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-4">Interest:</h6>
                             <ul class="u-align-left u-text u-text-5">
@@ -165,7 +175,7 @@ try {
                                     <img src="images/<?= $supervisor['availability'] === 'Unavailable' ? 'Incorrect.png' : '3699459-d2dcaf9f.png'; ?>" alt="Availability Icon" style="width: 16px; height: 16px; vertical-align: middle; ">
                                 </span>
                             </h6>
-                            <a href="RequestSupervisor.php?email=<?= urlencode($supervisor['email']) ?>" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">REQUEST</a>
+                            <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">REQUEST</a>
                         </div>
                     </div>
                 <?php endforeach; ?>

@@ -10,13 +10,19 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userEmail = $_SESSION['user_id']; // Get user ID from session
-$supervisorEmail = $_POST['supervisor_email'] ?? 'aabeer@KSU.EDU.SA'; // Supervisor selected from the dropdown
+if (isset($_GET['supervisor_email'])||isset($_POST['supervisor_email'])) {
+  $supervisorEmail = $_GET['supervisor_email'];
+} else {
+  echo "Error: No supervisor email provided.";
+  exit();
+}
 
 // Fetch supervisors with ideas
 $query = "SELECT idea FROM supervisors WHERE idea IS NOT NULL AND idea != '' AND email = :email ";
 $stmt = $con->prepare($query);
 $stmt->execute(['email' => $supervisorEmail]);
 $supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 $hasSupervisorIdeas = count($supervisors) > 0;
 
@@ -25,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idea = trim($_POST['Idea']);
     $requestDate = date('Y-m-d');
     $status = 'Pending';
+    $supervisorEmail = $_POST['supervisor_email'];
 
     try {
         // Check if the student already requested this supervisor
@@ -68,28 +75,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Insert into the appropriate table based on project preference
         if ($projectPreference === 'Supervisor Idea') {
-            $query = "INSERT INTO supervisor_idea_request (status, team_email, supervisor_email, request_date) VALUES (:status, :team_email, :supervisor_email, :request_date)";
-            $stmt = $con->prepare($query);
-            $stmt->execute([
-                'status' => $status,
-                'team_email' => $userEmail,
-                'supervisor_email' => $supervisorEmail,
-                'request_date' => $requestDate
-            ]);
+          $query = "INSERT INTO supervisor_idea_request (status, team_email, supervisor_email, request_date) VALUES (:status, :team_email, :supervisor_email, :request_date)";
+          $stmt = $con->prepare($query);
+          $stmt->execute([
+              'status' => $status,
+              'team_email' => $userEmail,
+              'supervisor_email' => $supervisorEmail,
+              'request_date' => $requestDate
+          ]);
             $_SESSION['message'] = "Request for supervisor's idea submitted successfully.";
             header("Location: StudentHomePage.php");
 
         } elseif ($projectPreference === 'Your Own Idea') {
-            $query = "INSERT INTO team_idea_request (project_name, description, status, team_email, supervisor_email, request_date) VALUES (:project_name, :description, :status, :team_email, :supervisor_email, :request_date)";
-            $stmt = $con->prepare($query);
-            $stmt->execute([
-                'project_name' => $idea,
-                'description' => $idea,
-                'status' => $status,
-                'team_email' => $userEmail,
-                'supervisor_email' => $supervisorEmail,
-                'request_date' => $requestDate
-            ]);
+          $project_name=$_POST["project_name"];
+          $query = "INSERT INTO team_idea_request (project_name, description, status, team_email, supervisor_email, request_date) VALUES (:project_name, :description, :status, :team_email, :supervisor_email, :request_date)";
+          $stmt = $con->prepare($query);
+          $stmt->execute([
+              'project_name' => $project_name,
+              'description' => $idea,
+              'status' => $status,
+              'team_email' => $userEmail,
+              'supervisor_email' => $supervisorEmail,
+              'request_date' => $requestDate
+          ]);
             $_SESSION['message'] = "Request for your idea submitted successfully.";
             header("Location: StudentHomePage.php");
 
@@ -121,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="generator" content="Nicepage 6.19.6, nicepage.com">
     <meta name="theme-color" content="#478ac9">
     <meta property="og:title" content="Request Supervisor">
+   
     <style data-mode="XL">@media (min-width: 1200px) {
       .u-block-d7f8-25 {
         min-height: 873px;
@@ -1444,9 +1453,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 if ($userEmail) {
                   // Prepare and execute the query to fetch supervisor data
-                  $supervisor_email = $_SESSION['supervisor_ID']?? 'aabeer@KSU.EDU.SA'; // Example ID; adjust as necessary
                 $stmt = $con->prepare("SELECT name, email, track FROM supervisors WHERE email = :id");
-                $stmt->bindParam(':id', $supervisor_email);
+                $stmt->bindParam(':id', $supervisorEmail);
                 $stmt->execute();
                 $supervisor = $stmt->fetch(PDO::FETCH_ASSOC);
               
@@ -1520,11 +1528,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <!-- Form Section -->
                 <div class="u-form">
-                <form action="RequestSupervisor.php" method="POST" class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form" source="email" data-services="5b2c2fa98341ebfafacab05d9cb29269" name="form" style="padding: 10px;">
+                <form action="RequestSupervisor.php" method="POST" class="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form" style="padding: 10px;">
     <div class="u-form-group u-form-select u-label-top u-block-d7f8-58">
-        <label for="projectPreference" class="u-label u-block-d7f8-59">Select your project preference:</label>
+        <label for="projectPreference" class="u-label u-block-d7f8-59">Select your project preference<span style="color: red;">*</span>:</label>
         <div class="u-form-select-wrapper">
-            <select id="projectPreference" name="select" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-4">
+            <select 
+                id="projectPreference" 
+                name="select" 
+                class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-4" 
+                onchange="toggleProjectNameInput()"
+            >
                 <?php if ($hasSupervisorIdeas): ?>
                     <option value="Supervisor Idea" selected="selected">Supervisor Idea</option>
                 <?php endif; ?>
@@ -1532,25 +1545,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </select>
         </div>
     </div>
+    
+      <!-- Text Input for Project Name -->
+    <?php if (!$hasSupervisorIdeas): ?>
+        <div class="u-form-group u-form-message u-label-top u-block-d7f8-67">
+            <label for="projectName" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5">
+                Project Name (Optional)
+            </label>
+            <input 
+                type="text" 
+                id="projectName" 
+                name="project_name" 
+                class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"
+                placeholder="Enter your project name"
+            />
+        </div>
+    <?php endif; ?>
+
+
+    <!-- Textarea for Supervisor Idea -->
     <div class="u-form-group u-form-message u-label-top u-block-d7f8-67">
-        <label for="ideaTextarea" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5" id="textareaLabel">Supervisor Idea</label>
+        <label for="ideaTextarea" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5" id="textareaLabel">
+            Idea <span style="color: red;">*</span>
+        </label>
         <textarea 
             rows="4" 
             cols="50" 
             id="ideaTextarea" 
             name="Idea" 
             class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"
-            readonly="<?= $hasSupervisorIdeas ? 'true' : 'false' ?>"
+            <?= $hasSupervisorIdeas ? 'readonly' : '' ?>
             placeholder="<?= $hasSupervisorIdeas ? '' : 'Write your idea here' ?>"
         >
             <?= $hasSupervisorIdeas ? htmlspecialchars($supervisors[0]['idea']) : '' ?>
         </textarea>
     </div>
+
+
     <div class="u-align-left u-form-group u-form-submit u-label-top u-block-d7f8-70">
-        <button type="submit" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">REQUEST SUPERVISORS</button>
+        <button type="submit" class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">
+            REQUEST SUPERVISORS
+        </button>
+        <input type="hidden" name="supervisor_email" value="<?= htmlspecialchars($supervisorEmail) ?>">
         <a href="ViewSupervisor.php" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-3 u-radius u-btn-2">BACK</a>
     </div>
 </form>
+
 
 
                 </div>
@@ -1605,6 +1645,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             label.textContent = 'Supervisor Idea'; // Update label
         }
     });
+    
+
 </script>
 </body>
 </html>
