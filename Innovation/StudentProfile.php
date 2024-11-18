@@ -21,7 +21,7 @@ $userEmail = $_SESSION['user_id'] ; // Get user ID from session
   $stmt->execute();
   $teamData = $stmt->fetch(PDO::FETCH_ASSOC);
   
-  $existingIdea = $teamData['draft_ideas'] ?? '';
+  $existingIdea = $teamData['draft_ideas'] ;
   $logoPath = $teamData['logo'] ?? 'images/7973420.png'; // Default logo
 
 // Handle form submission
@@ -131,7 +131,7 @@ $studentsStmt->execute();
 $students = $studentsStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch project details from team_idea_request table
-$projectStmt = $con->prepare("SELECT project_name, description FROM team_idea_request WHERE team_email = :team_email AND status = 'accepted'");
+$projectStmt = $con->prepare("SELECT project_name, description FROM team_idea_request WHERE team_email = :team_email AND status = 'Approved'");
 $projectStmt->bindParam(':team_email', $leaderEmail);
 $projectStmt->execute();
 $project = $projectStmt->fetch(PDO::FETCH_ASSOC);
@@ -236,9 +236,16 @@ $supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
 
                   <form id="ideaForm" action="StudentProfile.php" method="POST" class="u-clearfix u-form-spacing-15 u-form-vertical u-inner-form" style="padding: 15px;"  name="form"> 
     <div class="u-form-group u-form-textarea u-label-none u-form-group-1">
-        <label for="textarea-0d3e" class="u-label">Idea: </label>
-        <textarea rows="4" cols="50" id="textarea-0d3e" name="textarea" class="u-input u-input-rectangle" required placeholder="Write down your ideas to save them for you! (Draft)">
-    <?= htmlspecialchars($existingIdea) ?>
+        <label for="textarea-0d3e" class="u-label">Ideas Draft: </label>
+        <textarea 
+    rows="4" 
+    cols="50" 
+    id="textarea-0d3e" 
+    name="textarea" 
+    class="u-input u-input-rectangle" 
+    required 
+    placeholder="Write down your ideas to save them for you! (Draft)">
+    <?= htmlspecialchars($existingIdea ?? '') ?>
 </textarea>
          </div>
     <div class="u-align-right u-form-group u-form-submit">
@@ -289,7 +296,9 @@ $supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
     <!-- Leader Name -->
     <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-3">
         <label for="name-8e541" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-2">Leader Name</label>
-        <input type="text" placeholder="Leader name" id="name-8e541" name="name-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-2" required value="<?php echo htmlspecialchars($leaderName); ?>" readonly>
+        <input type="text" placeholder="Leader name" id="name-8e541" name="name-1" 
+        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-2"
+         required value="<?php echo htmlspecialchars($leaderName); ?>" readonly>
     </div>
 
     <!-- Leader Email -->
@@ -310,7 +319,7 @@ $supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
                    name="name-<?php echo $index + 1; ?>" 
                    class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-<?php echo $index + 4; ?>" 
                    required 
-                   value="<?php echo htmlspecialchars($student['name']); ?>">
+                   value="<?php echo htmlspecialchars($student['name']); ?>"readonly>
         </div>
 
         <!-- Student Email (Read-Only) -->
@@ -331,7 +340,8 @@ $supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
     <!-- Supervisor (Read-Only) -->
     <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-11">
         <label for="text-df08" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-10">Supervisor</label>
-        <input type="text" placeholder="Current supervisor" id="text-df08" name="text" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-10" value="<?php echo htmlspecialchars($supervisor['name'] ?? ''); ?>" readonly>
+        <input type="text" placeholder="Current supervisor" id="text-df08" name="text" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-10" 
+        value="<?php echo htmlspecialchars($supervisor['name'] ?? ''); ?>" readonly>
     </div>
 
     <!-- Project Title (Read-Only) -->
@@ -343,7 +353,7 @@ $supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
     <!-- Project Idea (Read-Only) -->
     <div class="u-form-group u-form-textarea u-label-none u-form-group-13">
         <label for="textarea-a10a" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-12">Project Idea</label>
-        <textarea rows="4" cols="50" id="textarea-a10a" name="textarea" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-12" placeholder="A brief about your project" readonly><?php echo htmlspecialchars($project['description'] ?? ''); ?></textarea>
+        <textarea rows="4" cols="50" id="textarea-a10a" name="textarea-2" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-12" placeholder="A brief about your project" readonly><?php echo htmlspecialchars($project['description'] ?? ''); ?></textarea>
     </div>
 
     <!-- Edit Button -->
@@ -404,8 +414,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Handle the Idea Form (Draft Saving)
     const ideaForm = document.getElementById("ideaForm");
     ideaForm.addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent default form submission
-        alert("Idea saved successfully!");
     });
 });
 

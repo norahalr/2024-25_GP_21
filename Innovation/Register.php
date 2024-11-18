@@ -282,7 +282,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
       }
 }else { // Student Register
-    $num_students = $_POST['num-students'];
+$num_students = $_POST['num-students'];
 $leader_name = $_POST['leader-name'];
 $leader_email = $_POST['leader-email'];
 $password = $_POST['password'];
@@ -304,12 +304,20 @@ if (empty($num_students)) {
 }
 if (empty($leader_name)) {
     $errors[] = "Leader name is required.";
+} elseif (!preg_match("/^[A-Za-z]+\s[A-Za-z]+$/", $leader_name)) {
+    $errors[] = "Leader name must be in 'First Last' format.";
 }
 if (empty($leader_email)) {
     $errors[] = "Leader email is required.";
 }
 if (empty($student_names[0])) {
     $errors[] = "At least one student name is required.";
+} else {
+    foreach ($student_names as $index => $student_name) {
+        if (!preg_match("/^[A-Za-z]+\s[A-Za-z]+$/", $student_name)) {
+            $errors[] = "Student name " . ($index + 1) . " must be in 'First Last' format.";
+        }
+    }
 }
 if (empty($student_emails[0])) {
     $errors[] = "At least one student email is required.";
@@ -516,7 +524,7 @@ id="supervisor-signup-form">
             class="u-custom-font u-font-georgia u-label">How many
             students are in your group? <span
                 style="color:red;">*</span></label>
-        <input type="number" id="num-students" placeholder="2"
+        <input type="number" id="num-students" placeholder="Number of students"
             name="num-students" min="2" max="5"
             class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
             required="" onchange="showStudentFields()">
@@ -598,7 +606,74 @@ id="supervisor-signup-form">
 
 </form>
 
-                                                    <script>
+    <script>
+              // Helper function to show error messages
+    function showError(input, message) {
+        let errorElement = input.nextElementSibling;
+        if (!errorElement || !errorElement.classList.contains('error-message')) {
+            errorElement = document.createElement('div');
+            errorElement.classList.add('error-message');
+            errorElement.style.color = 'red';
+            errorElement.style.fontSize = '12px';
+            input.parentNode.appendChild(errorElement);
+        }
+        errorElement.textContent = message;
+    }
+
+    // Helper function to clear error messages
+    function clearError(input) {
+        const errorElement = input.nextElementSibling;
+        if (errorElement && errorElement.classList.contains('error-message')) {
+            errorElement.remove();
+        }
+    }
+
+    // Validation for individual fields
+    function validateField(input) {
+        const fieldName = input.name;
+        const value = input.value.trim();
+
+        if (fieldName === 'leader-name' || fieldName.startsWith('student-name')) {
+            if (!/^[A-Za-z]+\s[A-Za-z]+$/.test(value)) {
+                showError(input, 'Please enter a valid full name (First Last).');
+            } else {
+                clearError(input);
+            }
+        }
+
+        if (fieldName === 'leader-email' || fieldName.startsWith('student-email')) {
+            if (!/^[^\s@]+@student\.ksu\.edu\.sa$/.test(value)) {
+                showError(input, 'Please enter a valid KSU student email.');
+            } else {
+                clearError(input);
+            }
+        }
+
+        if (fieldName === 'password') {
+            if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)) {
+                showError(input, 'Password must be 8+ characters with upper, lower, number, and special character.');
+            } else {
+                clearError(input);
+            }
+        }
+
+        if (fieldName === 're-enter-password') {
+            const password = document.getElementById('password').value;
+            if (value !== password) {
+                showError(input, 'Passwords do not match.');
+            } else {
+                clearError(input);
+            }
+        }
+    }
+
+    // Attach blur event listeners to all inputs
+    document.querySelectorAll('#student-signup-form input').forEach(input => {
+        input.addEventListener('blur', function () {
+            validateField(input);
+        });
+    });
+
                                                     function showStudentFields() {
                                                         const numStudents = document.getElementById('num-students')
                                                             .value;
@@ -637,7 +712,7 @@ id="supervisor-signup-form">
                           `;
 
                                                         // Add additional student fields if numStudents > 2
-                                                        for (let i = 2; i < numStudents; i++) {
+                                                        for (let i = 2; i < numStudents&& i<5; i++) {
                                                             studentFieldsContainer.innerHTML += `
                                   <div class="student-info">
                                       <div class="u-form-group">
@@ -652,7 +727,7 @@ id="supervisor-signup-form">
                               `;
                                                         }
                                                     }
-                                                    </script>
+    </script>
 
 
 
