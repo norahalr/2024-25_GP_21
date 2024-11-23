@@ -46,8 +46,113 @@ $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo "Error: " . $e->getMessage();
 }
 
-   
+if (isset($_SESSION['message'])) {
+    $message = htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
+    $backgroundColor = "#007BFF"; // Default background color for the button
+    $buttonTextColor = "white";   // Default text color for the button
+    $popupTextColor = "black";    // Default text color for the popup
+
+    // Display the popup
+    echo "
+    <div id='popup' style='
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        z-index: 1000;
+        text-align: center;
+        color: $popupTextColor;
+    '>
+        <p>$message</p>
+        <button id='confirmButton' style='
+            padding: 10px 20px;
+            background-color: $backgroundColor;
+            color: $buttonTextColor;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        '>OK</button>
+    </div>
+    <div id='overlay' style='
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    '></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('confirmButton').addEventListener('click', function() {
+                document.getElementById('popup').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            });
+        });
+    </script>
+    ";
+    unset($_SESSION['message']); // Clear message
+}
+
+if (isset($_SESSION['error'])) {
+    $error = htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8');
+    $backgroundColor = "#DC3545"; // Red background for error button
+    $buttonTextColor = "white";   // White text for the error button
+    $popupTextColor = "#721C24";  // Dark red for error popup text
+
+    // Display the error popup
+    echo "
+    <div id='popup' style='
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        z-index: 1000;
+        text-align: center;
+        color: $popupTextColor;
+    '>
+        <p>$error</p>
+        <button id='confirmButton' style='
+            padding: 10px 20px;
+            background-color: $backgroundColor;
+            color: $buttonTextColor;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        '>OK</button>
+    </div>
+    <div id='overlay' style='
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    '></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('confirmButton').addEventListener('click', function() {
+                document.getElementById('popup').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            });
+        });
+    </script>
+    ";
+    unset($_SESSION['error']); // Clear error
+}
 ?>
+
+   
+
 
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en"><head>
@@ -149,6 +254,20 @@ $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 Email: <?= htmlspecialchars($request['supervisor_email']) ?>
             </h6>
         <?php endif; ?>
+        <?php
+// Define a mapping of request types to user-friendly descriptions
+$requestTypeDescriptions = [
+    'team_idea_request' => 'Team Idea Request',
+    'supervisor_idea_request' => 'Supervisor Idea Request'
+];
+
+// Get the friendly description for the request type
+$requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 'Unknown Request Type';
+?>
+
+<h7 class="u-blog-control u-custom-font u-font-oswald u-text u-text-3">
+    Request Type: <?= htmlspecialchars($requestTypeDescription) ?>
+</h7>
         <div class="u-blog-control u-post-content u-text u-text-3 fr-view">
             Project Idea: <?= htmlspecialchars($request['description']) ?>
         </div>
@@ -161,7 +280,9 @@ $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 if ($request['status'] == 'Approved') {
                     echo 'lightgreen';
                 } elseif ($request['status'] == 'Rejected') {
-                    echo 'red';
+                  echo 'red';
+                }elseif ($request['status'] == 'Deleted') {
+                    echo 'gray';
                 } else {
                     echo 'black';
                 } 
@@ -169,8 +290,67 @@ $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?= htmlspecialchars($request['status']) ?>
             </span>
         </div>
+        <?php if ($request['status'] == 'Pending'): // Check if the status is not deleted ?>
+
+        <!-- Add Buttons Here -->
+        <div class="u-blog-control u-buttons" style="
+    margin-top: 10px; 
+    text-align: right;
+">
+        <!-- Edit Button -->
+         
+        <?php if ($request['request_type'] === 'team_idea_request'): // Check if the status is not deleted ?>
+
+        <form action="edit-request.php" method="GET" style="display: inline-block;">
+    <input type="hidden" name="id" value="<?= htmlspecialchars($request['id'], ENT_QUOTES, 'UTF-8') ?>">
+    <input type="hidden" name="type" value="<?= htmlspecialchars($request['request_type'], ENT_QUOTES, 'UTF-8') ?>">
+    <button type="submit" 
+            class="u-btn u-btn-edit" 
+            style="
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #007BFF;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+                margin-right: 10px;
+            ">
+        Edit
+    </button>
+</form>
+<?php endif; ?>
+
+
+
+
+        <!-- Delete Button with Confirmation -->
+        <form method="POST" action="delete-request.php" style="display: inline;">
+            <input type="hidden" name="request_id" value="<?= $request['id'] ?>">
+            <input type="hidden" name="request_type" value="<?= htmlspecialchars($request['request_type']) ?>">
+            <button type="submit" class="u-btn u-btn-delete" 
+                onclick="return confirm('Are you sure you want to delete this request? This action cannot be undone.');"
+                style="
+                    display: inline-block;
+                   padding: 10px 20px;
+                   background-color: #f8d7da;
+                   color: #721c24;
+                   text-decoration: none;
+                   border-radius: 5px;
+                   font-weight: bold;
+                ">
+                Delete
+            </button>
+        </form>
+    <?php endif; ?>
+</div>
+
     </div>
 </div>
+
+
 <hr>
 
     <?php endforeach; ?>

@@ -11,7 +11,7 @@ $db = "InnovationEngine";
 try {
     $con = new PDO("mysql:host=$servername;dbname=$db", $username, $password);
     $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "Connected successfully"; // If connection is successful
+   // echo "Connected successfully"; // If connection is successful
 } catch(PDOException $e) {
     echo "Connection failed: " . $e->getMessage(); // Display the error message
 }

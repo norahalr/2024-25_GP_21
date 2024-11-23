@@ -2,9 +2,52 @@
 session_start();
 
 if (isset($_SESSION['message'])) {
-    echo "<div class='message'>{$_SESSION['message']}</div>";
-    unset($_SESSION['message']);  // Clear the message after displaying
+    $message = htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
+    echo "
+    <div id='popup' style='
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        z-index: 1000;
+        text-align: center;
+    '>
+        <p>$message</p>
+        <button id='confirmButton' style='
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        '>OK</button>
+    </div>
+    <div id='overlay' style='
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    '></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('confirmButton').addEventListener('click', function() {
+                document.getElementById('popup').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            });
+        });
+    </script>
+    ";
+    unset($_SESSION['message']);
 }
+
+
 
 // Include the database connection
 require_once 'config/connect.php'; // Ensure the path is correct for your directory structure

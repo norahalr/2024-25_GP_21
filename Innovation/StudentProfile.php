@@ -131,18 +131,38 @@ $studentsStmt->execute();
 $students = $studentsStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch project details from team_idea_request table
-$projectStmt = $con->prepare("SELECT project_name, description FROM team_idea_request WHERE team_email = :team_email AND status = 'Approved'");
+$projectStmt = $con->prepare("
+    SELECT 
+        tir.project_name, 
+        tir.supervisor_email, 
+        tir.description,
+        'team_idea_request' AS request_type
+    FROM team_idea_request tir
+    WHERE tir.team_email = :team_email AND tir.status = 'Approved'
+    UNION ALL
+    SELECT 
+        NULL AS project_name, 
+        sir.supervisor_email, 
+        s.idea AS description,
+        'supervisor_idea_request' AS request_type
+    FROM supervisor_idea_request sir
+    JOIN supervisors s ON sir.supervisor_email = s.email
+    WHERE sir.team_email = :team_email AND sir.status = 'Approved'
+");
+
 $projectStmt->bindParam(':team_email', $leaderEmail);
 $projectStmt->execute();
 $project = $projectStmt->fetch(PDO::FETCH_ASSOC);
 
-// Fetch supervisor name from supervisors table using supervisor_email
-$supervisorStmt = $con->prepare("SELECT name FROM supervisors WHERE email = :supervisor_email");
-$supervisorStmt->bindParam(':supervisor_email', $leader['supervisor_email']);
-$supervisorStmt->execute();
-$supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
-
-
+if ($project) {
+    // Fetch supervisor name only if $project is not false
+    $supervisorStmt = $con->prepare("SELECT name FROM supervisors WHERE email = :supervisor_email");
+    $supervisorStmt->bindParam(':supervisor_email', $project['supervisor_email']);
+    $supervisorStmt->execute();
+    $supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
+    
+    
+} 
 
 
 
