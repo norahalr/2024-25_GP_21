@@ -236,17 +236,17 @@ if (isset($_SESSION['error'])) {
     <?php foreach ($requests as $request): ?>
       <div class="u-blog-post u-repeater-item">
     <div class="u-container-layout u-similar-container u-valign-bottom-xs u-container-layout-<?= $request['id'] ?>">
-        <a class="u-post-header-link" href="blog/request-<?= $request['id'] ?>.php">
+        <!-- <a class="u-post-header-link" href="blog/request-<?= $request['id'] ?>.php"> -->
             <img src="images/bulb_idea_knowledge_light_read_icon.png" alt="" class="u-blog-control u-image u-image-default u-image-1" data-image-width="1280" data-image-height="852">
-        </a>
+        <!-- </a> -->
         <h2 class="u-blog-control u-text u-text-2">
-            <a class="u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-2 u-text-1" href="blog/request-<?= $request['id'] ?>.php">
+            <!-- <a class="u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-2 u-text-1" href="blog/request-<?= $request['id'] ?>.php"> -->
                 <?= htmlspecialchars($request['project_name'] ?: "No Project Name") ?>
-            </a>
+            <!-- </a> -->
         </h2>
         <?php if ($request['supervisor_name']): ?>
             <h5 class="u-blog-control u-custom-font u-font-oswald u-text u-text-3">
-                <a href="supervisor-profile.php?email=<?= htmlspecialchars($request['supervisor_email']) ?>">
+                <a href="ViewSupervisor.php?email=<?= htmlspecialchars($request['supervisor_email']) ?>">
                     <?= htmlspecialchars($request['supervisor_name']) ?>
                 </a>
             </h5>
@@ -326,24 +326,89 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
 
 
 
-        <!-- Delete Button with Confirmation -->
-        <form method="POST" action="delete-request.php" style="display: inline;">
-            <input type="hidden" name="request_id" value="<?= $request['id'] ?>">
-            <input type="hidden" name="request_type" value="<?= htmlspecialchars($request['request_type']) ?>">
-            <button type="submit" class="u-btn u-btn-delete" 
-                onclick="return confirm('Are you sure you want to delete this request? This action cannot be undone.');"
-                style="
-                    display: inline-block;
-                   padding: 10px 20px;
-                   background-color: #f8d7da;
-                   color: #721c24;
-                   text-decoration: none;
-                   border-radius: 5px;
-                   font-weight: bold;
-                ">
-                Delete
-            </button>
-        </form>
+        <!-- Delete Form -->
+<form method="POST" action="delete-request.php" style="display: inline;" id="deleteForm">
+    <input type="hidden" name="request_id" value="<?= $request['id'] ?>">
+    <input type="hidden" name="request_type" value="<?= htmlspecialchars($request['request_type']) ?>">
+    <button type="button" class="u-btn u-btn-delete" 
+        onclick="showDeletePopup()"
+        style="
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f8d7da;
+            color: #721c24;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        ">
+        Delete
+    </button>
+</form>
+
+<!-- Custom Delete Confirmation Modal -->
+<div id="deletePopup" style="
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    z-index: 1000;
+    text-align: center;
+    color: black;
+">
+    <p>Are you sure you want to delete this request? This action cannot be undone.</p>
+    <button id="confirmDeleteButton" style="
+        padding: 10px 20px;
+        background-color: #f8d7da;
+        color: #721c24;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+    ">Yes, Delete</button>
+    <button id="cancelDeleteButton" style="
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    ">Cancel</button>
+</div>
+<div id="deleteOverlay" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+"></div>
+
+<!-- JavaScript for Modal Functionality -->
+<script>
+    function showDeletePopup() {
+        document.getElementById('deletePopup').style.display = 'block';
+        document.getElementById('deleteOverlay').style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('cancelDeleteButton').addEventListener('click', function() {
+            document.getElementById('deletePopup').style.display = 'none';
+            document.getElementById('deleteOverlay').style.display = 'none';
+        });
+
+        document.getElementById('confirmDeleteButton').addEventListener('click', function() {
+            document.getElementById('deleteForm').submit();
+        });
+    });
+</script>
+
     <?php endif; ?>
 </div>
 

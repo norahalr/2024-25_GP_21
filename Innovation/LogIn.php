@@ -229,11 +229,15 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                             <h1 class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">Supervisor Login </h1>
                             <div class="u-form-group u-form-name">
                               <label for="email-da99" class="u-label">Email</label>
-                              <input type="text" placeholder="Enter a valid email address" id="email-da99" name="email" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
+                              <input type="text" placeholder="Enter a valid email address" id="email-da99" name="email"                     
+                              class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
+                              required="required">
                             </div>
                             <div class="u-form-group u-label-none u-form-group-2">
                               <label for="text-5a78" class="u-label">Password</label>
-                              <input type="password" placeholder="Password" id="text-5a78" name="password" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
+                              <input type="password" placeholder="Password" id="text-5a78" name="password"
+                              class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
+                              required="required">
                             </div>
                             <div class="u-align-right u-form-group u-form-submit">
                               <a href="Forget.php" class="frpass">Forget password?</a>
@@ -250,11 +254,15 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                             <h1 class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">Students Login </h1>
                             <div class="u-form-group u-label-none">
                               <label for="email-da97" class="u-label">Email</label>
-                              <input type="text" placeholder="Enter leader email address" id="email-da97" name="email" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
+                              <input type="text" placeholder="Enter leader email address" id="email-da97" name="email"
+                              class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
+                              required="required">
                             </div>
                             <div class="u-form-group u-label-none u-form-group-2">
                               <label for="text-5a78" class="u-label">Password</label>
-                              <input type="password" placeholder="Password" id="text-5a78" name="password" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
+                              <input type="password" placeholder="Password" id="text-5a78" name="password" 
+                              class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
+                              required="required">
                             </div>
                             <div class="u-align-right u-form-group u-form-submit">
                               <a href="Forget.php" class="frpass">Forget password?</a>

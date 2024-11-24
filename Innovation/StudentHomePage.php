@@ -104,8 +104,8 @@ if (isset($_SESSION['message'])) {
         </div>
         <div class="u-custom-menu u-nav-container">
           <ul class="u-nav u-spacing-30 u-unstyled u-nav-1">
-            <!-- <li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.html" style="padding: 10px 0px;">Student Home page</a>
-  </li> -->
+        <li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.php" style="padding: 10px 0px;">Student Home page</a>
+  </li>
   
   <li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentProfile.php">Profile</a>
   </li>
@@ -154,8 +154,9 @@ if (isset($_SESSION['message'])) {
                 </div>
 
                 <div class="u-align-left u-form-group u-form-submit u-label-none">
-                    <button type="button" class="u-btn u-btn-submit u-button-style u-btn-1" onclick="performSearch()">Search</button>
-                </div>
+                <button type="button" class="u-btn u-btn-submit u-button-style u-btn-1" onclick="performSearch()">
+  <img src="\images\211817_search_strong_icon.png" alt="Search Icon" style="width: 20px; height: 20px;">
+</button>                </div>
             </form>
         </div>
     </div>
