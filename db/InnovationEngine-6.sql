@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Nov 24, 2024 at 07:31 PM
+-- Generation Time: Nov 24, 2024 at 07:49 PM
 -- Server version: 5.7.39
 -- PHP Version: 7.4.33
 
@@ -55,8 +55,9 @@ CREATE TABLE `external_departments_requests` (
   `email` varchar(255) NOT NULL,
   `collage` varchar(100) NOT NULL,
   `idea_description` text NOT NULL,
-  `status` enum('Pending','Approved','Rejected') NOT NULL,
-  `admin_email` varchar(255) NOT NULL
+  `status` enum('Pending','Approved','Rejected','Canceled') NOT NULL,
+  `admin_email` varchar(255) NOT NULL,
+  `request_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -313,7 +314,7 @@ INSERT INTO `supervisors` (`email`, `name`, `password`, `track`, `idea`, `intere
 
 CREATE TABLE `supervisor_idea_request` (
   `id` int(20) NOT NULL,
-  `status` enum('Pending','Approved','Rejected') NOT NULL,
+  `status` enum('Pending','Approved','Rejected','Canceled') NOT NULL,
   `team_email` varchar(255) NOT NULL,
   `supervisor_email` varchar(255) NOT NULL,
   `request_date` date NOT NULL
@@ -398,7 +399,7 @@ CREATE TABLE `team_idea_request` (
   `id` int(20) NOT NULL,
   `project_name` varchar(100) NOT NULL,
   `description` text NOT NULL,
-  `status` enum('Pending','Approved','Rejected') NOT NULL,
+  `status` enum('Pending','Approved','Rejected','Canceled') NOT NULL,
   `team_email` varchar(255) NOT NULL,
   `supervisor_email` varchar(255) NOT NULL,
   `request_date` date NOT NULL
