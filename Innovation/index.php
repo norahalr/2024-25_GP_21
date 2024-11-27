@@ -241,7 +241,7 @@ Lama Alsudias, a dedicated and inspiring professor, guided us to rethink how we 
                   </div><!--/block-->
                 </div><!--/position-->
                 <div class="u-social-icons u-spacing-10 u-social-icons-1" data-animation-name="" data-animation-duration="0" data-animation-direction="">
-                  <a class="u-social-url" title="Email" target="_blank" href=""><span class="u-file-icon u-icon u-social-facebook u-social-icon u-icon-1"><img src="images/542740.png" alt=""></span>
+                  <a class="u-social-url" title="Email" target="_blank" href="443200556@student.ksu.edu.sa"><span class="u-file-icon u-icon u-social-facebook u-social-icon u-icon-1"><img src="images/542740.png" alt=""></span>
                   </a>
                   <a class="u-social-url" title="department website" target="_blank" href="https://ccis.ksu.edu.sa/ar"><span class="u-file-icon u-icon u-social-icon u-social-linkedin u-icon-2"><img src="images/3308395.png" alt=""></span>
                   </a>
