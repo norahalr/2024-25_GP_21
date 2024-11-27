@@ -272,7 +272,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':idea', $textarea);
 
         if ($stmt->execute()) {
-            echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-message u-form-send-success"> Thank you! Your registration has been successful. </div>';
+            $_SESSION['user_id'] = $semail; // Set session variable
+            setcookie('Supervisor_email', $semail, time() + 3600, "/"); // Set cookie for 1 hour
+
+            // Redirect to ResearchInterests.php
+            header("Location: SupervisorHomePage.php");
+            exit();        
         } else {
             echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message"> Unable to register. Please try again later. </div>';
         }
@@ -479,13 +484,13 @@ id="supervisor-signup-form">
       name="textarea"
       class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"
       required=""
-      placeholder="Please enter your interest about GP projects"></textarea>
+      placeholder="Enter your interests in GP projects, separated by commas"></textarea>
 </div>
 <div class="u-form-group u-form-group-3">
   <label for="text-b089"
       class="u-custom-font u-font-georgia u-label">Password
       <span style="color:red;">*</span></label>
-  <input type="password" placeholder="Please enter valid password"
+  <input type="password" placeholder="Please enter valid password (minimum 8 characters, including uppercase, lowercase, number, and special character)"
       id="text-b089" name="pass"
       class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
       required="required">
@@ -583,7 +588,7 @@ id="supervisor-signup-form">
             class="u-custom-font u-font-georgia u-label">Password
             <span style="color:red;">*</span></label>
         <input type="password"
-            placeholder="Please enter valid password" id="password"
+            placeholder="Please enter valid password (minimum 8 characters, including uppercase, lowercase, number, and special character)" id="password"
             name="password"
             class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
             required="">
