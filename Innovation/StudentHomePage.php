@@ -2,20 +2,63 @@
 session_start();
 
 if (isset($_SESSION['message'])) {
-    echo "<div class='message'>{$_SESSION['message']}</div>";
-    unset($_SESSION['message']);  // Clear the message after displaying
+    $message = htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
+    echo "
+    <div id='popup' style='
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        z-index: 1000;
+        text-align: center;
+    '>
+        <p>$message</p>
+        <button id='confirmButton' style='
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        '>OK</button>
+    </div>
+    <div id='overlay' style='
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    '></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('confirmButton').addEventListener('click', function() {
+                document.getElementById('popup').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            });
+        });
+    </script>
+    ";
+    unset($_SESSION['message']);
 }
+
+
 
 // Include the database connection
 require_once 'config/connect.php'; // Ensure the path is correct for your directory structure
 
 try {
-    // Fetch distinct fields for field filter dropdown
+    // Fetch distinct fields for the field filter dropdown
     $fieldStmt = $con->prepare("SELECT DISTINCT field FROM past_projects");
     $fieldStmt->execute();
     $fields = $fieldStmt->fetchAll(PDO::FETCH_COLUMN);
 
-    // Fetch distinct technologies for technology filter dropdown
+    // Fetch distinct technologies for the technology filter dropdown
     $techStmt = $con->prepare("SELECT DISTINCT name FROM technologies");
     $techStmt->execute();
     $technologies = $techStmt->fetchAll(PDO::FETCH_COLUMN);
@@ -25,13 +68,29 @@ try {
     $supervisorStmt->execute();
     $supervisors = $supervisorStmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // Fetch all project data including id, name, description, and document link
+    $projectsStmt = $con->prepare("SELECT id, name, description, document FROM past_projects");
+    $projectsStmt->execute();
+    $projects = $projectsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Ensure the projects array is correctly retrieved
+    if (empty($projects)) {
+        throw new Exception("No projects found in the database. Please check the `past_projects` table.");
+    }
+
 } catch (PDOException $e) {
-    die("Error executing queries: " . $e->getMessage());
+    // Handle query or connection errors gracefully
+    die("Database error: " . htmlspecialchars($e->getMessage()));
+} catch (Exception $e) {
+    // Handle custom exceptions for missing data
+    die("Application error: " . htmlspecialchars($e->getMessage()));
 }
 
+// Display a session message if available
 if (isset($_SESSION['message'])) {
-    echo "<div class='message'>{$_SESSION['message']}</div>";
-    unset($_SESSION['message']);  // Clear the message after displaying
+    $sanitizedMessage = htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
+    echo "<div class='message'>{$sanitizedMessage}</div>";
+    unset($_SESSION['message']); // Clear the message after displaying
 }
 ?>
 
@@ -61,8 +120,8 @@ if (isset($_SESSION['message'])) {
         </div>
         <div class="u-custom-menu u-nav-container">
           <ul class="u-nav u-spacing-30 u-unstyled u-nav-1">
-            <!-- <li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.html" style="padding: 10px 0px;">Student Home page</a>
-  </li> -->
+        <li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.php" style="padding: 10px 0px;">Student Home page</a>
+  </li>
   
   <li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentProfile.php">Profile</a>
   </li>
@@ -111,8 +170,9 @@ if (isset($_SESSION['message'])) {
                 </div>
 
                 <div class="u-align-left u-form-group u-form-submit u-label-none">
-                    <button type="button" class="u-btn u-btn-submit u-button-style u-btn-1" onclick="performSearch()">Search</button>
-                </div>
+                <button type="button" class="u-btn u-btn-submit u-button-style u-btn-1" onclick="performSearch()">
+  <img src="\images\211817_search_strong_icon.png" alt="Search Icon" style="width: 20px; height: 20px;">
+</button>                </div>
             </form>
         </div>
     </div>
@@ -312,11 +372,37 @@ function performFilter() {
 
 
 
+function openDocument(documentPath) {
+    const url = documentPath.trim(); // Use the path as stored in the database
+    window.open(url, '_blank'); // Open the document in a new tab
+}
 
+function fetchAndOpenDocument(button) {
+    const projectId = button.getAttribute('data-project-id');
+
+    // Perform an AJAX request to fetch the document URL
+    fetch(`getDocument.php?project_id=${projectId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.documentUrl) {
+                // Open the document in a new tab
+                window.open(data.documentUrl, '_blank');
+            } else {
+                alert('Failed to retrieve document. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching document URL:', error);
+            alert('An error occurred. Please try again.');
+        });
+}
 
 function displayResults(data) {
     const resultsDiv = document.getElementById("searchResults");
     const title = document.querySelector("h2.u-text-1"); // Select the "Search Results" title element
+
+    // Debugging: Log data structure to the console
+    console.log("Received data:", data);
 
     // Check if data is an array
     if (!Array.isArray(data)) {
@@ -328,19 +414,18 @@ function displayResults(data) {
 
     if (data.length === 0) {
         // No results found
+        console.log("No results found.");
         title.style.display = "none"; // Hide the title
-        resultsDiv.innerHTML ="<h4 style='background-color: #E7F1FA; color: #4D7397; margin: -10px; padding: 40px 0px 500px 0px; text-align: center;'>No results found.</>";
+        resultsDiv.innerHTML = "<h4 style='background-color: #E7F1FA; color: #4D7397; margin: -10px; padding: 40px 0px 500px 0px; text-align: center;'>No results found.</h4>";
         return;
     }
 
     title.style.display = "block"; // Show the title if there are results
 
-    const minItems = 6; // Set the minimum number of items to display
-
-    // Add filler items if the data count is less than the minimum required
-    while (data.length < minItems) {
-        data.push({ filler: true }); // Add filler items
-    }
+    // Debugging: Log each item in the array
+    data.forEach((item, index) => {
+        console.log(`Item ${index + 1}:`, item);
+    });
 
     resultsDiv.innerHTML = `
         <section class="u-align-center u-clearfix u-container-align-center u-gradient u-section-2 u-body u-xl-mode" 
@@ -354,7 +439,7 @@ function displayResults(data) {
                             ${data.map(item => item.filler ? `
                                 <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
                                     style="background-color: transparent; box-shadow: none; margin-bottom: 20px;">
-                                </div>` : item.hasOwnProperty('description') ? `
+                                </div>` : `
                                 <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
                                     style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); margin-bottom: 20px;">
                                     
@@ -362,42 +447,15 @@ function displayResults(data) {
                                         <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2" style="margin:10px 200px 10px 100px ;">${item.name}</h5>
                                         <p style="margin-bottom:100px; font-size: 16px; line-height: 1.6; text-align: left; padding-right: 20px;">${item.description}</p>
                                         
-                                        <a href="documents/${item.document}" target="_blank" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1" style=" margin:50px 200px 50px 450px" >View</a>
+                                        <!-- Button to trigger the document -->
+                                        <a href="${item.document}" target="_blank" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1" style=" margin:50px 200px 50px 450px" >View</a>
                                     </div>
-                                </div>` : `
-                                <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
-                                    style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); margin-bottom: 20px;">
-                                    
-                                    <div class="u-container-layout u-similar-container u-container-layout-1">
-                                        <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2">${item.name}</h5>
-                                         <div class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-2" data-image-width="309" data-image-height="309" style="margin-bottom: 35px"></div>
-                                       
-                                       <a href="ViewSupervisor.php?email=${encodeURIComponent(item.email)}" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
-                                       <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-3">${item.email}</h6>
-
-                                        <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-4">Interest:</h6>
-                                        
-                                        <ul class="u-align-left u-text u-text-5">
-                                            ${item.interest.split(',').map(interest => `<li>${interest.trim()}</li>`).join('')}
-                                        </ul>
-
-                                        <h6 class="u-align-center-xs u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-custom-font u-font-oswald u-text u-text-6" style="color: ${item.availability === 'Unavailable' ? 'red' : '#5cb85c'}; display: inline;">
-                                            ${item.availability}
-                                            <span class="u-file-icon u-icon u-icon-1" style="display: inline; vertical-align: middle; margin-left: 5px; margin-bottom: 10px;">
-                                                <img src="images/${item.availability === 'Unavailable' ? 'Incorrect.png' : '3699459-d2dcaf9f.png'}" alt="Availability Icon" style="width: 16px; height: 16px; vertical-align: middle; margin-bottom: 10px;">
-                                            </span>
-                                        </h6>
-                                        
-                                        <a href="RequestSupervisor.php?email=${encodeURIComponent(item.email)}" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">REQUEST</a>
-                                    </div>
-                                </div>
-                            `).join('')}
+                                </div>`).join('')}
                         </div>
                     </div>
                 </div>
             </section>`;
 }
-
 
 
 </script>
