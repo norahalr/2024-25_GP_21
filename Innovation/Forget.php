@@ -130,7 +130,7 @@
 function sendPasswordResetEmail($email, $newPassword, $config) {
     $subject = "Password Reset Request";
     $message = "Please use this new password to login: " . $newPassword;
-    $headers = "From: no-reply@yourdomain.com";
+    $headers = "From: 443200556@student.ksu.edu.sa";
 
     if (mail($email, $subject, $message, $headers)) {
         echo "Email sent successfully.";
@@ -142,37 +142,37 @@ function generateRandomPassword($length = 10) {
     return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, $length);
 }
 
-if($_SERVER['REQUEST_METHOD']=='POST'){
-  $type= $_POST['type'];
-  $email=$_POST['email'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  $type = $_POST['type'];
+  $email = $_POST['email'];
 
+  if ($type == 1) { // Supervisor
+      $stmt = $con->prepare("SELECT email FROM supervisors WHERE email = :email");
+      $updateStmt = $con->prepare("UPDATE supervisors SET password = :password WHERE email = :email");
+  } else { // Student
+      $stmt = $con->prepare("SELECT leader_email FROM teams WHERE leader_email = :email");
+      $updateStmt = $con->prepare("UPDATE teams SET password = :password WHERE leader_email = :email");
+  }
 
-    if ($type == 1) { // Supervisor
-        $stmt = $con->prepare("SELECT email FROM supervisors WHERE email = :email");
-        $updateStmt = $con->prepare("UPDATE supervisors SET password = :password WHERE email = :email");
-    } else { // Student
-        $stmt = $con->prepare("SELECT email FROM students WHERE email = :email");
-        $updateStmt = $con->prepare("UPDATE students SET password = :password WHERE email = :email");
-    }
+  $stmt->bindParam(':email', $email);
+  $stmt->execute();
+  $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $stmt->bindParam(':email', $email);
-    $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+  if ($result) {
+      $newPassword = generateRandomPassword();
+      $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
-    if ($result) {
-        $newPassword = generateRandomPassword();
-        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+      $updateStmt->bindParam(':password', $hashedPassword);
+      $updateStmt->bindParam(':email', $email); // Use ':email' in both cases
+      $updateStmt->execute();
 
-        $updateStmt->bindParam(':password', $hashedPassword);
-        $updateStmt->bindParam(':email', $email);
-        $updateStmt->execute();
-
-       // sendPasswordResetEmail($email, $newPassword, $config);
-        echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-message u-form-send-success">Email has been sent. Check your mail to reset your password.</div>';
-    } else {
-        echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">Email not found. Please try again.</div>';
-    }
+      sendPasswordResetEmail($email, $newPassword, $config);
+      echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-message u-form-send-success">Email has been sent. Check your mail to reset your password.</div>';
+  } else {
+      echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">Email not found. Please try again.</div>';
+  }
 }
+
 
 ?>
 
@@ -197,7 +197,9 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                             <h1 class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">Forget Password</h1>
                             <div class="u-form-group u-form-name">
                               <label for="email-da99" class="u-label">Email</label>
-                              <input type="text" placeholder="Enter a valid email address" id="email-da99" name="email" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-input u-input-rectangle" required="required">
+                              <input type="text" placeholder="Enter a valid email address" id="email-da99" name="email" 
+                              class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
+                              required="required">
                             </div><br/>
                             <div class="u-form-group u-label-none u-form-group-2">
                               <label for="text-5a78" class="u-label">User Type</label>
