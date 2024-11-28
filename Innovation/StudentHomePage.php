@@ -171,7 +171,7 @@ if (isset($_SESSION['message'])) {
 
                 <div class="u-align-left u-form-group u-form-submit u-label-none">
                 <button type="button" class="u-btn u-btn-submit u-button-style u-btn-1" onclick="performSearch()">
-  <img src="\images\211817_search_strong_icon.png" alt="Search Icon" style="width: 20px; height: 20px;">
+                <img src="/images/211817_search_strong_icon.png" alt="Search Icon" style="width: 20px; height: 20px;">
 </button>                </div>
             </form>
         </div>

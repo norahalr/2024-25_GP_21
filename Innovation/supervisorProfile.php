@@ -1,231 +1,498 @@
+<?php 
+  require_once 'config/connect.php';
+  $supervisorEmail="healbassam@KSU.EDU.SA1";
+
+  $sql = "SELECT * FROM supervisors WHERE email='".$supervisorEmail."'";
+  $stmt = $con->prepare($sql);
+  $stmt->execute();
+  $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  foreach ($requests as $request) {
+      $name = $request['name'];
+      $email = $request['email'];
+      $phone = $request['phone_number'];
+      $track = $request['track'];
+      $interest = $request['interest'];
+      $idea = $request['idea'];
+
+  }
+
+
+?>
 <!DOCTYPE html>
-<html style="font-size: 16px;" lang="en"><head>
+<html style="font-size: 16px;" lang="en">
+
+<head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
     <meta name="keywords" content="Supervisor Profile">
     <meta name="description" content="">
     <title>supervisorProfile</title>
     <link rel="stylesheet" href="nicepage2.css" media="screen">
-<link rel="stylesheet" href="supervisorProfile.css" media="screen">
+    <link rel="stylesheet" href="supervisorProfile.css" media="screen">
     <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
     <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
     <meta name="generator" content="Nicepage 6.19.6, nicepage.com">
     <meta name="referrer" content="origin">
-    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
-    
-    
-    
-    <script type="application/ld+json">{
-		"@context": "http://schema.org",
-		"@type": "Organization",
-		"name": "Site1",
-		"sameAs": [
-				"https://ccis.ksu.edu.sa/ar",
-				"https://x.com/fccis_ksu?s=11&t=U-hrOO7JjdBm0Zm8XnUG6A"
-		]
-}</script>
+    <link id="u-theme-google-font" rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+
+
+
+    <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "Organization",
+        "name": "Site1",
+        "sameAs": [
+            "https://ccis.ksu.edu.sa/ar",
+            "https://x.com/fccis_ksu?s=11&t=U-hrOO7JjdBm0Zm8XnUG6A"
+        ]
+    }
+    </script>
     <meta name="theme-color" content="#478ac9">
     <meta property="og:title" content="supervisorProfile">
     <meta property="og:type" content="website">
-  <meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
-  <body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="en">
-    <header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
-      <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" data-responsive-from="MD">
-        <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px; font-weight: 700; text-transform: uppercase;">
-          <a class="u-button-style u-custom-active-border-color u-custom-active-color u-custom-border u-custom-border-color u-custom-borders u-custom-hover-border-color u-custom-hover-color u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-nav-link" href="#" style="padding: 0px; font-size: calc(1em + 0.5px);">
-            <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 302 302" style=""><use xlink:href="#svg-5247"></use></svg>
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="svg-5247" x="0px" y="0px" viewBox="0 0 302 302" style="enable-background:new 0 0 302 302;" xml:space="preserve" class="u-svg-content"><g><rect y="36" width="302" height="30"></rect><rect y="236" width="302" height="30"></rect><rect y="136" width="302" height="30"></rect>
-</g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>
-          </a>
+    <meta data-intl-tel-input-cdn-path="intlTelInput/">
+</head>
+
+<body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="en">
+    <header class="u-clearfix u-header" id="sec-4e01">
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" data-responsive-from="MD">
+                <div class="menu-collapse"
+                    style="font-size: 1rem; letter-spacing: 0px; font-weight: 700; text-transform: uppercase;">
+                    <a class="u-button-style u-custom-active-border-color u-custom-active-color u-custom-border u-custom-border-color u-custom-borders u-custom-hover-border-color u-custom-hover-color u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-nav-link"
+                        href="#" style="padding: 0px; font-size: calc(1em + 0.5px);">
+                        <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 302 302" style="">
+                            <use xlink:href="#svg-5247"></use>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+                            id="svg-5247" x="0px" y="0px" viewBox="0 0 302 302"
+                            style="enable-background:new 0 0 302 302;" xml:space="preserve" class="u-svg-content">
+                            <g>
+                                <rect y="36" width="302" height="30"></rect>
+                                <rect y="236" width="302" height="30"></rect>
+                                <rect y="136" width="302" height="30"></rect>
+                            </g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                            <g></g>
+                        </svg>
+                    </a>
+                </div>
+                <div class="u-custom-menu u-nav-container">
+                    <ul class="u-nav u-spacing-30 u-unstyled u-nav-1">
+                        <li class="u-nav-item"><a
+                                class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
+                                href="SupervisorHomePage.php" style="padding: 10px 0px;">Supervisor home page</a>
+                        </li>
+                        <li class="u-nav-item"><a
+                                class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
+                                style="padding: 10px 0px;" href="supervisorProfile.php">Profile</a>
+                        </li>
+                        <li class="u-nav-item"><a
+                                class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
+                                style="padding: 10px 0px;" href="index.php">Log out</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="u-custom-menu u-nav-container-collapse">
+                    <div
+                        class="u-container-style u-inner-container-layout u-opacity u-opacity-95 u-palette-1-dark-2 u-sidenav">
+                        <div class="u-inner-container-layout u-sidenav-overflow">
+                            <div class="u-menu-close"></div>
+                            <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2">
+                                <li class="u-nav-item"><a class="u-button-style u-nav-link" href="./">Home</a>
+                                </li>
+                                <li class="u-nav-item"><a class="u-button-style u-nav-link">Sign Up</a>
+                                </li>
+                                <li class="u-nav-item"><a class="u-button-style u-nav-link">Login</a>
+                                </li>
+                                <li class="u-nav-item"><a class="u-button-style u-nav-link">Request Project from
+                                        CCIS</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="u-menu-overlay u-opacity u-opacity-70 u-palette-1-dark-2"></div>
+                </div>
+                <style class="menu-style">
+                @media (max-width: 939px) {
+                    [data-responsive-from="MD"] .u-nav-container {
+                        display: none;
+                    }
+
+                    [data-responsive-from="MD"] .menu-collapse {
+                        display: block;
+                    }
+                }
+                </style>
+            </nav>
+            <a href="#" class="u-image u-logo u-image-1" data-image-width="276" data-image-height="194">
+                <img src="images/logo_GP-noname.png" class="u-logo-image u-logo-image-1">
+            </a>
         </div>
-        <div class="u-custom-menu u-nav-container">
-          <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="SupervisorHomePage.php" style="padding: 10px 0px;">Supervisor home page</a>
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="supervisorProfile.php">Profile</a>
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.php">Log out</a>
-</li></ul>
-        </div>
-        <div class="u-custom-menu u-nav-container-collapse">
-          <div class="u-container-style u-inner-container-layout u-opacity u-opacity-95 u-palette-1-dark-2 u-sidenav">
-            <div class="u-inner-container-layout u-sidenav-overflow">
-              <div class="u-menu-close"></div>
-              <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2"><li class="u-nav-item"><a class="u-button-style u-nav-link" href="./">Home</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link">Sign Up</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link">Login</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link">Request Project from CCIS</a>
-</li></ul>
-            </div>
-          </div>
-          <div class="u-menu-overlay u-opacity u-opacity-70 u-palette-1-dark-2"></div>
-        </div>
-        <style class="menu-style">@media (max-width: 939px) {
-                  [data-responsive-from="MD"] .u-nav-container {
-                      display: none;
-                  }
-                  [data-responsive-from="MD"] .menu-collapse {
-                      display: block;
-                  }
-              }</style>
-      </nav>
-      <a href="#" class="u-image u-logo u-image-1" data-image-width="276" data-image-height="194">
-        <img src="images/logo_GP-noname.png" class="u-logo-image u-logo-image-1">
-      </a>
-    </div></header>
+    </header>
     <section class="u-align-center u-clearfix u-container-align-center u-white u-section-1" id="sec-55fc">
-      <div class="u-clearfix u-sheet u-sheet-1">
-        <h1 class="u-text u-text-custom-color-3 u-text-default u-text-1" >Supervisor Profile</h1>
-        <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-0 u-layout-wrap u-layout-wrap-1">
-          <div class="u-layout" style="">
-            <div class="u-layout-row" style="">
-              <div class="u-align-center u-container-align-center u-container-style u-layout-cell u-left-cell u-palette-1-light-3 u-radius u-shape-round u-size-60 u-size-xs-60 u-layout-cell-1" src="">
-                <div class="u-container-layout u-container-layout-1">
-                  <div class="custom-expanded u-border-1 u-border-custom-color-3 u-container-style u-group u-opacity u-opacity-80 u-radius u-shape-round u-white u-group-1">
-                    <div class="u-container-layout u-container-layout-2">
-                      <div class="u-expanded-width u-form u-form-1">
-                        <form action="https://forms.nicepagesrv.com/v2/form/process" class="u-clearfix u-form-spacing-30 u-form-vertical u-inner-form" source="email" name="form" style="padding: 15px;">
-                          <div class="u-form-group u-label-left u-form-group-1">
-                            <label for="text-6c71" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-1">Doctor name</label>
-                            <input type="text" placeholder="" id="text-6c71" name="text" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-1" required="required">
-                          </div>
-                          <div class="u-form-group u-label-left u-form-group-2">
-                            <label for="text-2b5a" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-2">Email</label>
-                            <input type="text" placeholder="" id="text-2b5a" name="text-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-2" required="required">
-                          </div>
-                          <div class="u-form-group u-label-left u-form-group-3">
-                            <label for="text-e112" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-3">Phone number</label>
-                            <input type="text" placeholder="" id="text-e112" name="text-2" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-3" required="required">
-                          </div>
-                          <div class="u-form-group u-form-select u-label-left u-form-group-4">
-                            <label for="select-b69f" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-4">Which track are you more interested in?</label>
-                            <div class="u-form-select-wrapper">
-                              <select id="select-b69f" name="select" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-4">
-                                <option value="Artificial Intelligence" data-calc="">Artificial Intelligence</option>
-                                <option value="Cyber Security" data-calc="">Cyber Security</option>
-                                <option value="Internet Of Things" data-calc="">Internet Of Things</option>
-                              </select>
-                              <svg class="u-caret u-caret-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style="fill:currentColor;" xml:space="preserve"><polygon class="st0" points="8,12 2,4 14,4 "></polygon></svg>
-                            </div>
-                          </div>
-                          <div class="u-form-group u-form-textarea u-label-left u-form-group-5">
-                            <label for="textarea-a10a" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5">Interest</label>
-                            <textarea rows="4" cols="50" id="textarea-a10a" name="textarea" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5" required="" placeholder="Please enter your interest about GP projects"></textarea>
-                          </div>
-                          <div class="u-form-group u-form-textarea u-label-left u-form-group-6">
-                            <label for="textarea-6d9e" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-6">Idea</label>
-                            <textarea rows="4" cols="50" id="textarea-6d9e" name="textarea-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-6" placeholder="Write down your idea if you have specific one"></textarea>
-                          </div>
-                          <div class="u-form-group u-form-submit u-label-left u-form-group-7">
-                            <label class="u-label u-spacing-0 u-label-7"></label>
-                            <input type="submit" value="submit" class="u-form-control-hidden" wfd-id="id118">
-                            <div class="u-align-right u-btn-submit-container">
-                              <a href="#" class="u-active-palette-1-light-3 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1">Edit </a>
-                            </div>
-                          </div>
-                          <div class="u-form-send-message u-form-send-success"> Thank you! Your message has been sent. </div>
-                          <div class="u-form-send-error u-form-send-message"> Unable to send your message. Please fix errors then try again. </div>
-                          <input type="hidden" value="" name="recaptchaResponse" wfd-id="id119">
-                          <input type="hidden" name="formServices" value="288a2770-31f5-dbbd-4ba6-cbffa36f438a">
-                        </form>
-                      </div>
-                      <a href="#" class="u-border-1 u-border-active-custom-color-3 u-border-custom-color-3 u-border-hover-palette-1-base u-border-no-left u-border-no-right u-border-no-top u-btn u-button-style u-none u-text-palette-1-base u-btn-2"onclick="handleSaveClick()">Save </a>
-                      <p id="saveMessage" style="display: none; color: green; font-weight: bold; text-align: center;">Your request has been saved successfully!</p>
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <h1 class="u-text u-text-custom-color-3 u-text-default u-text-1">Supervisor Profile</h1>
+            <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-0 u-layout-wrap u-layout-wrap-1">
+                <div class="u-layout" style="">
+                    <div class="u-layout-row" style="">
+                        <div class="u-align-center u-container-align-center u-container-style u-layout-cell u-left-cell u-palette-1-light-3 u-radius u-shape-round u-size-60 u-size-xs-60 u-layout-cell-1"
+                            src="">
+                            <div class="u-container-layout u-container-layout-1">
+                                <?php
+                              if(isset($_GET['do'])&& $_GET['do']=='success'){
+                                echo '<div class="u-form-send-message u-form-send-success"> Thank you! Your
+                                                    message has been sent. </div>';
+                              }
+                              if(isset($_GET['do'])&& $_GET['do']=='error'){
+                                echo '<div class="u-form-send-error u-form-send-message"> Unable to send your
+                                message. Please fix errors then try again. </div>';
+                              }
+                            ?>
 
-                    </div>
-                  </div>
-                  <div class="u-container-style u-group u-radius u-shape-round u-white u-group-2">
-                    <div class="u-container-layout u-container-layout-3">
-                      <div class="custom-expanded u-form u-form-2">
-                        <form action="https://forms.nicepagesrv.com/v2/form/process" class="u-clearfix u-form-spacing-30 u-form-vertical u-inner-form" source="email" name="form" style="padding: 15px;">
-                          <div class="u-form-group u-form-textarea u-label-left u-form-group-8">
-                            <label for="textarea-a10a" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-8">GP group</label>
-                            <textarea rows="4" cols="50" id="textarea-a10a" name="textarea" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-7" required="" placeholder="Students names"></textarea>
-                          </div>
-                          <div class="u-form-group u-form-partition-factor-2 u-label-left u-form-group-9">
-                            <label for="text-505a" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-9">Leader</label>
-                            <input type="text" placeholder="Email" id="text-505a" name="text" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-8">
-                          </div>
-                          <div class="u-form-group u-form-partition-factor-2 u-label-left u-form-group-10">
-                            <label for="text-1c02" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-10">Phone number</label>
-                            <input type="text" placeholder="Leader phone number" id="text-1c02" name="text-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-9">
-                          </div>
-                          <div class="u-form-group u-label-left u-form-group-11">
-                            <label for="text-6ab4" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-11">Project title</label>
-                            <input type="text" placeholder="Fill in" id="text-6ab4" name="text-2" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-10">
-                          </div>
-                          <div class="u-form-group u-form-submit u-label-left u-form-group-12">
-                            <label class="u-label u-spacing-0 u-label-12"></label>
-                            <input type="submit" value="submit" class="u-form-control-hidden" wfd-id="id118">
-                            <div class="u-align-right u-btn-submit-container">
-                              <a href="#" class="u-active-palette-1-light-3 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-3">Edit </a>
-                            </div>
-                          </div>
-                          <div class="u-form-send-message u-form-send-success"> Thank you! Your message has been sent. </div>
-                          <div class="u-form-send-error u-form-send-message"> Unable to send your message. Please fix errors then try again. </div>
-                          <input type="hidden" value="" name="recaptchaResponse" wfd-id="id119">
-                          <input type="hidden" name="formServices" value="288a2770-31f5-dbbd-4ba6-cbffa36f438a">
-                        </form>
-                      </div>
-                      <a href="#" class="u-border-1 u-border-active-custom-color-3 u-border-custom-color-3 u-border-hover-palette-1-base u-border-no-left u-border-no-right u-border-no-top u-btn u-button-style u-none u-text-palette-1-base u-btn-4"onclick="handleSaveClick()">Save </a>
-                      <!-- Success Message -->
-                      <p id="saveMessage" style="display: none; color: green; font-weight: bold; text-align: center;">Your request has been saved successfully!</p>
+                                <div
+                                    class="custom-expanded u-border-1 u-border-custom-color-3 u-container-style u-group u-opacity u-opacity-80 u-radius u-shape-round u-white u-group-1">
+                                    <div class="u-container-layout u-container-layout-2">
+                                        <div class="u-expanded-width u-form u-form-1">
+                                            <form action="edit.php" method="POST" style="padding: 15px;">
 
+
+
+                                                <div class="u-form-group u-label-left u-form-group-1">
+
+                                                    <input value="<?php echo $name; ?>" style="cursor: no-drop;"
+                                                        type="hidden" id="text-6c71" name="name"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-1"
+                                                        required="required">
+                                                </div>
+                                                <div class="u-form-group u-label-left u-form-group-2">
+                                                    <input value="<?php echo $email; ?>" style="cursor: no-drop;"
+                                                        type="hidden" id="text-2b5a" name="email"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-2"
+                                                        required="required">
+                                                </div>
+
+
+
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-label-left u-form-group-1">
+                                                    <label for="text-6c71"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-1">Doctor
+                                                        name</label>
+                                                    <input value="<?php echo $name; ?>" disabled
+                                                        style="cursor: no-drop;" type="text" id="text-6c71" name="sss"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-1"
+                                                        required="required">
+                                                </div>
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-label-left u-form-group-2">
+                                                    <label for="text-2b5a"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-2">Email</label>
+                                                    <input value="<?php echo $email; ?>" disabled
+                                                        style="cursor: no-drop;" type="text" id="text-2b5a" name="xxx"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-2"
+                                                        required="required">
+                                                </div>
+
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-label-left u-form-group-3">
+                                                    <label for="text-e112"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-3">Phone
+                                                        number</label>
+                                                    <input value="<?php echo $phone; ?>" type="number" placeholder=""
+                                                        id="text-e112" name="phone"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-3"
+                                                        required="required">
+                                                </div>
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-form-select u-label-left u-form-group-4">
+                                                    <label for="select-b69f"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-4">Which
+                                                        track are you more interested in?</label>
+                                                    <div class="u-form-select-wrapper">
+                                                        <select id="select-b69f" name="track"
+                                                            class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-4">
+
+                                                            <option value="<?php echo $track; ?>" selected>
+                                                                <?php echo $track; ?>
+                                                            </option>
+
+                                                            <?php
+                                                                  $options = ['Artificial Intelligence', 'Cybersecurity', 'Internet of Things'];
+                                                                  foreach ($options as $option) {
+                                                                      if ($option !== $track) {
+                                                                          echo "<option value=\"$option\">$option</option>";
+                                                                      }
+                                                                  }
+                                                              ?>
+                                                        </select>
+                                                        <svg class="u-caret u-caret-svg" version="1.1" id="Layer_1"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                                            width="16px" height="16px" viewBox="0 0 16 16"
+                                                            style="fill:currentColor;" xml:space="preserve">
+                                                            <polygon class="st0" points="8,12 2,4 14,4 "></polygon>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-form-textarea u-label-left u-form-group-5">
+                                                    <label for="textarea-a10a"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5">Interest</label>
+                                                    <textarea rows="4" cols="50" id="textarea-a10a" name="interest"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"
+                                                        required=""
+                                                        placeholder="Please enter your interest about GP projects"><?php echo $interest; ?></textarea>
+                                                </div>
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-form-textarea u-label-left u-form-group-6">
+                                                    <label for="textarea-6d9e"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-6">Idea</label>
+                                                    <textarea rows="4" cols="50" id="textarea-6d9e" name="idea"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-6"
+                                                        placeholder="Write down your idea if you have specific one"><?php echo $idea; ?></textarea>
+                                                </div>
+                                                <button style="margin-top:30px;" type="submit"
+                                                    class="u-active-palette-1-light-3 u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1">Edit
+                                                </button>
+                                            </form>
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+
+
+                                <?php
+                                $sql= "SELECT * FROM `supervisor_idea_request` INNER JOIN supervisors ON supervisors.email = supervisor_idea_request.supervisor_email WHERE supervisor_email='".$supervisorEmail."' AND status='Approved' ";
+                                $stmt = $con->prepare($sql);
+                                $stmt->execute();
+                                $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                foreach ($requests as $request) {
+                            
+                                  $students="";
+                                  $sql= "SELECT * FROM `students` WHERE team_email='".$request['team_email']."'";
+                                  $stmt = $con->prepare($sql);
+                                  $stmt->execute();
+                                  $studentsList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                  foreach ($studentsList as $student) {
+                                    $students = $student['name'].", ";
+                                  }
+                            ?>
+                                <div class="u-container-style u-group u-radius u-shape-round u-white u-group-2">
+                                    <div class="u-container-layout u-container-layout-3">
+                                        <div class="custom-expanded u-form u-form-2">
+                                            <form style="padding: 15px;">
+
+
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-form-textarea u-label-left u-form-group-8">
+                                                    <label for="textarea-a10a"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-8">GP
+                                                        group</label>
+                                                    <textarea disabled rows="4" cols="50" id="textarea-a10a"
+                                                        name="group"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-7"
+                                                        required=""
+                                                        placeholder="Students names"><?php echo $students; ?></textarea>
+                                                </div>
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-form-partition-factor-2 u-label-left u-form-group-9">
+                                                    <label for="text-505a"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-9">Leader</label>
+                                                    <input disabled type="text" placeholder="Email" id="text-505a"
+                                                        name="leader"
+                                                        value="<?php echo $request['team_email']; ?>"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-8">
+                                                </div>
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-form-partition-factor-2 u-label-left u-form-group-10">
+                                                    <label for="text-1c02"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-10">Phone
+                                                        number</label>
+                                                    <input disabled type="number" placeholder="Leader phone number"
+                                                        id="text-1c02" name="phone"
+                                                        value="<?php echo $request['phone_number']; ?>"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-9">
+                                                </div>
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-label-left u-form-group-11">
+                                                    <label for="text-6ab4"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-11">Project
+                                                        title</label>
+                                                    <input disabled type="text" placeholder="Fill in" id="text-6ab4"
+                                                        name="project" value="Supervisor Idea"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-10">
+                                                </div>
+                                                <!-- <button style="margin-top:30px;" type="submit"
+                                                            class="u-active-palette-1-light-3 u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1"
+                                                            >Edit
+                                                        </button>             -->
+
+                                            </form>
+                                        </div>
+                                        <?php } 
+                            ?>
+
+                            
+<?php
+                                $sql= "SELECT * FROM `team_idea_request` INNER JOIN supervisors ON supervisors.email = team_idea_request.supervisor_email  WHERE supervisor_email='".$supervisorEmail."' AND status='Approved'";
+                                $stmt = $con->prepare($sql);
+                                $stmt->execute();
+                                $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                foreach ($requests as $request) {
+                            
+                                  $students="";
+                                  $sql= "SELECT * FROM `students` WHERE team_email='".$request['team_email']."'";
+                                  $stmt = $con->prepare($sql);
+                                  $stmt->execute();
+                                  $studentsList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                  foreach ($studentsList as $student) {
+                                    $students = $student['name'].", ";
+                                  }
+                            ?>
+                                <div class="u-container-style u-group u-radius u-shape-round u-white u-group-2">
+                                    <div class="u-container-layout u-container-layout-3">
+                                        <div class="custom-expanded u-form u-form-2">
+                                            <form style="padding: 15px;">
+
+
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-form-textarea u-label-left u-form-group-8">
+                                                    <label for="textarea-a10a"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-8">GP
+                                                        group</label>
+                                                    <textarea disabled rows="4" cols="50" id="textarea-a10a"
+                                                        name="group"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-7"
+                                                        required=""
+                                                        placeholder="Students names"><?php echo $students; ?></textarea>
+                                                </div>
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-form-partition-factor-2 u-label-left u-form-group-9">
+                                                    <label for="text-505a"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-9">Leader</label>
+                                                    <input disabled type="text" placeholder="Email" id="text-505a"
+                                                        name="leader"
+                                                        value="<?php echo $request['team_email']; ?>"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-8">
+                                                </div>
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-form-partition-factor-2 u-label-left u-form-group-10">
+                                                    <label for="text-1c02"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-10">Phone
+                                                        number</label>
+                                                    <input disabled type="number" placeholder="Leader phone number"
+                                                        id="text-1c02" name="phone"
+                                                        value="<?php echo $request['phone_number']; ?>"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-9">
+                                                </div>
+                                                <div style="margin-top:30px;"
+                                                    class="u-form-group u-label-left u-form-group-11">
+                                                    <label for="text-6ab4"
+                                                        class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-11">Project
+                                                        title</label>
+                                                    <input disabled type="text" placeholder="Fill in" id="text-6ab4"
+                                                        name="project" value="<?php echo $request['project_name']; ?>"
+                                                        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-10">
+                                                </div>
+                                                <!-- <button style="margin-top:30px;" type="submit"
+                                                            class="u-active-palette-1-light-3 u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1"
+                                                            >Edit
+                                                        </button>             -->
+
+                                            </form>
+                                        </div>
+                                        <?php } 
+                            ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
     </section>
-    
-    
-    
-   
-<footer class="u-clearfix u-custom-color-3 u-footer" id="sec-9e3e"><div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
-  <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-30 u-layout-wrap u-layout-wrap-1">
-    <div class="u-gutter-0 u-layout">
-      <div class="u-layout-row">
-        <div class="u-align-left u-container-style u-layout-cell u-left-cell u-size-60 u-layout-cell-1">
-          <div class="u-container-layout u-container-layout-1">
-            <h5 class="u-align-center u-text u-text-default u-text-1">Thank you for visiting our website!<br>If you have any suggestions, please do not hesitate to contact us
-            </h5><!--position-->
-            <div data-position="" class="u-position u-position-1"><!--block-->
-              <div class="u-block">
-                <div class="u-block-container u-clearfix"><!--block_header-->
-                  <h5 class="u-block-header u-text"><!--block_header_content--><!--/block_header_content--></h5><!--/block_header--><!--block_content-->
-                  <div class="u-block-content u-text"><!--block_content_content--><!--/block_content_content--></div><!--/block_content-->
+
+
+
+
+    <footer class="u-clearfix u-custom-color-3 u-footer" id="sec-9e3e">
+        <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+            <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-30 u-layout-wrap u-layout-wrap-1">
+                <div class="u-gutter-0 u-layout">
+                    <div class="u-layout-row">
+                        <div class="u-align-left u-container-style u-layout-cell u-left-cell u-size-60 u-layout-cell-1">
+                            <div class="u-container-layout u-container-layout-1">
+                                <h5 class="u-align-center u-text u-text-default u-text-1">Thank you for visiting our
+                                    website!<br>If you have any suggestions, please do not hesitate to contact us
+                                </h5>
+                                <!--position-->
+                                <div data-position="" class="u-position u-position-1">
+                                    <!--block-->
+                                    <div class="u-block">
+                                        <div class="u-block-container u-clearfix">
+                                            <!--block_header-->
+                                            <h5 class="u-block-header u-text">
+                                                <!--block_header_content-->
+                                                <!--/block_header_content-->
+                                            </h5>
+                                            <!--/block_header-->
+                                            <!--block_content-->
+                                            <div class="u-block-content u-text">
+                                                <!--block_content_content-->
+                                                <!--/block_content_content-->
+                                            </div>
+                                            <!--/block_content-->
+                                        </div>
+                                    </div>
+                                    <!--/block-->
+                                </div>
+                                <!--/position-->
+                                <div class="u-social-icons u-spacing-10 u-social-icons-1" data-animation-name=""
+                                    data-animation-duration="0" data-animation-direction="">
+                                    <a class="u-social-url" title="Email" target="_blank" href=""><span
+                                            class="u-file-icon u-icon u-social-facebook u-social-icon u-icon-1"><img
+                                                src="images/542740.png" alt=""></span>
+                                    </a>
+                                    <a class="u-social-url" title="department website" target="_blank"
+                                        href="https://ccis.ksu.edu.sa/ar"><span
+                                            class="u-file-icon u-icon u-social-icon u-social-linkedin u-icon-2"><img
+                                                src="images/3308395.png" alt=""></span>
+                                    </a>
+                                    <a class="u-social-url" title="twitter" target="_blank"
+                                        href="https://x.com/fccis_ksu?s=11&amp;t=U-hrOO7JjdBm0Zm8XnUG6A"><span
+                                            class="u-file-icon u-icon u-social-icon u-social-twitter u-icon-3"><img
+                                                src="images/11823292.png" alt=""></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div><!--/block-->
-            </div><!--/position-->
-            <div class="u-social-icons u-spacing-10 u-social-icons-1" data-animation-name="" data-animation-duration="0" data-animation-direction="">
-              <a class="u-social-url" title="Email" target="_blank" href=""><span class="u-file-icon u-icon u-social-facebook u-social-icon u-icon-1"><img src="images/542740.png" alt=""></span>
-              </a>
-              <a class="u-social-url" title="department website" target="_blank" href="https://ccis.ksu.edu.sa/ar"><span class="u-file-icon u-icon u-social-icon u-social-linkedin u-icon-2"><img src="images/3308395.png" alt=""></span>
-              </a>
-              <a class="u-social-url" title="twitter" target="_blank" href="https://x.com/fccis_ksu?s=11&amp;t=U-hrOO7JjdBm0Zm8XnUG6A"><span class="u-file-icon u-icon u-social-icon u-social-twitter u-icon-3"><img src="images/11823292.png" alt=""></span>
-              </a>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div></footer>
-    
-  
-</body></html>
-<script>
+    </footer>
 
-  function handleSaveClick() {
-    // Display the success message
-    const saveMessage = document.getElementById('saveMessage');
-    saveMessage.style.display = 'block';
-  
-    // Hide the message after 3 seconds
-    setTimeout(() => {
-      saveMessage.style.display = 'none';
-    }, 3000);
-  }
-  
-</script>
 
+</body>
+
+</html>
