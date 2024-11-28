@@ -235,10 +235,15 @@ if (isset($_SESSION['message'])) {
                                 style="color: <?= $supervisor['availability'] === 'Unavailable' ? 'red' : '#5cb85c'; ?>; display: inline;">
                                 <?= htmlspecialchars($supervisor['availability']) ?>
                                 <span class="u-file-icon u-icon u-icon-1" style="display: inline; vertical-align: middle; margin-left: 5px; margin-bottom: 10px;">
-                                    <img src="images/<?= $supervisor['availability'] === 'Unavailable' ? 'Incorrect.png' : '3699459-d2dcaf9f.png'; ?>" alt="Availability Icon" style="width: 16px; height: 16px; vertical-align: middle; ">
+                                    <img src="images/<?= $supervisor['availability'] === 'Unavailable' ? 'Incorrect.png' : '3699459-d2dcaf9f.png'; ?>" alt="Availability Icon" style="width: 16px; height: 16px; vertical-align: middle;">
                                 </span>
                             </h6>
-                            <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">REQUEST</a>
+                            <?php if ($supervisor['availability'] !== 'Unavailable'): ?>
+                                <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" 
+                                   class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
+                                   REQUEST
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -401,9 +406,6 @@ function displayResults(data) {
     const resultsDiv = document.getElementById("searchResults");
     const title = document.querySelector("h2.u-text-1"); // Select the "Search Results" title element
 
-    // Debugging: Log data structure to the console
-    console.log("Received data:", data);
-
     // Check if data is an array
     if (!Array.isArray(data)) {
         console.error("Invalid data format received:", data);
@@ -414,7 +416,6 @@ function displayResults(data) {
 
     if (data.length === 0) {
         // No results found
-        console.log("No results found.");
         title.style.display = "none"; // Hide the title
         resultsDiv.innerHTML = "<h4 style='background-color: #E7F1FA; color: #4D7397; margin: -10px; padding: 40px 0px 500px 0px; text-align: center;'>No results found.</h4>";
         return;
@@ -422,41 +423,71 @@ function displayResults(data) {
 
     title.style.display = "block"; // Show the title if there are results
 
-    // Debugging: Log each item in the array
-    data.forEach((item, index) => {
-        console.log(`Item ${index + 1}:`, item);
-    });
+    const minItems = 6; // Set the minimum number of items to display
+
+    // Add filler items if the data count is less than the minimum required
+    while (data.length < minItems) {
+        data.push({ filler: true }); // Add filler items
+    }
 
     resultsDiv.innerHTML = `
         <section class="u-align-center u-clearfix u-container-align-center u-gradient u-section-2 u-body u-xl-mode" 
             style="background-image: linear-gradient(#e9f2fa, #adcce9); width: 100vw; padding: 30px 0; box-sizing: border-box; margin-left: calc(-50vw + 50%);">
                 
-                <div class="u-clearfix u-sheet u-sheet-1" style="max-width: 1200px; margin: 0 auto; padding: 30px;">
-                    <h2 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1">Search Results</h2>
-                    
-                    <div class="u-expanded-width u-layout-grid u-list u-list-1">
-                        <div class="u-repeater u-repeater-1">
-                            ${data.map(item => item.filler ? `
-                                <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
-                                    style="background-color: transparent; box-shadow: none; margin-bottom: 20px;">
-                                </div>` : `
-                                <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
-                                    style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); margin-bottom: 20px;">
+            <div class="u-clearfix u-sheet u-sheet-1" style="max-width: 1200px; margin: 0 auto; padding: 30px;">
+                <h2 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1">Search Results</h2>
+                
+                <div class="u-expanded-width u-layout-grid u-list u-list-1">
+                    <div class="u-repeater u-repeater-1">
+                        ${data.map(item => item.filler ? `
+                            <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
+                                style="background-color: transparent; box-shadow: none; margin-bottom: 20px;">
+                            </div>` : item.hasOwnProperty('description') ? `
+                            <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
+                                style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); margin-bottom: 20px;">
+                                
+                                <div class="u-container-layout u-similar-container u-container-layout-1">
+                                    <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2" style="margin: 10px 200px 10px 100px;">${item.name}</h5>
+                                    <p style="margin-bottom: 100px; font-size: 16px; line-height: 1.6; text-align: left; padding-right: 20px;">${item.description}</p>
                                     
-                                    <div class="u-container-layout u-similar-container u-container-layout-1">
-                                        <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2" style="margin:10px 200px 10px 100px ;">${item.name}</h5>
-                                        <p style="margin-bottom:100px; font-size: 16px; line-height: 1.6; text-align: left; padding-right: 20px;">${item.description}</p>
-                                        
-                                        <!-- Button to trigger the document -->
-                                        <a href="${item.document}" target="_blank" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1" style=" margin:50px 200px 50px 450px" >View</a>
-                                    </div>
-                                </div>`).join('')}
-                        </div>
+                                    <a href="documents/${item.document}" target="_blank" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1" style="margin: 50px 200px 50px 450px;">View</a>
+                                </div>
+                            </div>` : `
+                            <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
+     style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); margin-bottom: 20px;">
+                                
+    <div class="u-container-layout u-similar-container u-container-layout-1">
+        <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2">${item.name}</h5>
+        <div class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-2" data-image-width="309" data-image-height="309" style="margin-bottom: 35px;"></div>
+        
+        <a href="ViewSupervisor.php?email=${encodeURIComponent(item.email)}" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
+        <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-3">${item.email}</h6>
+
+        <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-4">Interest:</h6>
+        
+        <ul class="u-align-left u-text u-text-5">
+            ${item.interest.split(',').map(interest => `<li>${interest.trim()}</li>`).join('')}
+        </ul>
+
+        <h6 class="u-align-center-xs u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-custom-font u-font-oswald u-text u-text-6" 
+            style="color: ${item.availability === 'Unavailable' ? 'red' : '#5cb85c'}; display: inline;">
+            ${item.availability}
+            <span class="u-file-icon u-icon u-icon-1" style="display: inline; vertical-align: middle; margin-left: 5px; margin-bottom: 10px;">
+                <img src="images/${item.availability === 'Unavailable' ? 'Incorrect.png' : '3699459-d2dcaf9f.png'}" alt="Availability Icon" style="width: 16px; height: 16px;">
+            </span>
+        </h6>
+        
+        ${item.availability !== 'Unavailable' ? `
+            <a href="RequestSupervisor.php?email=${encodeURIComponent(item.email)}" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">REQUEST</a>
+        ` : ''}
+    </div>
+</div>
+                        `).join('')}
                     </div>
                 </div>
-            </section>`;
+            </div>
+        </section>`;
 }
-
 
 </script>
 
