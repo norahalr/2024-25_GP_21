@@ -38,6 +38,14 @@
     <meta property="og:type" content="website">
     <meta data-intl-tel-input-cdn-path="intlTelInput/">
     <style>
+        a {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+    font-size: 12px; /* Change this value to adjust the size */
+
+}
+
     input[type="radio"] {
         display: none;
     }
@@ -487,22 +495,32 @@ id="supervisor-signup-form">
       placeholder="Enter your interests in GP projects, separated by commas"></textarea>
 </div>
 <div class="u-form-group u-form-group-3">
-  <label for="text-b089"
-      class="u-custom-font u-font-georgia u-label">Password
-      <span style="color:red;">*</span></label>
-  <input type="password" placeholder="Please enter valid password (minimum 8 characters, including uppercase, lowercase, number, and special character)"
+  <label for="text-b089" class="u-custom-font u-font-georgia u-label">
+    Password <span style="color:red;">*</span>
+  </label>
+  <input type="password"
+      placeholder="Please enter valid password (minimum 8 characters, including uppercase, lowercase, number, and special character)"
       id="text-b089" name="pass"
       class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
       required="required">
+  <a href="javascript:void(0);" onclick="togglePasswordVisibility('text-b089')" id="toggle-text-b089" style="color: blue; text-decoration: underline; font-size: 12px;">
+    Show Password
+  </a>
 </div>
+
 <div class="u-form-group u-form-group-4">
-  <label for="text-8c1a"
-      class="u-custom-font u-font-georgia u-label">Re-enter
-      password <span style="color:red;">*</span></label>
-  <input type="password" id="text-8c1a" name="passcheck"
+  <label for="text-8c1a" class="u-custom-font u-font-georgia u-label">
+    Re-enter password <span style="color:red;">*</span>
+  </label>
+  <input type="password"
+      id="text-8c1a" name="passcheck"
       class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
       required="required">
+  <a href="javascript:void(0);" onclick="togglePasswordVisibility('text-8c1a')" id="toggle-text-8c1a" style="color: blue; text-decoration: underline; font-size: 12px;">
+    Show Password
+  </a>
 </div>
+
 <div class="u-form-group u-form-submit u-form-group-5">
 
   <button type="submit"
@@ -583,26 +601,26 @@ id="supervisor-signup-form">
         </div>
     </div>
 
-    <div class="u-form-group">
-        <label for="password"
-            class="u-custom-font u-font-georgia u-label">Password
-            <span style="color:red;">*</span></label>
-        <input type="password"
-            placeholder="Please enter valid password (minimum 8 characters, including uppercase, lowercase, number, and special character)" id="password"
-            name="password"
-            class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
-            required="">
-    </div>
-    <div class="u-form-group">
-        <label for="re-enter-password"
-            class="u-custom-font u-font-georgia u-label">Re-enter
-            password <span style="color:red;">*</span></label>
-        <input type="password"
-            placeholder="Please re-enter password"
-            id="re-enter-password" name="re-enter-password"
-            class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
-            required="">
-    </div>
+    <div class="input-wrapper">
+    <label for="password" class="u-custom-font u-font-georgia u-label">
+        Password <span style="color:red;">*</span>
+    </label>
+    <input type="password" placeholder="Please enter valid password (minimum 8 characters, including uppercase, lowercase, number, and special character)" id="password" name="password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required>
+    <a href="javascript:void(0);" onclick="togglePasswordVisibility('password')" id="toggle-password" style="color: blue; text-decoration: underline;">
+        Show Password
+    </a>
+</div>
+
+<div class="input-wrapper">
+    <label for="re-enter-password" class="u-custom-font u-font-georgia u-label">
+        Re-enter password <span style="color:red;">*</span>
+    </label>
+    <input type="password" id="re-enter-password" name="re-enter-password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required>
+    <a href="javascript:void(0);" onclick="togglePasswordVisibility('re-enter-password')" id="toggle-re-enter-password" style="color: blue; text-decoration: underline;">
+        Show Password
+    </a>
+</div>
+
 
     <div class="u-form-group u-form-submit">
         <button type="submit" value="Submit"
@@ -612,6 +630,34 @@ id="supervisor-signup-form">
 </form>
 
     <script>
+        function togglePasswordVisibility(inputId) {
+    const passwordField = document.getElementById(inputId);
+    const toggleLink = document.getElementById('toggle-' + inputId);
+
+    // Toggle input type between 'password' and 'text'
+    if (passwordField.type === "password") {
+        passwordField.type = "text"; // Show password
+        toggleLink.textContent = "Hide Password"; // Update link text
+    } else {
+        passwordField.type = "password"; // Hide password
+        toggleLink.textContent = "Show Password"; // Update link text
+    }
+}
+
+        function togglePasswordVisibility(inputId) {
+    var passwordField = document.getElementById(inputId);
+    var link = document.getElementById('toggle-' + inputId);
+
+    // Toggle the input type between 'password' and 'text'
+    if (passwordField.type === "password") {
+        passwordField.type = "text"; // Show the password
+        link.textContent = "Hide Password"; // Change link text
+    } else {
+        passwordField.type = "password"; // Hide the password
+        link.textContent = "Show Password"; // Change link text
+    }
+}
+
               // Helper function to show error messages
     function showError(input, message) {
         let errorElement = input.nextElementSibling;
