@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Nov 27, 2024 at 07:52 PM
+-- Generation Time: Nov 29, 2024 at 12:20 PM
 -- Server version: 5.7.39
 -- PHP Version: 7.4.33
 
@@ -127,18 +127,6 @@ INSERT INTO `past_projects` (`id`, `name`, `description`, `keywords`, `document`
 (45, 'Huna KSA', 'Huna KSA is a mobile application designed to enhance tourism in Saudi Arabia by providing tourists and locals with personalized recommendations based on their interests. The app uses machine learning algorithms and a recommender system to suggest tourist destinations, activities, and recreational spots, including specialized options for women and children. By integrating Google Maps API, users can easily locate and navigate to their chosen sites. Developed using Flutter and Firebase, Huna KSA aligns with Saudi Arabia’s Vision 2030, promoting tourism and showcasing the country’s diverse attractions while providing a modern solution to boost visitor engagement.', 'tourism,recommendation,SaudiArabia,mobileapplication,machinelearning,GoogleMapsAPI,Vision2030', 'PastProjects/45-HunaKSA_Release-2.pdf', 'Entertainment'),
 (46, 'STEGO', 'STEGO is an Android mobile application designed to enhance the security of information exchange through the use of steganography. It allows users to hide secret messages within images, making them appear as innocent photos to anyone without access. Using the camera or selecting from the gallery, users can embed confidential messages, which only the intended recipient can decode with a shared secret key. The application leverages asymmetric key cryptography to securely share this key, ensuring high security for private communications.STEGO prioritizes user convenience and data protection.', 'steganography,security,privacy,android,application,encryption,secretmessage,communication,data,cryptography,agilemethodology,imageembedding,cameraintegration,asymmetrickey,confidentiality', 'PastProjects/46-STEGO_Report.pdf', 'Security'),
 (47, 'ALQ', 'ALQ is an educational mobile application designed for young learners aged 10 to 15, aimed at making the study of human anatomy interactive and engaging. By utilizing augmented reality (AR) technology, the app allows users to visualize 3D models of various human body systems and interact with these models in real time. Users can explore and rotate the models, learning about different organs and their functions. The app also includes quizzes after each system to test and reinforce users\' knowledge, making learning both informative and enjoyable.', 'augmentedreality,humananatomy,younglearners,educationalapp,interactivelearning,3dmodels,anatomyquiz,learningplatform', 'PastProjects/47-ALAQ_Release_2.pdf', 'Academic Solutions');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `pdf_files`
---
-
-CREATE TABLE `pdf_files` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `path` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -287,7 +275,7 @@ CREATE TABLE `supervisors` (
 --
 
 INSERT INTO `supervisors` (`email`, `name`, `password`, `track`, `idea`, `interest`, `availability`, `phone_number`) VALUES
-('aabeer@KSU.EDU.SA', 'Abeer Aldayel', '1', NULL, NULL, 'Computational Social Science,Natural Language Processing', 'Unavailable', ''),
+('aabeer@KSU.EDU.SA', 'Abeer Aldayel', '1', 'Artificial Intelligence', '', 'Computational Social Science,Natural Language Processing', 'Unavailable', ''),
 ('ajafri@KSU.EDU.SA', 'Afshan Jafri', '1', NULL, NULL, 'Natural Language Processing,Data Analytics,Cloud Computing,Distributed Programming,Parallel Programming,Scientific Computing', 'Available', ''),
 ('alyahya@KSU.EDU.SA', 'Maha AlYahya', '1', 'Artificial Intelligence', NULL, 'Arabic NLP,AI for Arabic Language ', 'Available', ''),
 ('amajdah@KSU.EDU.SA', 'Majdah Alshehri', '1', NULL, NULL, 'HCI,Inclusive Technology,Design Methods,Internet Of Things', 'Available', ''),
@@ -297,7 +285,8 @@ INSERT INTO `supervisors` (`email`, `name`, `password`, `track`, `idea`, `intere
 ('halbaity@KSU.EDU.SA', 'Heyam AlBaity	', '1', NULL, NULL, 'Artificial Intelligence,Data Science,Machine Learning,Computer Vision,Biometrics', 'Available', ''),
 ('halhindi@KSU.EDU.SA', 'Hanan Alhindi', '1', 'Cybersecurity', NULL, 'Cybersecurity,Security', 'Available', ''),
 ('halsaaran@KSU.EDU.SA', 'Hessah Alsaaran', '1', 'Artificial Intelligence', NULL, 'Computer Vision,Image Analysis,Video Analysis,Machine Learning,Artificial Intelligence', 'Available', ''),
-('healbassam@KSU.EDU.SA', 'Hend Albassam', '1', NULL, NULL, 'Software Engineering,User Experience Design,Artificial Intelligence,Internet of Things', 'Available', ''),
+('healbassam@ksu.edu.sa', 'Hend Albassam', '$2y$10$YDWkYw1Hxsk6Wy5MzMFxYO7Ryetsjad8oqBFRYP5J9wkHL.MN1hH.', 'Artificial Intelligence', 'I am interested in developing mobile applications that serves academic community.', '', 'Available', NULL),
+('healbassam@KSU.EDU.SA1', 'Hend Albassam', '1', 'Artificial Intelligence', 'application designed to simplify the management of personal and professional schedules using Artificial Neural Networks (ANNs). The app integrates with users’ calendars, emails, and task management tools to analyze and prioritize activities based on deadlines, importance, and personal prefer\r\n\r\n\r\nour system will be a website that offers ........etc,', 'Software Engineering,User Experience Design,Artificial Intelligenc, prompt engineering.', 'Unavailable', '0503482222'),
 ('hmokhtar@KSU.EDU.SA', 'Hala Mokhtar', '1', NULL, NULL, 'Internet of Things, Wireless Networks,Artificial Intelligence,Machine Learning,Smart Education Systems', 'Available', ''),
 ('houertani@KSU.EDU.SA', 'Henda Ouertani', '1', 'Artificial Intelligence', NULL, 'Artificial Intelligence,Internet of Things', 'Available', ''),
 ('kalyahya1@KSU.EDU.SA', 'Khulood Alyahya', '1', NULL, NULL, 'Artificial Intelligence,Large Language Models,Optimisation,General Machine Learning,Machine Learning in Finance,Data Visualisation,Time Series Forecasting,Data Science in Medical,Data Science in Biological,Data science in Behavioural and Decision Making', 'Available', ''),
@@ -355,7 +344,7 @@ INSERT INTO `supervisor_projects` (`supervisor_email`, `pastproject_id`) VALUES
 ('halsaaran@KSU.EDU.SA', 13),
 ('ksaleh@KSU.EDU.SA', 14),
 ('noralhammad@KSU.EDU.SA', 15),
-('healbassam@KSU.EDU.SA', 16),
+('healbassam@KSU.EDU.SA1', 16),
 ('nalrumaih@KSU.EDU.SA', 17),
 ('lalzaben@KSU.EDU.SA', 18),
 ('dalsaeed@KSU.EDU.SA', 19),
@@ -370,7 +359,7 @@ INSERT INTO `supervisor_projects` (`supervisor_email`, `pastproject_id`) VALUES
 ('walkaldi@KSU.EDU.SA', 36),
 ('kalyahya1@KSU.EDU.SA', 37),
 ('lalbraheem@KSU.EDU.SA', 39),
-('healbassam@KSU.EDU.SA', 40),
+('healbassam@KSU.EDU.SA1', 40),
 ('malshardan@KSU.EDU.SA', 40),
 ('nalrumaih@KSU.EDU.SA', 41),
 ('lalhusain@KSU.EDU.SA', 43),
@@ -466,12 +455,6 @@ ALTER TABLE `past_projects`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `pdf_files`
---
-ALTER TABLE `pdf_files`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `projects_technology`
 --
 ALTER TABLE `projects_technology`
@@ -545,22 +528,16 @@ ALTER TABLE `past_projects`
   MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
--- AUTO_INCREMENT for table `pdf_files`
---
-ALTER TABLE `pdf_files`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `supervisor_idea_request`
 --
 ALTER TABLE `supervisor_idea_request`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `team_idea_request`
 --
 ALTER TABLE `team_idea_request`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `technologies`
