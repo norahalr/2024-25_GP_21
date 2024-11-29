@@ -1627,40 +1627,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
       </div>
     </div></footer>
-   <script>
+    <script>
     document.getElementById('projectPreference').addEventListener('change', function () {
         const preference = this.value;
-        const textarea = document.getElementById('ideaTextarea');
-        const label = document.getElementById('textareaLabel');
         const projectNameGroup = document.getElementById('projectNameGroup');
+        const textarea = document.getElementById('ideaTextarea');
 
         if (preference === 'Your Own Idea') {
             // Show project name input
             projectNameGroup.style.display = 'block';
 
-            // Enable editing in the textarea
-            textarea.value = '';
+            // Enable textarea editing
             textarea.readOnly = false;
             textarea.placeholder = 'Write your idea here';
-            label.textContent = 'Your Idea';
         } else {
             // Hide project name input
             projectNameGroup.style.display = 'none';
 
             // Make textarea read-only with supervisor's idea
-            textarea.value = `<?= htmlspecialchars($supervisors[0]['idea']) ?>`;
             textarea.readOnly = true;
             textarea.placeholder = '';
-            label.textContent = 'Supervisor Idea';
         }
     });
 
-    // Initialize the form based on the current selection
+    // Initialize form behavior on page load
     window.addEventListener('load', function () {
-        const preference = document.getElementById('projectPreference').value;
         document.getElementById('projectPreference').dispatchEvent(new Event('change'));
     });
-
 </script>
 </body>
 </html>
