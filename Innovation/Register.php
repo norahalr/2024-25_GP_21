@@ -38,6 +38,14 @@
     <meta property="og:type" content="website">
     <meta data-intl-tel-input-cdn-path="intlTelInput/">
     <style>
+        a {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+    font-size: 12px; /* Change this value to adjust the size */
+
+}
+
     input[type="radio"] {
         display: none;
     }
@@ -244,9 +252,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     if (empty($semail)) {
         $errors[] = "Email is required.";
-    } elseif (!preg_match("/@ksu\.edu\.sa$/", $semail)) {
+    } elseif (!preg_match("/@ksu\.edu\.sa$/i", $semail)) { // Add 'i' flag for case-insensitivity
         $errors[] = "Email must be from the domain @ksu.edu.sa.";
     }
+    
     if (empty($select)) {
         $errors[] = "Track is required.";
     }
@@ -459,9 +468,9 @@ id="supervisor-signup-form">
           class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-4">
           <option value="Artificial Intelligence"
               data-calc="">Artificial Intelligence</option>
-          <option value="Cyber Security" data-calc="">Cyber
+          <option value="Cybersecurity" data-calc="">Cyber
               Security</option>
-          <option value="Internet Of Things" data-calc="">
+          <option value="Internet of Things" data-calc="">
               Internet Of Things</option>
       </select>
       <svg class="u-caret u-caret-svg" version="1.1"
@@ -487,22 +496,32 @@ id="supervisor-signup-form">
       placeholder="Enter your interests in GP projects, separated by commas"></textarea>
 </div>
 <div class="u-form-group u-form-group-3">
-  <label for="text-b089"
-      class="u-custom-font u-font-georgia u-label">Password
-      <span style="color:red;">*</span></label>
-  <input type="password" placeholder="Please enter valid password (minimum 8 characters, including uppercase, lowercase, number, and special character)"
+  <label for="text-b089" class="u-custom-font u-font-georgia u-label">
+    Password <span style="color:red;">*</span>
+  </label>
+  <input type="password"
+      placeholder="Please enter valid password (minimum 8 characters, including uppercase, lowercase, number, and special character)"
       id="text-b089" name="pass"
       class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
       required="required">
+  <a href="javascript:void(0);" onclick="togglePasswordVisibility('text-b089')" id="toggle-text-b089" style="color: blue; text-decoration: underline; font-size: 12px;">
+    Show Password
+  </a>
 </div>
+
 <div class="u-form-group u-form-group-4">
-  <label for="text-8c1a"
-      class="u-custom-font u-font-georgia u-label">Re-enter
-      password <span style="color:red;">*</span></label>
-  <input type="password" id="text-8c1a" name="passcheck"
+  <label for="text-8c1a" class="u-custom-font u-font-georgia u-label">
+    Re-enter password <span style="color:red;">*</span>
+  </label>
+  <input type="password"
+      id="text-8c1a" name="passcheck"
       class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
       required="required">
+  <a href="javascript:void(0);" onclick="togglePasswordVisibility('text-8c1a')" id="toggle-text-8c1a" style="color: blue; text-decoration: underline; font-size: 12px;">
+    Show Password
+  </a>
 </div>
+
 <div class="u-form-group u-form-submit u-form-group-5">
 
   <button type="submit"
@@ -583,26 +602,26 @@ id="supervisor-signup-form">
         </div>
     </div>
 
-    <div class="u-form-group">
-        <label for="password"
-            class="u-custom-font u-font-georgia u-label">Password
-            <span style="color:red;">*</span></label>
-        <input type="password"
-            placeholder="Please enter valid password (minimum 8 characters, including uppercase, lowercase, number, and special character)" id="password"
-            name="password"
-            class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
-            required="">
-    </div>
-    <div class="u-form-group">
-        <label for="re-enter-password"
-            class="u-custom-font u-font-georgia u-label">Re-enter
-            password <span style="color:red;">*</span></label>
-        <input type="password"
-            placeholder="Please re-enter password"
-            id="re-enter-password" name="re-enter-password"
-            class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
-            required="">
-    </div>
+    <div class="input-wrapper">
+    <label for="password" class="u-custom-font u-font-georgia u-label">
+        Password <span style="color:red;">*</span>
+    </label>
+    <input type="password" placeholder="Please enter valid password (minimum 8 characters, including uppercase, lowercase, number, and special character)" id="password" name="password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required>
+    <a href="javascript:void(0);" onclick="togglePasswordVisibility('password')" id="toggle-password" style="color: blue; text-decoration: underline;">
+        Show Password
+    </a>
+</div>
+
+<div class="input-wrapper">
+    <label for="re-enter-password" class="u-custom-font u-font-georgia u-label">
+        Re-enter password <span style="color:red;">*</span>
+    </label>
+    <input type="password" id="re-enter-password" name="re-enter-password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required>
+    <a href="javascript:void(0);" onclick="togglePasswordVisibility('re-enter-password')" id="toggle-re-enter-password" style="color: blue; text-decoration: underline;">
+        Show Password
+    </a>
+</div>
+
 
     <div class="u-form-group u-form-submit">
         <button type="submit" value="Submit"
@@ -612,6 +631,34 @@ id="supervisor-signup-form">
 </form>
 
     <script>
+        function togglePasswordVisibility(inputId) {
+    const passwordField = document.getElementById(inputId);
+    const toggleLink = document.getElementById('toggle-' + inputId);
+
+    // Toggle input type between 'password' and 'text'
+    if (passwordField.type === "password") {
+        passwordField.type = "text"; // Show password
+        toggleLink.textContent = "Hide Password"; // Update link text
+    } else {
+        passwordField.type = "password"; // Hide password
+        toggleLink.textContent = "Show Password"; // Update link text
+    }
+}
+
+        function togglePasswordVisibility(inputId) {
+    var passwordField = document.getElementById(inputId);
+    var link = document.getElementById('toggle-' + inputId);
+
+    // Toggle the input type between 'password' and 'text'
+    if (passwordField.type === "password") {
+        passwordField.type = "text"; // Show the password
+        link.textContent = "Hide Password"; // Change link text
+    } else {
+        passwordField.type = "password"; // Hide the password
+        link.textContent = "Show Password"; // Change link text
+    }
+}
+
               // Helper function to show error messages
     function showError(input, message) {
         let errorElement = input.nextElementSibling;
@@ -647,12 +694,13 @@ id="supervisor-signup-form">
         }
 
         if (fieldName === 'leader-email' || fieldName.startsWith('student-email')) {
-            if (!/^[^\s@]+@student\.ksu\.edu\.sa$/.test(value)) {
-                showError(input, 'Please enter a valid KSU student email.');
-            } else {
-                clearError(input);
-            }
-        }
+    if (!/^[^\s@]+@student\.ksu\.edu\.sa$/i.test(value)) { // Add 'i' flag for case-insensitivity
+        showError(input, 'Please enter a valid KSU student email.');
+    } else {
+        clearError(input);
+    }
+}
+
 
         if (fieldName === 'password') {
             if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)) {

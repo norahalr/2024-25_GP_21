@@ -10,6 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userEmail = $_SESSION['user_id']; // Get user ID from session
+
 if (isset($_GET['supervisor_email'])||isset($_POST['supervisor_email'])) {
   $supervisorEmail = $_GET['supervisor_email'];
 } else {
@@ -34,26 +35,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $supervisorEmail = $_POST['supervisor_email'];
 
     try {
-        // Check if the student already requested this supervisor
+        // Check if the student already requested this supervisor with Pending or Rejected status
         $query = "
             SELECT COUNT(*) AS existing_requests 
             FROM (
-                SELECT id FROM supervisor_idea_request WHERE team_email = :team_email AND supervisor_email = :supervisor_email
+                SELECT id FROM supervisor_idea_request 
+                WHERE team_email = :team_email 
+                  AND supervisor_email = :supervisor_email
+                  AND status  IN ('Pending')  -- Ensure the status is not Pending or Rejected
                 UNION ALL
-                SELECT id FROM team_idea_request WHERE team_email = :team_email AND supervisor_email = :supervisor_email
+                SELECT id FROM team_idea_request 
+                WHERE team_email = :team_email 
+                  AND supervisor_email = :supervisor_email
+                  AND status IN ('Pending')  -- Ensure the status is not Pending or Rejected
             ) AS combined_requests";
+            
         $stmt = $con->prepare($query);
         $stmt->execute([
             'team_email' => $userEmail,
             'supervisor_email' => $supervisorEmail
         ]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        
         if ($row['existing_requests'] > 0) {
-            $_SESSION['message'] = "Error: You have already submitted a request to this supervisor.";
+            $_SESSION['message'] = "Error: You have already submitted a request to this supervisor with a status Pending.";
             header("Location: StudentHomePage.php");
             exit();
         }
+        
 
         // Check the number of "on-progress" requests for the team
         $query = "
@@ -1627,40 +1636,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
       </div>
     </div></footer>
-   <script>
+    <script>
     document.getElementById('projectPreference').addEventListener('change', function () {
         const preference = this.value;
-        const textarea = document.getElementById('ideaTextarea');
-        const label = document.getElementById('textareaLabel');
         const projectNameGroup = document.getElementById('projectNameGroup');
+        const textarea = document.getElementById('ideaTextarea');
 
         if (preference === 'Your Own Idea') {
             // Show project name input
             projectNameGroup.style.display = 'block';
 
-            // Enable editing in the textarea
-            textarea.value = '';
+            // Enable textarea editing
             textarea.readOnly = false;
             textarea.placeholder = 'Write your idea here';
-            label.textContent = 'Your Idea';
         } else {
             // Hide project name input
             projectNameGroup.style.display = 'none';
 
             // Make textarea read-only with supervisor's idea
-            textarea.value = `<?= htmlspecialchars($supervisors[0]['idea']) ?>`;
             textarea.readOnly = true;
             textarea.placeholder = '';
-            label.textContent = 'Supervisor Idea';
         }
     });
 
-    // Initialize the form based on the current selection
+    // Initialize form behavior on page load
     window.addEventListener('load', function () {
-        const preference = document.getElementById('projectPreference').value;
         document.getElementById('projectPreference').dispatchEvent(new Event('change'));
     });
-
 </script>
 </body>
 </html>

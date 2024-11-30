@@ -33,6 +33,13 @@
     <meta property="og:type" content="website">
   <meta data-intl-tel-input-cdn-path="intlTelInput/">
   <style>
+     a {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+    font-size: 12px; /* Change this value to adjust the size */
+
+}
     input[type="radio"] {
         display: none;
     }
@@ -133,13 +140,13 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
   $password=$_POST['password'];
 
   if ($type == 1) { // Supervisor
-    $stmt = $con->prepare("SELECT password FROM supervisors WHERE email = :email");
+    $stmt = $con->prepare("SELECT email, password FROM supervisors WHERE email = :email");
     $stmt->bindParam(':email', $email);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($result && password_verify($password, $result['password'])) {
-      $_SESSION['user_id'] = $result['id'];
+      $_SESSION['user_id'] = $result['email'];
       $_SESSION['email'] = $email;
       $_SESSION['user_type'] = 'supervisor';
         header("Location: SupervisorHomePage.php");
@@ -234,11 +241,17 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                               required="required">
                             </div>
                             <div class="u-form-group u-label-none u-form-group-2">
-                              <label for="text-5a78" class="u-label">Password <span style="color:red;">*</span></label>
-                              <input type="password" placeholder="Password" id="text-5a78" name="password"
-                              class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
-                              required="required">
-                            </div>
+  <label for="text-5a78" class="u-label">
+    Password <span style="color:red;">*</span>
+  </label>
+  <input type="password" placeholder="Password" id="text-5a78" name="password"
+      class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
+      required="required">
+  <a href="javascript:void(0);" onclick="togglePasswordVisibility('text-5a78')" id="toggle-text-5a78" style="color: blue; text-decoration: underline; font-size: 12px;">
+    Show Password
+  </a>
+</div>
+
                             <div class="u-align-right u-form-group u-form-submit">
                               <a href="Forget.php" class="frpass">Forget password?</a>
                               <button type="submit" class="u-active-palette-1-light-1 u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1">Login</button>
@@ -259,11 +272,18 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                               required="required">
                             </div>
                             <div class="u-form-group u-label-none u-form-group-2">
-                              <label for="text-5a78" class="u-label">Password <span style="color:red;">*</span></label>
-                              <input type="password" placeholder="Password" id="text-5a78" name="password" 
-                              class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
-                              required="required">
-                            </div>
+  <label for="text-5a79" class="u-label">
+    Password <span style="color:red;">*</span>
+  </label>
+  <input type="password" placeholder="Password" id="text-5a79" name="password"
+      class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
+      required="required">
+  <a href="javascript:void(0);" onclick="togglePasswordVisibility('text-5a79')" id="toggle-text-5a79" 
+      style="color: blue; text-decoration: underline; font-size: 12px; display: inline-block; margin-top: 5px;">
+    Show Password
+  </a>
+</div>
+
                             <div class="u-align-right u-form-group u-form-submit">
                               <a href="Forget.php" class="frpass">Forget password?</a>
                               <button type="submit" class="u-active-palette-1-light-1 u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1">Login</button>
@@ -320,6 +340,33 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     
   
     <script>
+      function togglePasswordVisibility(inputId) {
+    const passwordField = document.getElementById(inputId);
+    const toggleLink = document.getElementById('toggle-' + inputId);
+
+    if (passwordField.type === "password") {
+        passwordField.type = "text"; // Reveal the password
+        toggleLink.textContent = "Hide Password"; // Update link text
+    } else {
+        passwordField.type = "password"; // Hide the password
+        toggleLink.textContent = "Show Password"; // Update link text
+    }
+}
+
+      function togglePasswordVisibility(inputId) {
+    const passwordField = document.getElementById(inputId);
+    const toggleLink = document.getElementById('toggle-' + inputId);
+
+    // Toggle input type between 'password' and 'text'
+    if (passwordField.type === "password") {
+        passwordField.type = "text"; // Show password
+        toggleLink.textContent = "Hide Password"; // Update link text
+    } else {
+        passwordField.type = "password"; // Hide password
+        toggleLink.textContent = "Show Password"; // Update link text
+    }
+}
+
       document.addEventListener("DOMContentLoaded", function() {
           const supervisorForm = document.getElementById("supervisor-login-form");
           const studentForm = document.getElementById("student-login-form");

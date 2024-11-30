@@ -18,12 +18,12 @@ echo $requestType;
         // Determine the table based on request type
         $table = ($requestType === 'team_idea_request') ? 'team_idea_request' : 'supervisor_idea_request';
 
-        // Update the status to 'Deleted'
-        $stmt = $con->prepare("UPDATE $table SET status = 'Deleted' WHERE id = :id AND status != 'Approved' AND status != 'Rejected'");
+        // Update the status to 'Canceled'
+        $stmt = $con->prepare("UPDATE $table SET status = 'Canceled' WHERE id = :id AND status != 'Approved' AND status != 'Rejected'");
         $stmt->execute(['id' => $requestId]);
 
         // Set a success message
-        $_SESSION['message'] = "The request has been marked as deleted.";
+        $_SESSION['message'] = "The request has been marked as Canceled.";
     } catch (PDOException $e) {
         $_SESSION['error'] = "An error occurred while trying to delete the request: " . $e->getMessage();
     }

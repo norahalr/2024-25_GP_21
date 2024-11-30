@@ -34,7 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['textarea'])) {
         $updateStmt->bindParam(':idea', $idea);
         $updateStmt->bindParam(':email', $userEmail);
         $updateStmt->execute();
-        echo "Idea updated successfully.";
+        //echo "Idea updated successfully.";
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit; // Ensure the script stops executing after the redirect
     
 
 }

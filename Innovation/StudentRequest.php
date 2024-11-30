@@ -281,7 +281,7 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
                     echo 'lightgreen';
                 } elseif ($request['status'] == 'Rejected') {
                   echo 'red';
-                }elseif ($request['status'] == 'Deleted') {
+                }elseif ($request['status'] == 'Canceled') {
                     echo 'gray';
                 } else {
                     echo 'black';
@@ -290,7 +290,7 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
                 <?= htmlspecialchars($request['status']) ?>
             </span>
         </div>
-        <?php if ($request['status'] == 'Pending'): // Check if the status is not deleted ?>
+        <?php if ($request['status'] == 'Pending'): // Check if the status is not Canceled ?>
 
         <!-- Add Buttons Here -->
         <div class="u-blog-control u-buttons" style="
@@ -299,7 +299,7 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
 ">
         <!-- Edit Button -->
          
-        <?php if ($request['request_type'] === 'team_idea_request'): // Check if the status is not deleted ?>
+        <?php if ($request['request_type'] === 'team_idea_request'): // Check if the status is not Canceled ?>
 
         <form action="edit-request.php" method="GET" style="display: inline-block;">
     <input type="hidden" name="id" value="<?= htmlspecialchars($request['id'], ENT_QUOTES, 'UTF-8') ?>">
@@ -341,7 +341,7 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
             border-radius: 5px;
             font-weight: bold;
         ">
-        Delete
+        Cancel
     </button>
 </form>
 
@@ -369,7 +369,7 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
         border-radius: 5px;
         cursor: pointer;
         margin-right: 10px;
-    ">Yes, Delete</button>
+    ">Yes, Cancel</button>
     <button id="cancelDeleteButton" style="
         padding: 10px 20px;
         background-color: #007BFF;
@@ -377,7 +377,7 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
         border: none;
         border-radius: 5px;
         cursor: pointer;
-    ">Cancel</button>
+    ">No don't Cancel</button>
 </div>
 <div id="deleteOverlay" style="
     display: none;
