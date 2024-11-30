@@ -1,6 +1,14 @@
 <?php 
+ ob_start();
+ session_start();
   require_once 'config/connect.php';
-  $supervisorEmail="healbassam@KSU.EDU.SA1";
+  if (!isset($_SESSION['user_id'])) {
+    echo "Error: User is not logged in.";
+    header("Location: LogIn.php");
+
+    exit();
+}
+$supervisorEmail=$_SESSION['user_id'];
 
 ?>
 

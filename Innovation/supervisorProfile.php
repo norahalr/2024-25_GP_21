@@ -1,7 +1,15 @@
 <?php 
   require_once 'config/connect.php';
-  $supervisorEmail="healbassam@KSU.EDU.SA1";
-
+  ob_start();
+  session_start();
+   require_once 'config/connect.php';
+   if (!isset($_SESSION['user_id'])) {
+     echo "Error: User is not logged in.";
+     header("Location: LogIn.php");
+ 
+     exit();
+ }
+ $supervisorEmail=$_SESSION['user_id'];
   $sql = "SELECT * FROM supervisors WHERE email='".$supervisorEmail."'";
   $stmt = $con->prepare($sql);
   $stmt->execute();
