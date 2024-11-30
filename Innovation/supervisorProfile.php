@@ -1,32 +1,36 @@
 <?php 
-  require_once 'config/connect.php';
-  ob_start();
-  session_start();
-   require_once 'config/connect.php';
-   if (!isset($_SESSION['user_id'])) {
-     echo "Error: User is not logged in.";
-     header("Location: LogIn.php");
- 
-     exit();
- }
- $supervisorEmail=$_SESSION['user_id'];
-  $sql = "SELECT * FROM supervisors WHERE email='".$supervisorEmail."'";
-  $stmt = $con->prepare($sql);
-  $stmt->execute();
-  $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
+require_once 'config/connect.php';
+ob_start();
+session_start();
 
-  foreach ($requests as $request) {
-      $name = $request['name'];
-      $email = $request['email'];
-      $phone = $request['phone_number'];
-      $track = $request['track'];
-      $interest = $request['interest'];
-      $idea = $request['idea'];
+if (!isset($_SESSION['user_id'])) {
+    header("Location: LogIn.php");
+    exit();
+}
 
-  }
+$supervisorEmail = $_SESSION['user_id']; // Ensure this contains email or adjust query to use ID
 
+$sql = "SELECT * FROM supervisors WHERE email = :email";
+$stmt = $con->prepare($sql);
+$stmt->bindParam(':email', $supervisorEmail);
+$stmt->execute();
+$request = $stmt->fetch(PDO::FETCH_ASSOC);
 
+if ($request) {
+    $name = $request['name'];
+    $email = $request['email'];
+    $phone = $request['phone_number'];
+    $track = $request['track'];
+    $interest = $request['interest'];
+    $idea = $request['idea'];
+} else {
+    echo "No data found for this supervisor.";
+    exit();
+}
 ?>
+
+
+
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en">
 
@@ -165,12 +169,10 @@
                             <div class="u-container-layout u-container-layout-1">
                                 <?php
                               if(isset($_GET['do'])&& $_GET['do']=='success'){
-                                echo '<div class="u-form-send-message u-form-send-success"> Thank you! Your
-                                                    message has been sent. </div>';
+                                echo '<div class="u-form-send-message u-form-send-success"> Supervisor information updated successfully! </div>';
                               }
                               if(isset($_GET['do'])&& $_GET['do']=='error'){
-                                echo '<div class="u-form-send-error u-form-send-message"> Unable to send your
-                                message. Please fix errors then try again. </div>';
+                                echo '<div class="u-form-send-error u-form-send-message"> Unable to update supervisor </div>';
                               }
                             ?>
 
@@ -226,7 +228,7 @@
                                                     <input value="<?php echo $phone; ?>" type="number" placeholder=""
                                                         id="text-e112" name="phone"
                                                         class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-3"
-                                                        required="required">
+                                                        >
                                                 </div>
                                                 <div style="margin-top:30px;"
                                                     class="u-form-group u-form-select u-label-left u-form-group-4">

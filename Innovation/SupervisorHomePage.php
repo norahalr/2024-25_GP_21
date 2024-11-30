@@ -2,6 +2,7 @@
  ob_start();
  session_start();
   require_once 'config/connect.php';
+
   if (!isset($_SESSION['user_id'])) {
     echo "Error: User is not logged in.";
     header("Location: LogIn.php");
@@ -141,8 +142,17 @@ $supervisorEmail=$_SESSION['user_id'];
     <section class="u-clearfix u-container-align-center-xs u-gradient u-section-1" id="carousel_adc9">
         <div class="u-clearfix u-sheet u-sheet-1">
             <div class="header-container">
+            <?php
+                $sql = "SELECT name FROM supervisors WHERE email = :email";
+                $stmt = $con->prepare($sql);
+                $stmt->bindParam(':email', $supervisorEmail);
+                $stmt->execute();
+                $request = $stmt->fetch(PDO::FETCH_ASSOC);
+                ?>
                 <h2 class="u-align-left u-text u-text-default u-text-1" data-animation-name="customAnimationIn"
-                    data-animation-duration="1200" data-animation-delay="0">Welcome ...</h2>
+                    data-animation-duration="1200" data-animation-delay="0">
+                    Welcome <?php echo $request["name"]; ?>
+                </h2>
                 <a href="supervisorProfile.php"
                     class="u-active-white u-align-center u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-base u-border-palette-1-base u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black u-block-5fc4-58"
                     data-animation-name="" data-animation-duration="0" data-animation-delay="0"
@@ -202,7 +212,7 @@ $supervisorEmail=$_SESSION['user_id'];
 
 if($request['status']=='Approved'){
   $style="style='border:4px solid green' ";
-}else if($request['status']=='Rejected'){
+}else if($request['status']=='Rejected'||$request['status']=='Canceled'){
   $style="style='border:4px solid red' ";
 }else{
   $style="";

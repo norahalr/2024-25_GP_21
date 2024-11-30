@@ -165,15 +165,13 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
                         <div class="u-inner-container-layout u-sidenav-overflow">
                             <div class="u-menu-close"></div>
                             <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2">
-                                <li class="u-nav-item"><a class="u-button-style u-nav-link" href="./">Home</a>
+                                <li class="u-nav-item"><a class="u-button-style u-nav-link" href="SupervisorHomePage.php">Supervisor home page</a>
                                 </li>
-                                <li class="u-nav-item"><a class="u-button-style u-nav-link">Sign Up</a>
+                                <li class="u-nav-item"><a class="u-button-style u-nav-link" href="supervisorProfile.php" >Profile</a>
                                 </li>
-                                <li class="u-nav-item"><a class="u-button-style u-nav-link">Login</a>
+                                <li class="u-nav-item"><a class="u-button-style u-nav-link"href="index.php">Log out</a>
                                 </li>
-                                <li class="u-nav-item"><a class="u-button-style u-nav-link">Request Project from
-                                        CCIS</a>
-                                </li>
+                               
                             </ul>
                         </div>
                     </div>

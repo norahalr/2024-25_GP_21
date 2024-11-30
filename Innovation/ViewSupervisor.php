@@ -1,6 +1,22 @@
 <?php 
-  require_once 'config/connect.php';
-  $supervisorEmail="aabeer@KSU.EDU.SA";
+
+session_start();
+require_once 'config/connect.php';
+
+// Check if the session has a user ID; otherwise, redirect to login
+if (!isset($_SESSION['user_id'])) {
+    echo "Error: User is not logged in.";
+    header("Location: LogIn.php");
+    exit();
+}
+
+$userEmail = $_SESSION['user_id']; // Get user ID from session
+if (isset($_GET['supervisor_email'])||isset($_POST['supervisor_email'])) {
+  $supervisorEmail = $_GET['supervisor_email'];
+} else {
+  echo "Error: No supervisor email provided.";
+  exit();
+}  
 
   $sql = "SELECT * FROM supervisors WHERE email='".$supervisorEmail."'";
   $stmt = $con->prepare($sql);
@@ -216,8 +232,15 @@
                                         <h2
                                             class="u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-2 u-text-5">
                                             Supervisor Idea: </h2>
-                                        <p class="u-align-left u-text u-text-4"><?php echo $idea; ?> <br>
-
+                                            <p class="u-align-left u-text u-text-4">
+                                            <?php 
+                                            if (empty($idea)) {
+                                                echo $name . " doesn't have an idea yet";
+                                            } else {
+                                                echo $idea;
+                                            }
+                                            ?> 
+                                        </p>  
                                     </div>
                                 </div>
                                 <div
@@ -286,8 +309,8 @@ INNER JOIN past_projects ON past_projects.id=supervisor_projects.pastproject_id
 
 
                                         </ul>
-                                        <a href="RequestSupervisor.php"
-                                            class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">REQUEST
+                                        <a href="RequestSupervisor.php?supervisor_email=<?php echo urlencode($email); ?>" 
+                                        class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">REQUEST
                                             SUPERVISORS </a>
                                         <a href="StudentHomePage.php"
                                             class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-3 u-radius u-btn-2">BACK

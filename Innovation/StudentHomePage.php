@@ -1,5 +1,17 @@
 <?php
+ob_start();
 session_start();
+
+require_once 'config/connect.php';
+
+// Check if the session has a user ID; otherwise, redirect to login
+if (!isset($_SESSION['user_id'])) {
+  echo "Error: User is not logged in.";
+  header("Location: LogIn.php");
+
+  exit();
+}
+$userEmail = $_SESSION['user_id'] ; // Get user ID from session
 
 if (isset($_SESSION['message'])) {
     $message = htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
@@ -460,7 +472,7 @@ function displayResults(data) {
         <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2">${item.name}</h5>
         <div class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-2" data-image-width="309" data-image-height="309" style="margin-bottom: 35px;"></div>
         
-        <a href="ViewSupervisor.php?email=${encodeURIComponent(item.email)}" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
+        <a href="ViewSupervisor.php?supervisor_email=${encodeURIComponent(item.email)}" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
         <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-3">${item.email}</h6>
 
         <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-4">Interest:</h6>
@@ -478,7 +490,7 @@ function displayResults(data) {
         </h6>
         
         ${item.availability !== 'Unavailable' ? `
-            <a href="RequestSupervisor.php?email=${encodeURIComponent(item.email)}" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">REQUEST</a>
+            <a href="RequestSupervisor.php?supervisor_email=${encodeURIComponent(item.email)}" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">REQUEST</a>
         ` : ''}
     </div>
 </div>

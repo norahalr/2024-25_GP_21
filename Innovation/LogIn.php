@@ -140,13 +140,13 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
   $password=$_POST['password'];
 
   if ($type == 1) { // Supervisor
-    $stmt = $con->prepare("SELECT password FROM supervisors WHERE email = :email");
+    $stmt = $con->prepare("SELECT email, password FROM supervisors WHERE email = :email");
     $stmt->bindParam(':email', $email);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($result && password_verify($password, $result['password'])) {
-      $_SESSION['user_id'] = $result['id'];
+      $_SESSION['user_id'] = $result['email'];
       $_SESSION['email'] = $email;
       $_SESSION['user_type'] = 'supervisor';
         header("Location: SupervisorHomePage.php");
@@ -272,13 +272,13 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                               required="required">
                             </div>
                             <div class="u-form-group u-label-none u-form-group-2">
-  <label for="text-5a78" class="u-label">
+  <label for="text-5a79" class="u-label">
     Password <span style="color:red;">*</span>
   </label>
-  <input type="password" placeholder="Password" id="text-5a78" name="password"
+  <input type="password" placeholder="Password" id="text-5a79" name="password"
       class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
       required="required">
-  <a href="javascript:void(0);" onclick="togglePasswordVisibility('text-5a78')" id="toggle-text-5a78" 
+  <a href="javascript:void(0);" onclick="togglePasswordVisibility('text-5a79')" id="toggle-text-5a79" 
       style="color: blue; text-decoration: underline; font-size: 12px; display: inline-block; margin-top: 5px;">
     Show Password
   </a>
