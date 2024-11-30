@@ -308,7 +308,7 @@
                                                                 <textarea rows="4" cols="50" id="textarea-e86c"
                                                                     name="textarea"
                                                                     class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
-                                                                    required="">write here..</textarea>
+                                                                    required="required" placeholder="Write down your idea"></textarea>
                                                             </div><br />
                                                             <div
                                                                 class="u-align-center u-form-group u-form-submit u-form-group-5">
