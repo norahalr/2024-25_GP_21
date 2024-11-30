@@ -97,6 +97,10 @@ $supervisorEmail=$_SESSION['user_id'];
                                 style="padding: 10px 0px;" href="supervisorProfile.php">Profile</a>
                         </li>
                         <li class="u-nav-item"><a
+                            class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
+                            style="padding: 10px 0px;" href="SupervisorGroup.php">Supervisor Group</a>
+                    </li>
+                        <li class="u-nav-item"><a
                                 class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
                                 style="padding: 10px 0px;" href="index.php">Log out</a>
                         </li>

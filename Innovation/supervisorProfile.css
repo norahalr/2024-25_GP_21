@@ -16,7 +16,7 @@
 }
 
 .u-section-1 .u-layout-cell-1 {
-  min-height: 1369px;
+  min-height: 600px;
   --radius: 20px;
 }
 
@@ -261,7 +261,7 @@
   }
 
   .u-section-1 .u-layout-cell-1 {
-    min-height: 1129px;
+    min-height: 600px;
   }
 
   .u-section-1 .u-group-1 {
@@ -323,7 +323,7 @@
   }
 
   .u-section-1 .u-layout-cell-1 {
-    min-height: 100px;
+    min-height: 600px;
   }
 
   .u-section-1 .u-group-1 {
