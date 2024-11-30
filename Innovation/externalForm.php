@@ -167,8 +167,8 @@
     }
     if (empty($email)) {
         $errors[] = "Email is required.";
-    } elseif (!preg_match("/@ksu\.edu\.sa$/i", $semail)) { // Add 'i' flag for case-insensitivity
-        $errors[] = "Email must be from the domain @ksu.edu.sa.";
+    } elseif (!preg_match("/@ksu\.edu\.sa$/i", $email)) { // Add 'i' flag for case-insensitivity
+        $errors[] = "Email must be from the domain @ksu.edu.sa";
     }
     if (empty($college)) {
         $errors[] = "College is required.";
