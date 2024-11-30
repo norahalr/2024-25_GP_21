@@ -273,12 +273,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (empty($errors)) {
         $hashedPassword = password_hash($pass, PASSWORD_BCRYPT);
-        $stmt = $con->prepare("INSERT INTO supervisors (email, name, password, track, idea, interest, availability) VALUES (:email, :name, :password, :track, :idea, '', 'Available')");
+        $stmt = $con->prepare("INSERT INTO supervisors (email, name, password, track, idea, interest, availability) VALUES (:email, :name, :password, :track, '', :interest, 'Available')");
         $stmt->bindParam(':email', $semail);
         $stmt->bindParam(':name', $sname);
         $stmt->bindParam(':password', $hashedPassword);
         $stmt->bindParam(':track', $select);
-        $stmt->bindParam(':idea', $textarea);
+        $stmt->bindParam(':interest', $textarea);
 
         if ($stmt->execute()) {
             $_SESSION['user_id'] = $semail; // Set session variable
