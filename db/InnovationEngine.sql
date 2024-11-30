@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.1.2
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:8889
--- Generation Time: Nov 29, 2024 at 12:20 PM
--- Server version: 5.7.39
--- PHP Version: 7.4.33
+-- Host: localhost:3306
+-- Generation Time: Nov 30, 2024 at 03:04 PM
+-- Server version: 5.7.24
+-- PHP Version: 8.3.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `InnovationEngine`
+-- Database: `innovationengine`
 --
 
 -- --------------------------------------------------------
@@ -244,14 +244,14 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`name`, `email`, `team_email`, `phone_number`) VALUES
-('Alanoud Ahmed', 'alanoud.ahmed@example.com', 'alanoud.ahmed@example.com', ''),
-('Alhanouf Khalid', 'alhanouf.khalid@example.com', 'alanoud.ahmed@example.com', ''),
-('Huda Fahad', 'huda.fahad@example.com', 'alanoud.ahmed@example.com', ''),
-('Huda Khalid', 'huda.khalid@example.com', 'alanoud.ahmed@example.com', ''),
-('Reema Fahad', 'reema.fahad@example.com', 'reema.fahad@example.com', ''),
-('Noor Mohammed', 'noor.mohammed@example.com', 'reema.fahad@example.com', ''),
-('Sara Khalid', 'sara.khalid@example.com', 'reema.fahad@example.com', ''),
-('Haya Mohammed', 'haya.mohammed@example.com', 'reema.fahad@example.com', '');
+('shoug alshaya', '443200001@student.ksu.edu.sa', '443200001@student.ksu.edu.sa', NULL),
+('Reema Alqassem', '443200002@student.ksu.edu.sa', '443200001@student.ksu.edu.sa', NULL),
+('Norah Alrajhi', '443200556@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', NULL),
+('Alhanouf Alshalan', '443200961@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', NULL),
+('Alia Alrassan', '443202519@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', NULL),
+('Marya Asaad', '443200794@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', NULL),
+('Sarah al', '443200003@student.ksu.edu.sa', '443200003@student.ksu.edu.sa', NULL),
+('myriam al', '443200004@student.ksu.edu.sa', '443200003@student.ksu.edu.sa', NULL);
 
 -- --------------------------------------------------------
 
@@ -281,27 +281,27 @@ INSERT INTO `supervisors` (`email`, `name`, `password`, `track`, `idea`, `intere
 ('amajdah@KSU.EDU.SA', 'Majdah Alshehri', '1', NULL, NULL, 'HCI,Inclusive Technology,Design Methods,Internet Of Things', 'Available', ''),
 ('dalsaeed@KSU.EDU.SA', 'Duaa Alsaeed', '1', 'Artificial Intelligence', NULL, 'Artificial Intelligence,Usability,User Experience,Image Processing,Recommender Systems. ', 'Available', ''),
 ('eabdulqader@KSU.EDU.SA', 'Ebtisam Alabdulqader', '1', NULL, NULL, 'Human Computer Interaction,Internet of Things,Artificial Intelligence', 'Available', ''),
-('ealkhamis@KSU.EDU.SA', 'Esra Alkhamis', '1', 'Cybersecurity', NULL, 'Usable Security,Information Security', 'Available', ''),
+('ealkhamis@KSU.EDU.SA', 'Esra Alkhamis', '$2y$10$kV.nQZVm28Ts8Y.NFHBX1eXSKkvgMvGzRYrQCY7lVSbdvkOtiOi8y', 'Cybersecurity', NULL, 'Usable Security,Information Security', 'Available', ''),
 ('halbaity@KSU.EDU.SA', 'Heyam AlBaity	', '1', NULL, NULL, 'Artificial Intelligence,Data Science,Machine Learning,Computer Vision,Biometrics', 'Available', ''),
 ('halhindi@KSU.EDU.SA', 'Hanan Alhindi', '1', 'Cybersecurity', NULL, 'Cybersecurity,Security', 'Available', ''),
 ('halsaaran@KSU.EDU.SA', 'Hessah Alsaaran', '1', 'Artificial Intelligence', NULL, 'Computer Vision,Image Analysis,Video Analysis,Machine Learning,Artificial Intelligence', 'Available', ''),
-('healbassam@ksu.edu.sa', 'Hend Albassam', '$2y$10$YDWkYw1Hxsk6Wy5MzMFxYO7Ryetsjad8oqBFRYP5J9wkHL.MN1hH.', 'Artificial Intelligence', 'I am interested in developing mobile applications that serves academic community.', '', 'Available', NULL),
+('healbassam@ksu.edu.sa', 'Hend Albassam', '1', 'Artificial Intelligence', 'I am interested in developing mobile applications that serves academic community.', '', 'Available', NULL),
 ('healbassam@KSU.EDU.SA1', 'Hend Albassam', '1', 'Artificial Intelligence', 'application designed to simplify the management of personal and professional schedules using Artificial Neural Networks (ANNs). The app integrates with users’ calendars, emails, and task management tools to analyze and prioritize activities based on deadlines, importance, and personal prefer\r\n\r\n\r\nour system will be a website that offers ........etc,', 'Software Engineering,User Experience Design,Artificial Intelligenc, prompt engineering.', 'Unavailable', '0503482222'),
 ('hmokhtar@KSU.EDU.SA', 'Hala Mokhtar', '1', NULL, NULL, 'Internet of Things, Wireless Networks,Artificial Intelligence,Machine Learning,Smart Education Systems', 'Available', ''),
-('houertani@KSU.EDU.SA', 'Henda Ouertani', '1', 'Artificial Intelligence', NULL, 'Artificial Intelligence,Internet of Things', 'Available', ''),
 ('kalyahya1@KSU.EDU.SA', 'Khulood Alyahya', '1', NULL, NULL, 'Artificial Intelligence,Large Language Models,Optimisation,General Machine Learning,Machine Learning in Finance,Data Visualisation,Time Series Forecasting,Data Science in Medical,Data Science in Biological,Data science in Behavioural and Decision Making', 'Available', ''),
 ('ksaleh@KSU.EDU.SA', 'Kholoud AlSaleh', '1', 'Cybersecurity', NULL, 'Searchable Encryption,Cryptography', 'Available', ''),
 ('lalbraheem@KSU.EDU.SA', 'Lamia Albraheem', '1', 'Internet of Things', NULL, 'Internet of Things,VANET,Wireless Networking,GIS,LiFi ', 'Available', ''),
 ('laldubaie@KSU.EDU.SA', 'Lulwa Aldubaie', '1', NULL, NULL, 'Natural Language Processing', 'Available', ''),
 ('lalhusain@KSU.EDU.SA', 'Luluah Alhusain', '1', NULL, NULL, 'Smart Cities,Healthcare,Machine Learning', 'Available', ''),
-('lalsudias@KSU.EDU.SA', 'Lama Alsudias', '1', NULL, NULL, 'Natural Language Processing,Data Mining,Arabic applications', 'Available', ''),
+('lalsudias@KSU.EDU.SA', 'Lama Alsudias', '$2y$10$2q0PUN.pX8kkTjOLCZUhvO3/kkvj6WliQFeM98IOLikIefrRzTP16', 'Internet of Things', 'i an app to ............', 'Natural Language Processing,Data Mining,Arabic applications', 'Available', '05555555556'),
 ('lalzaben@KSU.EDU.SA', 'Lama Alzaben', '1', NULL, NULL, 'Natural Language Processing,Mobile Applications,Web Applications,Lifestyle Applications,Educational Applications,Health Applications,Fitness Applications,Textual Data,Machine Learning,Smart Search Engines', 'Available', ''),
 ('maldayel@KSU.EDU.SA', 'Mashael Aldayel	\r\n', '1', 'Artificial Intelligence', NULL, 'Artificial Intelligence,Data Science, Machine Learning,Brain Computer Interface,Multidisciplinary,Neuro Tourism,Neuromarketing,Emotion Recognition,Bioinformatics,Recommenders System', 'Available', ''),
 ('malshardan@KSU.EDU.SA', 'Mona Alshardan', '1', NULL, NULL, 'Information Systems,Design Thinking,User Experience,Food Trucks Applications', 'Available', ''),
 ('nalrumaih@KSU.EDU.SA', 'Nouf Alrumaih', '1', NULL, NULL, 'Artificial Intelligence,Internet of Things', 'Available', ''),
 ('nhakbani@KSU.EDU.SA', 'Noura Hakbani', '1', 'Internet of Things', NULL, 'Internet of Things,Robotics,Virtual Reality,Fitness Applications,Rehabilitation,Education ', 'Available', ''),
 ('noralhammad@KSU.EDU.SA', 'Nora Alhammad', '1', NULL, NULL, 'Machine Learning,Artificial Intelligence', 'Available', ''),
-('qalsmail@KSU.EDU.SA', 'Qatrunnada Alsmail', '1', 'Cybersecurity', NULL, 'Cybersecurity,Security', 'Available', ''),
+('qalsmail@KSU.EDU.SA', 'Qatrunnada Alsmail', '$2y$10$lbt8RwIA1mi7RE.Db0IzBOyqThij9FQMj3yFqmFXBgTRAjKJEqLJO', 'Cybersecurity', NULL, 'Cybersecurity,Security', 'Available', ''),
+('Qatrunnada@ksu.edu.sa', 'Qatrunnada', '$2y$10$lbt8RwIA1mi7RE.Db0IzBOyqThij9FQMj3yFqmFXBgTRAjKJEqLJO', 'Cybersecurity', 'fgk', '', 'Available', NULL),
 ('ralmurshed@KSU.EDU.SA', 'Rana Almurshed', '1', 'Artificial Intelligence', NULL, 'Image Processing,Artificial Intelligence', 'Available', ''),
 ('salrabiaah@KSU.EDU.SA', 'Sumayah AlRabiaa', '1', NULL, NULL, 'Optimization', 'Available', ''),
 ('sharefah@KSU.EDU.SA', 'Sharefah Al Ghamdi', '1', NULL, NULL, 'Natural Language Processing,Machine Learning', 'Available', ''),
@@ -321,6 +321,14 @@ CREATE TABLE `supervisor_idea_request` (
   `request_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `supervisor_idea_request`
+--
+
+INSERT INTO `supervisor_idea_request` (`id`, `status`, `team_email`, `supervisor_email`, `request_date`) VALUES
+(1, 'Pending', '443200001@student.ksu.edu.sa', 'lalsudias@KSU.EDU.SA', '2024-11-30'),
+(2, 'Pending', '443200556@student.ksu.edu.sa', 'lalsudias@KSU.EDU.SA', '2024-11-30');
+
 -- --------------------------------------------------------
 
 --
@@ -337,7 +345,6 @@ CREATE TABLE `supervisor_projects` (
 --
 
 INSERT INTO `supervisor_projects` (`supervisor_email`, `pastproject_id`) VALUES
-('houertani@KSU.EDU.SA', 5),
 ('laldubaie@KSU.EDU.SA', 7),
 ('eabdulqader@KSU.EDU.SA', 8),
 ('ajafri@KSU.EDU.SA', 11),
@@ -387,8 +394,9 @@ CREATE TABLE `teams` (
 --
 
 INSERT INTO `teams` (`leader_email`, `name`, `password`, `interest`, `logo`, `draft_ideas`, `supervisor_email`) VALUES
-('alanoud.ahmed@example.com', 'Alanoud Ahmed', '1234', '', '', NULL, 'aabeer@KSU.EDU.SA'),
-('reema.fahad@example.com', 'Reema Fahad', '1234', '', '', NULL, 'ajafri@KSU.EDU.SA');
+('443200001@student.ksu.edu.sa', 'shoug alshaya', '$2y$10$W4vWyNsd8cKt6.QVgrH/n.m.XVdhhZtWIa.slZYU15QFepWX2Tsem', '2,4,6', NULL, NULL, NULL),
+('443200003@student.ksu.edu.sa', 'Sarah al', '$2y$10$crCeA/1deO7V2mE.XDMzIeb8AZAQu1AhO.otJJVyMX2Lv5CdUsvPq', '1,2,5', NULL, NULL, NULL),
+('443200556@student.ksu.edu.sa', 'Norah Alrajhi', '$2y$10$V17rQ0oPZ4gpvM4f1g.FSek1QSi.tkFlXhUGIVyyJu/cyMMYHWzvm', '6,7,8', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -405,6 +413,15 @@ CREATE TABLE `team_idea_request` (
   `supervisor_email` varchar(255) NOT NULL,
   `request_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `team_idea_request`
+--
+
+INSERT INTO `team_idea_request` (`id`, `project_name`, `description`, `status`, `team_email`, `supervisor_email`, `request_date`) VALUES
+(3, 'innovation engine', 'a website', 'Canceled', '443200001@student.ksu.edu.sa', 'alyahya@KSU.EDU.SA', '2024-11-30'),
+(6, '', 'an app to track movements...', 'Pending', '443200003@student.ksu.edu.sa', 'lalsudias@KSU.EDU.SA', '2024-11-30'),
+(7, 'aman', 'an app to collect all passwords using high security....', 'Pending', '443200003@student.ksu.edu.sa', 'qalsmail@KSU.EDU.SA', '2024-11-30');
 
 -- --------------------------------------------------------
 
@@ -531,13 +548,13 @@ ALTER TABLE `past_projects`
 -- AUTO_INCREMENT for table `supervisor_idea_request`
 --
 ALTER TABLE `supervisor_idea_request`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `team_idea_request`
 --
 ALTER TABLE `team_idea_request`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `technologies`

@@ -252,9 +252,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     if (empty($semail)) {
         $errors[] = "Email is required.";
-    } elseif (!preg_match("/@ksu\.edu\.sa$/", $semail)) {
+    } elseif (!preg_match("/@ksu\.edu\.sa$/i", $semail)) { // Add 'i' flag for case-insensitivity
         $errors[] = "Email must be from the domain @ksu.edu.sa.";
     }
+    
     if (empty($select)) {
         $errors[] = "Track is required.";
     }
@@ -467,9 +468,9 @@ id="supervisor-signup-form">
           class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-4">
           <option value="Artificial Intelligence"
               data-calc="">Artificial Intelligence</option>
-          <option value="Cyber Security" data-calc="">Cyber
+          <option value="Cybersecurity" data-calc="">Cyber
               Security</option>
-          <option value="Internet Of Things" data-calc="">
+          <option value="Internet of Things" data-calc="">
               Internet Of Things</option>
       </select>
       <svg class="u-caret u-caret-svg" version="1.1"
@@ -693,12 +694,13 @@ id="supervisor-signup-form">
         }
 
         if (fieldName === 'leader-email' || fieldName.startsWith('student-email')) {
-            if (!/^[^\s@]+@student\.ksu\.edu\.sa$/.test(value)) {
-                showError(input, 'Please enter a valid KSU student email.');
-            } else {
-                clearError(input);
-            }
-        }
+    if (!/^[^\s@]+@student\.ksu\.edu\.sa$/i.test(value)) { // Add 'i' flag for case-insensitivity
+        showError(input, 'Please enter a valid KSU student email.');
+    } else {
+        clearError(input);
+    }
+}
+
 
         if (fieldName === 'password') {
             if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)) {
