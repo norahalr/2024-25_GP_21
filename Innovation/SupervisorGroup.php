@@ -241,7 +241,7 @@ $stmt = $con->prepare($sql);
 $stmt->execute(['supervisorEmail' => $supervisorEmail]);
 $requests2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if (!empty($requests2)&&!empty($requests2)) {
+if (empty($requests)&&empty($requests2)) {
     $message = "you are not supervising any group yet.";
     echo "
     <div id='popup' style='

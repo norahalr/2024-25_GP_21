@@ -11,6 +11,7 @@ $idea = $_POST['idea'];
 // Use a properly prepared statement
 $sql = "UPDATE supervisors
         SET 
+            name = :name,
             phone_number = :phone,
             interest = :interest,
             track = :track,
@@ -21,6 +22,7 @@ $stmt = $con->prepare($sql);
 
 try {
     $stmt->execute([
+        ':name' => $name,
         ':phone' => $phone,
         ':interest' => $interest,
         ':track' => $track,

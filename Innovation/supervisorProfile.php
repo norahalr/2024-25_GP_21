@@ -209,8 +209,8 @@ if ($request) {
                                                     <label for="text-6c71"
                                                         class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-1">Doctor
                                                         name</label>
-                                                    <input value="<?php echo $name; ?>" disabled
-                                                        style="cursor: no-drop;" type="text" id="text-6c71" name="sss"
+                                                    <input value="<?php echo $name; ?>" 
+                                                        style="cursor: no-drop;" type="text" id="text-6c71" name="name"
                                                         class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-1"
                                                         required="required">
                                                 </div>
@@ -314,6 +314,7 @@ if ($request) {
                 <div class="u-gutter-0 u-layout">
                     <div class="u-layout-row">
                         <div class="u-align-left u-container-style u-layout-cell u-left-cell u-size-60 u-layout-cell-1">
+                            <div class="u-container-layout u-container-layout-1">
                                 <h5 class="u-align-center u-text u-text-default u-text-1">Thank you for visiting our
                                     website!<br>If you have any suggestions, please do not hesitate to contact us
                                 </h5>
@@ -356,7 +357,7 @@ if ($request) {
                                                 src="images/11823292.png" alt=""></span>
                                     </a>
                                 </div>
-                            
+                            </div>
                         </div>
                     </div>
                 </div>

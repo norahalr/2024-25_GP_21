@@ -159,12 +159,16 @@
     $college = $_POST['select'];
     $idea = $_POST['textarea'];
     $errors = [];
+    $requestDate = date('Y-m-d');
+
 
     if (empty($name)) {
         $errors[] = "Name is required.";
     }
     if (empty($email)) {
         $errors[] = "Email is required.";
+    } elseif (!preg_match("/@ksu\.edu\.sa$/i", $semail)) { // Add 'i' flag for case-insensitivity
+        $errors[] = "Email must be from the domain @ksu.edu.sa.";
     }
     if (empty($college)) {
         $errors[] = "College is required.";
@@ -174,11 +178,12 @@
     }
 
     if (empty($errors)) {
-        $stmt = $con->prepare("INSERT INTO external_departments_requests (faculty_name, email, collage, idea_description, status, admin_email) VALUES (:name, :email, :college, :idea, 'Pending', '443200961@student.ksu.edu.sa')");
+        $stmt = $con->prepare("INSERT INTO external_departments_requests (faculty_name, email, collage, idea_description, status, admin_email,request_date) VALUES (:name, :email, :college, :idea, 'Pending', '443200961@student.ksu.edu.sa',:request_date)");
         $stmt->bindParam(':name', $name);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':college', $college);
         $stmt->bindParam(':idea', $idea);
+        $stmt->bindParam(':request_date', $requestDate);
 
         if ($stmt->execute()) {
             echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-message u-form-send-success"> Thank you! Your message has been sent. </div>';
