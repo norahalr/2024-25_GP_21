@@ -12,88 +12,57 @@
 
 # Instructions for Opening and Launching the Application
 
-## For Windows
 
-1. **Extract the Files**
-   - Extract the zip folder to a location on your computer (e.g., `Desktop` or `C:\phpdesktop`). The folder should contain:
-     - `phpdesktop-chrome.exe`
-     - `www` (Our website files)
-     - `settings.json`
+1. **Download and Extract the Files**
+   - Clone or download the repository to your local machine. The repository should contain the following files and folders:
+     - `.vscode/` (VS Code configuration folder)
+     - `home page/` (Website files)
+     - `Innovation/` (Project files)
+     - `db/` (Database SQL file)
+     - `AUTHORS` (List of authors)
+     - `README.md` (This file)
+     - place the folder in "C:\MAMP\htdocs"
 
-2. **Launch the Application**
-   - Double-click `phpdesktop-chrome.exe` to open the PHP Desktop application. This will open your website in a browser-like window.
+2. **Install MAMP**
+   - Download and install [MAMP](https://www.mamp.info/en/).
+   - MAMP provides a local server environment (Apache, MySQL, PHP) for Windows.
 
 3. **Database Setup**
-   - Import the database into your preferred MySQL setup (e.g., XAMPP or MAMP).
-   - If you are using XAMPP, ensure that you change the `$password` variable in the `www\config\connect.php` file to:
+   - Import the database into MySQL via MAMP:
+     - Open MAMP and start the servers (Apache and MySQL).
+     - Open the MAMP MySQL Admin panel (phpMyAdmin).
+     - Create a new database (e.g., `InnovationEngine`).
+     - Import the `db/InnovationEngine.sql` file into the newly created database.
+
+4. **Configure Database Connection**
+   - Open the `home page/config/connect.php` file in a text editor (e.g., VS Code).
+   - Set the database connection details:
      ```php
-     $password = ""; // Default XAMPP password
+     $host = 'localhost'; // MAMP default host
+     $db = 'InnovationEngine'; // Database name
+     $username = 'root'; // Default MAMP username
+     $password = 'root'; // Default MAMP password or (empty by default)
      ```
-   - Ensure MySQL is running, and the database is successfully imported.
 
-4. **Access the Application**
-   - Your website should load automatically. If it doesn't, open the app's address bar and go to: `http://localhost/`
+5. **Launch the Application**
+   - Open the `"C:\MAMP\htdocs\2024-25_GP_21\Innovation\index.php"` file  using [VS Code](https://code.visualstudio.com/).
+   - Right-click on the `index.php` file in VS Code and select "Open with Live Server" to launch the website.
+   - Alternatively, you can navigate to `http://localhost` in your web browser.
 
-5. **Troubleshooting**
+6. **Access the Application**
+   - Your website should load automatically. If it doesn't, open the app's address bar and go to: `http://localhost/`.
+
+7. **Troubleshooting**
    - If the app closes immediately, enable error reporting in `index.php` by adding these lines at the top of the file:
      ```php
      error_reporting(E_ALL);
      ini_set('display_errors', 1);
      ```
-   - Look for any errors and ensure the database is correctly set up.
+   - Check the PHP settings in VS Code:
+     - Ensure that the `php` executable is correctly set in your system PATH or configure it in VS Code's settings.
+     - Check that the PHP version in MAMP matches the version specified in your code.
 
-6. **Closing the Application**
+8. **Closing the Application**
    - Simply close the window when you're done. No installation is required.
 
----
-
-## For Mac
-
-1. **Extract the Files**
-   - Extract the zip folder to a location on your Mac (e.g., `Desktop` or `~/phpdesktop`). The folder should contain:
-     - `phpdesktop-chrome` (the application to launch PHP Desktop)
-     - `www` (Our website files)
-     - `settings.json`
-
-2. **Install PHP and MySQL**
-   - If you haven't already, install Homebrew (a package manager for macOS) and use it to install PHP and MySQL:
-     ```bash
-     brew install php
-     brew install mysql
-     ```
-   - Start MySQL with:
-     ```bash
-     brew services start mysql
-     ```
-
-3. **Database Setup**
-   - Import the database into MySQL by running:
-     ```bash
-     mysql -u root -p < path/to/your/InnovationEngine.sql
-     ```
-   - Update the `www/config/connect.php` file with the correct password (for MySQL):
-     ```php
-     $password = ""; // Default MySQL password on Mac
-     ```
-
-4. **Launch the Application**
-   - Open the `phpdesktop-chrome` application from the extracted folder. This will launch the application in a browser-like window.
-
-5. **Access the Application**
-   - Your website should load automatically. If not, open the app's address bar and go to: `http://localhost/`
-
-6. **Troubleshooting**
-   - If the app closes immediately, enable error reporting in `index.php` by adding these lines at the top of the file:
-     ```php
-     error_reporting(E_ALL);
-     ini_set('display_errors', 1);
-     ```
-   - Look for any errors and ensure the database is correctly set up.
-
-7. **Closing the Application**
-   - Simply close the window when you're done. No installation is required.
-
----
-
-**Optional:** You can also set up a Virtual Machine (VM) to run the application if needed.
 
