@@ -174,7 +174,7 @@ $supervisorEmail=$_SESSION['user_id'];
         SELECT 
             CONCAT('SUP_', sir.id) AS request_number, 
             status,
-            'supervisor idea' AS leader_name, 
+            'Supervisor idea' AS leader_name, 
             s.idea AS idea_description, 
             'supervisor' AS source,
             sir.request_date,

@@ -1593,7 +1593,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             REQUEST SUPERVISORS
         </button>
         <input type="hidden" name="supervisor_email" value="<?= htmlspecialchars($supervisorEmail) ?>">
-        <a href="ViewSupervisor.php" class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-3 u-radius u-btn-2">BACK</a>
+        <a href="StudentHomePage.php" 
+   class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-3 u-radius u-btn-2">
+    BACK
+</a>
     </div>
 </form>
 
