@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.2
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Nov 30, 2024 at 03:04 PM
--- Server version: 5.7.24
--- PHP Version: 8.3.1
+-- Host: localhost:8889
+-- Generation Time: Dec 02, 2024 at 04:26 PM
+-- Server version: 5.7.39
+-- PHP Version: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `innovationengine`
+-- Database: `InnovationEngine`
 --
 
 -- --------------------------------------------------------
@@ -285,15 +285,14 @@ INSERT INTO `supervisors` (`email`, `name`, `password`, `track`, `idea`, `intere
 ('halbaity@KSU.EDU.SA', 'Heyam AlBaity	', '1', NULL, NULL, 'Artificial Intelligence,Data Science,Machine Learning,Computer Vision,Biometrics', 'Available', ''),
 ('halhindi@KSU.EDU.SA', 'Hanan Alhindi', '1', 'Cybersecurity', NULL, 'Cybersecurity,Security', 'Available', ''),
 ('halsaaran@KSU.EDU.SA', 'Hessah Alsaaran', '1', 'Artificial Intelligence', NULL, 'Computer Vision,Image Analysis,Video Analysis,Machine Learning,Artificial Intelligence', 'Available', ''),
-('healbassam@ksu.edu.sa', 'Hend Albassam', '1', 'Artificial Intelligence', 'I am interested in developing mobile applications that serves academic community.', '', 'Available', NULL),
-('healbassam@KSU.EDU.SA1', 'Hend Albassam', '1', 'Artificial Intelligence', 'application designed to simplify the management of personal and professional schedules using Artificial Neural Networks (ANNs). The app integrates with users’ calendars, emails, and task management tools to analyze and prioritize activities based on deadlines, importance, and personal prefer\r\n\r\n\r\nour system will be a website that offers ........etc,', 'Software Engineering,User Experience Design,Artificial Intelligenc, prompt engineering.', 'Unavailable', '0503482222'),
+('healbassam@KSU.EDU.SA', 'Hend Albassam', '1', 'Artificial Intelligence', 'application designed to simplify the management of personal and professional schedules using Artificial Neural Networks (ANNs). The app integrates with users’ calendars, emails, and task management tools to analyze and prioritize activities based on deadlines, importance, and personal preference.', 'Software Engineering,User Experience Design,Artificial Intelligenc, prompt engineering.', 'Available', ''),
 ('hmokhtar@KSU.EDU.SA', 'Hala Mokhtar', '1', NULL, NULL, 'Internet of Things, Wireless Networks,Artificial Intelligence,Machine Learning,Smart Education Systems', 'Available', ''),
 ('kalyahya1@KSU.EDU.SA', 'Khulood Alyahya', '1', NULL, NULL, 'Artificial Intelligence,Large Language Models,Optimisation,General Machine Learning,Machine Learning in Finance,Data Visualisation,Time Series Forecasting,Data Science in Medical,Data Science in Biological,Data science in Behavioural and Decision Making', 'Available', ''),
 ('ksaleh@KSU.EDU.SA', 'Kholoud AlSaleh', '1', 'Cybersecurity', NULL, 'Searchable Encryption,Cryptography', 'Available', ''),
 ('lalbraheem@KSU.EDU.SA', 'Lamia Albraheem', '1', 'Internet of Things', NULL, 'Internet of Things,VANET,Wireless Networking,GIS,LiFi ', 'Available', ''),
 ('laldubaie@KSU.EDU.SA', 'Lulwa Aldubaie', '1', NULL, NULL, 'Natural Language Processing', 'Available', ''),
 ('lalhusain@KSU.EDU.SA', 'Luluah Alhusain', '1', NULL, NULL, 'Smart Cities,Healthcare,Machine Learning', 'Available', ''),
-('lalsudias@KSU.EDU.SA', 'Lama Alsudias', '$2y$10$2q0PUN.pX8kkTjOLCZUhvO3/kkvj6WliQFeM98IOLikIefrRzTP16', 'Internet of Things', 'i an app to ............', 'Natural Language Processing,Data Mining,Arabic applications', 'Available', '05555555556'),
+('lalsudias@KSU.EDU.SA', 'Lama Alsudias', '$2y$10$2q0PUN.pX8kkTjOLCZUhvO3/kkvj6WliQFeM98IOLikIefrRzTP16', 'Internet of Things', 'A web-based AI-powered platform designed to provide personalized insights and recommendations for businesses, students, and individuals. InsightBot AI leverages machine learning and NLP (Natural Language Processing) to analyze uploaded data, texts, or goals and provide actionable advice.', 'Natural Language Processing,Data Mining,Arabic applications', 'Available', '05555555556'),
 ('lalzaben@KSU.EDU.SA', 'Lama Alzaben', '1', NULL, NULL, 'Natural Language Processing,Mobile Applications,Web Applications,Lifestyle Applications,Educational Applications,Health Applications,Fitness Applications,Textual Data,Machine Learning,Smart Search Engines', 'Available', ''),
 ('maldayel@KSU.EDU.SA', 'Mashael Aldayel	\r\n', '1', 'Artificial Intelligence', NULL, 'Artificial Intelligence,Data Science, Machine Learning,Brain Computer Interface,Multidisciplinary,Neuro Tourism,Neuromarketing,Emotion Recognition,Bioinformatics,Recommenders System', 'Available', ''),
 ('malshardan@KSU.EDU.SA', 'Mona Alshardan', '1', NULL, NULL, 'Information Systems,Design Thinking,User Experience,Food Trucks Applications', 'Available', ''),
@@ -301,7 +300,7 @@ INSERT INTO `supervisors` (`email`, `name`, `password`, `track`, `idea`, `intere
 ('nhakbani@KSU.EDU.SA', 'Noura Hakbani', '1', 'Internet of Things', NULL, 'Internet of Things,Robotics,Virtual Reality,Fitness Applications,Rehabilitation,Education ', 'Available', ''),
 ('noralhammad@KSU.EDU.SA', 'Nora Alhammad', '1', NULL, NULL, 'Machine Learning,Artificial Intelligence', 'Available', ''),
 ('qalsmail@KSU.EDU.SA', 'Qatrunnada Alsmail', '$2y$10$lbt8RwIA1mi7RE.Db0IzBOyqThij9FQMj3yFqmFXBgTRAjKJEqLJO', 'Cybersecurity', NULL, 'Cybersecurity,Security', 'Available', ''),
-('Qatrunnada@ksu.edu.sa', 'Qatrunnada', '$2y$10$lbt8RwIA1mi7RE.Db0IzBOyqThij9FQMj3yFqmFXBgTRAjKJEqLJO', 'Cybersecurity', 'fgk', '', 'Available', NULL),
+('Qatrunnada@ksu.edu.sa', 'Qatrunnada', '$2y$10$lbt8RwIA1mi7RE.Db0IzBOyqThij9FQMj3yFqmFXBgTRAjKJEqLJO', 'Cybersecurity', 'A web-based AI-powered platform designed to provide advanced cybersecurity solutions for individuals and small businesses. SecureSphere AI helps users detect vulnerabilities, monitor threats, and take proactive measures to protect their digital assets.', '', 'Available', NULL),
 ('ralmurshed@KSU.EDU.SA', 'Rana Almurshed', '1', 'Artificial Intelligence', NULL, 'Image Processing,Artificial Intelligence', 'Available', ''),
 ('salrabiaah@KSU.EDU.SA', 'Sumayah AlRabiaa', '1', NULL, NULL, 'Optimization', 'Available', ''),
 ('sharefah@KSU.EDU.SA', 'Sharefah Al Ghamdi', '1', NULL, NULL, 'Natural Language Processing,Machine Learning', 'Available', ''),
@@ -351,7 +350,7 @@ INSERT INTO `supervisor_projects` (`supervisor_email`, `pastproject_id`) VALUES
 ('halsaaran@KSU.EDU.SA', 13),
 ('ksaleh@KSU.EDU.SA', 14),
 ('noralhammad@KSU.EDU.SA', 15),
-('healbassam@KSU.EDU.SA1', 16),
+('healbassam@KSU.EDU.SA', 16),
 ('nalrumaih@KSU.EDU.SA', 17),
 ('lalzaben@KSU.EDU.SA', 18),
 ('dalsaeed@KSU.EDU.SA', 19),
@@ -366,7 +365,7 @@ INSERT INTO `supervisor_projects` (`supervisor_email`, `pastproject_id`) VALUES
 ('walkaldi@KSU.EDU.SA', 36),
 ('kalyahya1@KSU.EDU.SA', 37),
 ('lalbraheem@KSU.EDU.SA', 39),
-('healbassam@KSU.EDU.SA1', 40),
+('healbassam@KSU.EDU.SA', 40),
 ('malshardan@KSU.EDU.SA', 40),
 ('nalrumaih@KSU.EDU.SA', 41),
 ('lalhusain@KSU.EDU.SA', 43),
@@ -394,7 +393,7 @@ CREATE TABLE `teams` (
 --
 
 INSERT INTO `teams` (`leader_email`, `name`, `password`, `interest`, `logo`, `draft_ideas`, `supervisor_email`) VALUES
-('443200001@student.ksu.edu.sa', 'shoug alshaya', '$2y$10$W4vWyNsd8cKt6.QVgrH/n.m.XVdhhZtWIa.slZYU15QFepWX2Tsem', '2,4,6', NULL, NULL, NULL),
+('443200001@student.ksu.edu.sa', 'shoug alshaya', '$2y$10$W4vWyNsd8cKt6.QVgrH/n.m.XVdhhZtWIa.slZYU15QFepWX2Tsem', '2,4,6', NULL, NULL, 'lalsudias@KSU.EDU.SA'),
 ('443200003@student.ksu.edu.sa', 'Sarah al', '$2y$10$crCeA/1deO7V2mE.XDMzIeb8AZAQu1AhO.otJJVyMX2Lv5CdUsvPq', '1,2,5', NULL, NULL, NULL),
 ('443200556@student.ksu.edu.sa', 'Norah Alrajhi', '$2y$10$V17rQ0oPZ4gpvM4f1g.FSek1QSi.tkFlXhUGIVyyJu/cyMMYHWzvm', '6,7,8', NULL, NULL, NULL);
 
@@ -419,9 +418,9 @@ CREATE TABLE `team_idea_request` (
 --
 
 INSERT INTO `team_idea_request` (`id`, `project_name`, `description`, `status`, `team_email`, `supervisor_email`, `request_date`) VALUES
-(3, 'innovation engine', 'a website', 'Canceled', '443200001@student.ksu.edu.sa', 'alyahya@KSU.EDU.SA', '2024-11-30'),
-(6, '', 'an app to track movements...', 'Pending', '443200003@student.ksu.edu.sa', 'lalsudias@KSU.EDU.SA', '2024-11-30'),
-(7, 'aman', 'an app to collect all passwords using high security....', 'Pending', '443200003@student.ksu.edu.sa', 'qalsmail@KSU.EDU.SA', '2024-11-30');
+(3, 'ParkFinder', 'A map-based app that helps users locate nearby parks and green spaces. Includes filters for amenities like playgrounds, trails, and picnic areas.', 'Pending', '443200001@student.ksu.edu.sa', 'alyahya@KSU.EDU.SA', '2024-11-30'),
+(6, 'StudyBuddy', 'A minimalist app for students to organize study schedules, set reminders for exams, and create flashcards for learning.', 'Pending', '443200003@student.ksu.edu.sa', 'lalsudias@KSU.EDU.SA', '2024-11-30'),
+(7, 'PetPal', 'An app to schedule reminders for pet care, like feeding, grooming, and vet appointments. It also includes a journal to track your pet’s milestones.', 'Pending', '443200003@student.ksu.edu.sa', 'qalsmail@KSU.EDU.SA', '2024-11-30');
 
 -- --------------------------------------------------------
 
@@ -548,13 +547,13 @@ ALTER TABLE `past_projects`
 -- AUTO_INCREMENT for table `supervisor_idea_request`
 --
 ALTER TABLE `supervisor_idea_request`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `team_idea_request`
 --
 ALTER TABLE `team_idea_request`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `technologies`
