@@ -231,7 +231,7 @@ if($request['status']=='Approved'){
                      data-image-width="256" data-image-height="256">
                 <h5 class="u-align-center u-text u-text-2">REQUEST: ' . $request_number . '</h5>
                 <h4 class="u-align-center u-text u-text-palette-1-base u-text-3">' . $leader_name . '</h4>
-                <p class="u-align-left u-text u-text-4"  style="margin:1rem;"> ' . substr($idea_description, 0, 100) . '...</p>
+                <p class="u-align-left u-text u-text-4" style="margin:1rem;"> ' . htmlspecialchars($idea_description) . '</p>
                 <a href="ViewSpecificRequest.php?id=' . $request_id . '&type=' . $source . '"
                    class="u-active-white u-align-center u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-base u-border-palette-1-base u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black u-btn-1"
                    data-animation-name="" data-animation-duration="0" data-animation-delay="0"

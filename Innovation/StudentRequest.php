@@ -241,7 +241,7 @@ if (isset($_SESSION['error'])) {
         <!-- </a> -->
         <h2 class="u-blog-control u-text u-text-2">
             <!-- <a class="u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-2 u-text-1" href="blog/request-<?= $request['id'] ?>.php"> -->
-                <?= htmlspecialchars($request['project_name'] ?: "No Project Name") ?>
+                <?= htmlspecialchars($request['project_name'] ?: "Supervisor's Idea") ?>
             <!-- </a> -->
         </h2>
         <?php if ($request['supervisor_name']): ?>

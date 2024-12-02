@@ -1401,19 +1401,20 @@ $supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <!-- Text Input for Project Name -->
-    <div id="projectNameGroup" class="u-form-group u-form-message u-label-top u-block-d7f8-67" style="display: <?= !$hasSupervisorIdeas ? 'block' : 'none' ?>;">
-        <label for="projectName" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5">
-            Project Name (Optional)
-        </label>
-        <input 
-            type="text" 
-            id="projectName" 
-            name="project_name" 
-            class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"
-            placeholder="Enter your project name"
-        />
-    </div>
+  <!-- Text Input for Project Name -->
+<div id="projectNameGroup" class="u-form-group u-form-message u-label-top u-block-d7f8-67" style="display: <?= !$hasSupervisorIdeas ? 'block' : 'none' ?>;">
+    <label for="projectName" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5">
+        Project Name (Optional)
+    </label>
+    <input 
+        type="text" 
+        id="projectName" 
+        name="project_name" 
+        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"
+        placeholder="Enter your project name"
+        value="<?= htmlspecialchars($request['project_name'] ?? '') ?>" 
+    />
+</div>
 
     <!-- Textarea for Project Idea -->
     <div class="u-form-group u-form-message u-label-top u-block-d7f8-67">

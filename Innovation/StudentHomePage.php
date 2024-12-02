@@ -226,7 +226,7 @@ if (isset($_SESSION['message'])) {
 <section id="initialSupervisors" class="u-align-center u-clearfix u-container-align-center u-gradient u-section-2" style="background-color: #e9f2fa; width: 100vw;">
     <!-- Supervisor display code here -->
     <div class="u-clearfix u-sheet u-sheet-1" style="max-width: 1600px; margin: 0 auto;">
-        <h2 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1" style="margin:10px 20px 20px 20px;">Welcome...</h2>
+        <h2 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1" style="margin:10px 20px 20px 20px;">Welcome</h2>
         <div class="u-expanded-width u-layout-grid u-list u-list-1">
             <div class="u-repeater u-repeater-1">
                 <?php foreach ($supervisors as $supervisor): ?>
@@ -462,7 +462,7 @@ function displayResults(data) {
                                     <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2" style="margin: 10px 200px 10px 100px;">${item.name}</h5>
                                     <p style="margin-bottom: 100px; font-size: 16px; line-height: 1.6; text-align: left; padding-right: 20px;">${item.description}</p>
                                     
-                                    <a href="documents/${item.document}" target="_blank" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1" style="margin: 50px 200px 50px 450px;">View</a>
+                                    <a href="${item.document}" target="_blank" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1" style=" margin:50px 200px 50px 450px" >View</a>
                                 </div>
                             </div>` : `
                             <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
