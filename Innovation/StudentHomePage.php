@@ -11,7 +11,14 @@ if (!isset($_SESSION['user_id'])) {
 
   exit();
 }
+
 $userEmail = $_SESSION['user_id'] ; // Get user ID from session
+
+$stmt = $con->prepare("SELECT supervisor_email FROM teams WHERE leader_email = :email");
+  $stmt->bindParam(':email', $userEmail);
+  $stmt->execute();
+  $teamData = $stmt->fetch(PDO::FETCH_ASSOC);
+
 
 if (isset($_SESSION['message'])) {
     $message = htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
@@ -250,7 +257,7 @@ if (isset($_SESSION['message'])) {
                                     <img src="images/<?= $supervisor['availability'] === 'Unavailable' ? 'Incorrect.png' : '3699459-d2dcaf9f.png'; ?>" alt="Availability Icon" style="width: 16px; height: 16px; vertical-align: middle;">
                                 </span>
                             </h6>
-                            <?php if ($supervisor['availability'] !== 'Unavailable'): ?>
+                            <?php if ($supervisor['availability'] !== 'Unavailable' && empty($teamData['supervisor_email'])): ?>
                                 <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" 
                                    class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
                                    REQUEST
