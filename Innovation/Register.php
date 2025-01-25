@@ -116,7 +116,7 @@
         cursor: pointer;
         text-align: center;
         flex-grow: 1;
-        padding: 10px;
+        padding: 10%;
         transition: color 0.3s;
     }
 
@@ -347,116 +347,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">' . htmlspecialchars($error) . '</div>';
         }
       }
-}else { // Student Register
-$num_students = $_POST['num-students'];
-$leader_name = $_POST['leader-name'];
-$leader_email = $_POST['leader-email'];
-$password = $_POST['password'];
-$reenter_password = $_POST['re-enter-password'];
-$student_names = []; // Array to store student names
-$student_emails = []; // Array to store student emails
-
-// Collecting student names and emails dynamically based on the number of students
-for ($i = 1; $i <= $num_students - 1; $i++) {
-    $student_names[] = $_POST['student-name-' . $i];
-    $student_emails[] = $_POST['student-email-' . $i];
-}
-
-$errors = [];
-
-// Validation checks
-if (empty($num_students)) {
-    $errors[] = "Number of students is required.";
-}
-if (empty($leader_name)) {
-    $errors[] = "Leader name is required.";
-} elseif (!preg_match("/^[A-Za-z]+\s[A-Za-z]+$/", $leader_name)) {
-    $errors[] = "Leader name must be in 'First Last' format.";
-}
-if (empty($leader_email)) {
-    $errors[] = "Leader email is required.";
-}
-if (empty($student_names[0])) {
-    $errors[] = "At least one student name is required.";
-} else {
-    foreach ($student_names as $index => $student_name) {
-        if (!preg_match("/^[A-Za-z]+\s[A-Za-z]+$/", $student_name)) {
-            $errors[] = "Student name " . ($index + 1) . " must be in 'First Last' format.";
-        }
-    }
-}
-if (empty($student_emails[0])) {
-    $errors[] = "At least one student email is required.";
-} elseif (!preg_match("/@student\.ksu\.edu\.sa$/", $student_emails[0])) {
-    $errors[] = "Student email must be from the domain @student.ksu.edu.sa.";
-}
-if (empty($password)) {
-    $errors[] = "Password is required.";
-} elseif (!preg_match("/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/", $password)) {
-    $errors[] = "Password must be at least 8 characters long, contain an upper case letter, a lower case letter, a number, and a special character.";
-}
-if ($password !== $reenter_password) {
-    $errors[] = "Password and password confirmation do not match.";
-}
-
-if (empty($errors)) {
-    // Hash the password
-    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-
-    // Insert the leader into the teams table
-    $stmt = $con->prepare("INSERT INTO teams (leader_email, name, password) VALUES (:email, :name, :password)");
-    $stmt->bindParam(':email', $leader_email);
-    $stmt->bindParam(':name', $leader_name);
-    $stmt->bindParam(':password', $hashedPassword);
-
-    if ($stmt->execute()) {
-        // Loop to insert the leader and students into the students table
-        $team_email = $leader_email; // All students will have the leader's email as team_email
-        $all_registered = true;
-
-        // Insert leader as student first
-        $stmt = $con->prepare("INSERT INTO students (name, email, team_email) VALUES (:name, :email, :team_email)");
-        $stmt->bindParam(':name', $leader_name);
-        $stmt->bindParam(':email', $leader_email);
-        $stmt->bindParam(':team_email', $team_email);
-
-        if (!$stmt->execute()) {
-            $all_registered = false;
-        }
-
-        // Insert students
-        for ($i = 0; $i < $num_students - 1; $i++) {
-            $stmt = $con->prepare("INSERT INTO students (name, email, team_email) VALUES (:name, :email, :team_email)");
-            $stmt->bindParam(':name', $student_names[$i]);
-            $stmt->bindParam(':email', $student_emails[$i]);
-            $stmt->bindParam(':team_email', $team_email);
-
-            if (!$stmt->execute()) {
-                $all_registered = false;
-            }
-        }
-
-        // Display appropriate message
-        if ($all_registered) {
-            $_SESSION['user_id'] = $leader_email; // Set session variable
-            setcookie('leader_email', $leader_email, time() + 3600, "/"); // Set cookie for 1 hour
-
-            // Redirect to ResearchInterests.php
-            header("Location: ResearchInterests.php");
-            exit();
-        }
-            else {
-            echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message"> Unable to register. Please try again later. </div>';
-        }
-    } else {
-        echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message"> Unable to add leader to the teams table. Please try again later. </div>';
-    }
-} else {
-    foreach ($errors as $error) {
-        echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">' . htmlspecialchars($error) . '</div>';
-    }
-}
-
 }
 }
 ?>
@@ -469,8 +359,7 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
 
 <!-- Add Radio Buttons to choose between Supervisor or Student -->
 <div class="radio-btn-container">
-<input type="radio" name="user-role" id="supervisor"
-  value="supervisor" checked>
+<input type="radio" name="user-role" id="supervisor" value="supervisor" checked>
 <input type="radio" name="user-role" id="student"
   value="student">
 <span class="slider-tab"></span>
@@ -582,99 +471,62 @@ id="supervisor-signup-form">
 </div>
 </form>
 
-
-
- <form action="Register.php" method="POST" id="student-signup-form">
-    <h1 class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">
-        Students Registration
-    </h1>
-    <input type="hidden" name="type" value="2" />
-    <!-- Selection for Leader or Member with More Presentable Radio Buttons -->
 <div class="u-form-group">
-    <label class="u-custom-font u-font-georgia u-label" style="inline">
+    <label class="u-custom-font u-font-georgia u-label" style="display: inline-block; margin-right: 10px;">
         Are you the group leader or a member? <span style="color:red;">*</span>
     </label>
-    <div class="radio-btn-container2" style="inline">
-        <input type="radio" id="leader" name="role" value="leader" onclick="toggleForm('leader-form')" required class="role-radio" />
-        <input type="radio" id="member" name="role" value="member" onclick="toggleForm('member-form')" required class="role-radio" />
-         <span class="slider-tab"></span> 
-
+    <div class="radio-btn-container2" style="display: inline-block;">
+        <input type="radio" id="leader" name="role" value="leader" onclick="toggleForm('leader-form')" required class="role-radio" checked />
         <label for="leader" class="role-label">Leader</label>
+        <input type="radio" id="member" name="role" value="member" onclick="toggleForm('member-form')" required class="role-radio" />
         <label for="member" class="role-label">Member</label>
+        <span class="slider-tab"></span> 
     </div>
 </div>
 
 
+<!-- Leader Form -->
+<form action="studentRegister.php" method="POST" id="leader-form" style="display: block;">
+    <h1 class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">
+        Leader Registration
+    </h1>
+    <input type="hidden" name="type" value="leader" />
+    <div class="u-form-group">
+        <label for="num-students" class="u-custom-font u-font-georgia u-label">
+            How many students are in your group? <span style="color:red;">*</span>
+        </label>
+        <input type="number" id="num-students" placeholder="Number of students" name="num-students" min="2" max="5" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required onchange="showStudentFields()" />
+    </div>
 
-
-    <!-- Leader Form (Identical to Original Student Registration Form) -->
-    <div id="leader-form" style="display">
-        <div class="u-form-group">
-            <label for="num-students" class="u-custom-font u-font-georgia u-label">How many students are in your group? <span style="color:red;">*</span></label>
-            <input type="number" id="num-students" placeholder="Number of students" name="num-students" min="2" max="5" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required="" onchange="showStudentFields()">
-        </div>
-
-        <div id="student-fields">
-            <div class="student-info">
-                <div class="u-form-group">
-                    <label for="leader-name" class="u-custom-font u-font-georgia u-label">Leader Name <span style="color:red;">*</span></label>
-                    <input type="text" placeholder="Enter Full Name" id="leader-name" name="leader-name" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required="">
-                </div>
-                <div class="u-form-group">
-                    <label for="leader-email" class="u-custom-font u-font-georgia u-label">Leader Email <span style="color:red;">*</span></label>
-                    <input type="email" placeholder="Enter a valid email address" id="leader-email" name="leader-email" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required="">
-                </div>
+    <div id="student-fields">
+        <div class="student-info">
+            <div class="u-form-group">
+                <label for="leader-name" class="u-custom-font u-font-georgia u-label">
+                    Leader Name <span style="color:red;">*</span>
+                </label>
+                <input type="text" placeholder="Enter Full Name" id="leader-name" name="leader-name" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
             </div>
-
-            <!-- Student fields for additional students -->
-            <div class="student-info">
-                <div class="u-form-group">
-                    <label for="student-name-1" class="u-custom-font u-font-georgia u-label">Student Full name <span style="color:red;">*</span></label>
-                    <input type="text" placeholder="Enter Full Name" id="student-name-1" name="student-name-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required="">
-                </div>
-                <div class="u-form-group">
-                    <label for="student-email-1" class="u-custom-font u-font-georgia u-label">Email <span style="color:red;">*</span></label>
-                    <input type="email" placeholder="Enter a valid email address" id="student-email-1" name="student-email-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required="">
-                </div>
+            <div class="u-form-group">
+                <label for="L-leader-email" class="u-custom-font u-font-georgia u-label">
+                    Leader Email <span style="color:red;">*</span>
+                </label>
+                <input type="email" placeholder="Enter a valid email address" id="L-leader-email" name="leader-email" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
             </div>
-        </div>
-
-        <div class="input-wrapper">
-            <label for="password" class="u-custom-font u-font-georgia u-label">
-                Password <span style="color:red;">*</span>
-            </label>
-            <input type="password" placeholder="Enter a strong password" id="password" name="password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
-        </div>
-
-        <div class="u-form-group">
-            <label for="re-enter-password" class="u-custom-font u-font-georgia u-label">
-                Re-enter password <span style="color:red;">*</span>
-            </label>
-            <input type="password" id="re-enter-password" name="re-enter-password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
         </div>
     </div>
 
-    <!-- Member Form -->
-    <div id="member-form" style="display: none;">
-        <div class="u-form-group">
-            <label for="member-name" class="u-custom-font u-font-georgia u-label">Member Name <span style="color:red;">*</span></label>
-            <input type="text" placeholder="Enter Full Name" id="member-name" name="member-name" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
-        </div>
-        <div class="u-form-group">
-            <label for="member-email" class="u-custom-font u-font-georgia u-label">Member Email <span style="color:red;">*</span></label>
-            <input type="email" placeholder="Enter a valid email address" id="member-email" name="member-email" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
-        </div>
-        <div class="u-form-group">
-            <label for="leader-email" class="u-custom-font u-font-georgia u-label">Leader Email <span style="color:red;">*</span></label>
-            <input type="email" placeholder="Enter the leader's email" id="leader-email" name="leader-email" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
-        </div>
+    <div class="input-wrapper">
+        <label for="password" class="u-custom-font u-font-georgia u-label">
+            Password <span style="color:red;">*</span>
+        </label>
+        <input type="password" placeholder="Enter a strong password" id="password" name="password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
+    </div>
 
-        <div class="input-wrapper">
-            <label for="password" class="u-custom-font u-font-georgia u-label">
-                Password <span style="color:red;">*</span>
-            </label>
-            <input type="password" placeholder="Enter the password provided by the leader" id="password" name="password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
-        </div>
+    <div class="u-form-group">
+        <label for="re-enter-password" class="u-custom-font u-font-georgia u-label">
+            Re-enter Password <span style="color:red;">*</span>
+        </label>
+        <input type="password" placeholder="Re-enter password" id="re-enter-password" name="re-enter-password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
     </div>
 
     <div class="u-form-group u-form-submit">
@@ -684,11 +536,63 @@ id="supervisor-signup-form">
     </div>
 </form>
 
-    <script>
-        function toggleForm(formId) {
+<!-- Member Form -->
+<form action="studentRegister.php" method="POST" id="member-form" style="display: none;">
+    <h1 class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">
+        Member Registration
+    </h1>
+    <input type="hidden" name="type" value="member" />
+    <div class="u-form-group">
+        <label for="member-name" class="u-custom-font u-font-georgia u-label">
+            Your Name <span style="color:red;">*</span>
+        </label>
+        <input type="text" placeholder="Enter Full Name" id="member-name" name="member-name" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
+    </div>
+    <div class="u-form-group">
+        <label for="member-email" class="u-custom-font u-font-georgia u-label">
+            Your Email <span style="color:red;">*</span>
+        </label>
+        <input type="email" placeholder="Enter a valid email address" id="member-email" name="member-email" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
+    </div>
+    <div class="u-form-group">
+        <label for="M-leader-email" class="u-custom-font u-font-georgia u-label">
+            Leader Email <span style="color:red;">*</span>
+        </label>
+        <input type="email" placeholder="Enter the leader's email" id="M-leader-email" name="leader-email" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
+    </div>
+
+    <div class="input-wrapper">
+        <label for="M-password" class="u-custom-font u-font-georgia u-label">
+            Password <span style="color:red;">*</span>
+        </label>
+        <input type="password" placeholder="Enter a strong password" id="M-password" name="password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
+    </div>
+
+    <div class="u-form-group">
+        <label for="M-re-enter-password" class="u-custom-font u-font-georgia u-label">
+            Re-enter Password <span style="color:red;">*</span>
+        </label>
+        <input type="password" placeholder="Re-enter password" id="M-re-enter-password" name="re-enter-password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
+    </div>
+
+    <div class="u-form-group u-form-submit">
+        <button type="submit" value="Submit" class="u-active-palette-1-light-3 u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1">
+            Submit
+        </button>
+    </div>
+</form>
+
+<script>
+    function toggleForm(formId) {
         document.getElementById('leader-form').style.display = formId === 'leader-form' ? 'block' : 'none';
         document.getElementById('member-form').style.display = formId === 'member-form' ? 'block' : 'none';
     }
+</script>
+
+
+
+    <script>
+        
         function togglePasswordVisibility(inputId) {
     const passwordField = document.getElementById(inputId);
     const toggleLink = document.getElementById('toggle-' + inputId);
