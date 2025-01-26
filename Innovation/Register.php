@@ -368,8 +368,7 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
 <label for="student" class="radio-btn">Student</label>
 </div>
 
-<form action="Register.php" method="POST"
-id="supervisor-signup-form">
+<form action="Register.php" method="POST" id="supervisor-signup-form">
 <h1
   class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">
   Supervisor Registration </h1>
@@ -470,7 +469,7 @@ id="supervisor-signup-form">
 
 </div>
 </form>
-
+<div id="student-signup-form" style="display: none;">
 <div class="u-form-group">
     <label class="u-custom-font u-font-georgia u-label" style="display: inline-block; margin-right: 10px;">
         Are you the group leader or a member? <span style="color:red;">*</span>
@@ -490,6 +489,7 @@ id="supervisor-signup-form">
     <h1 class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">
         Leader Registration
     </h1>
+    
     <input type="hidden" name="type" value="leader" />
     <div class="u-form-group">
         <label for="num-students" class="u-custom-font u-font-georgia u-label">
@@ -581,16 +581,13 @@ id="supervisor-signup-form">
         </button>
     </div>
 </form>
-
+</div>
 <script>
     function toggleForm(formId) {
         document.getElementById('leader-form').style.display = formId === 'leader-form' ? 'block' : 'none';
         document.getElementById('member-form').style.display = formId === 'member-form' ? 'block' : 'none';
     }
 </script>
-
-
-
     <script>
         
         function togglePasswordVisibility(inputId) {
@@ -744,10 +741,6 @@ id="supervisor-signup-form">
                                                     }
     </script>
 
-
-
-
-
                                                 </div>
                                                 <a href="LogIn.php"
                                                     class="u-active-none u-border-5 u-border-active-palette-2-dark-1 u-border-hover-custom-color-1 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-btn u-button-style u-hover-none u-none u-text-active-palette-1-light-1 u-text-hover-palette-1-dark-2 u-text-palette-1-dark-1 u-btn-2">Already
@@ -760,9 +753,6 @@ id="supervisor-signup-form">
                         </div>
                     </div>
     </section>
-
-
-
 
     <footer class="u-clearfix u-custom-color-3 u-footer" id="sec-9e3e">
         <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">

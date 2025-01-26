@@ -2,6 +2,9 @@
 require_once 'config/connect.php';
 session_start();
 ob_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $role = $_POST['type'];
@@ -93,7 +96,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Set session and redirect
                 session_start();
                 $_SESSION['user_id'] = $leader_email;
-                setcookie('leader_email', $leader_email, time() + 3600, "/");
+                $_SESSION['role'] = 'leader'; // Add the role to the session
+                setcookie('email', $leader_email, time() + 3600, "/", "", true, true);
+                setcookie('role', 'leader', time() + 3600, "/","",true, true); // Add the role to the cookie
                 header("Location: ResearchInterests.php");
                 exit();
             } catch (PDOException $e) {
@@ -101,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $errors[] = "Database error: " . $e->getMessage();
             }
         }
-    } } elseif ($role == "member") {
+    }   elseif ($role == "member") {
         $member_name = $_POST['member-name'];
         $member_email = $_POST['member-email'];
         $leader_email = $_POST['leader-email'];
@@ -118,6 +123,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (empty($leader_email) || !filter_var($leader_email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = "Please enter a valid leader email.";
         }
+        if (empty($password) || !preg_match("/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/", $password)) {
+            $errors[] = "Password must be at least 8 characters long, contain uppercase, lowercase, a number, and a special character.";
+        }
         if ($password !== $reenter_password) {
             $errors[] = "Passwords do not match.";
         }
@@ -125,28 +133,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Check for errors
         if (empty($errors)) {
             try {
-                $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-    
-                $stmt = $con->prepare("INSERT INTO students (name, email, team_email, Password) VALUES (:name, :email, :team_email, :password)");
-                $stmt->bindParam(':name', $member_name);
-                $stmt->bindParam(':email', $member_email);
-                $stmt->bindParam(':team_email', $leader_email);
-                $stmt->bindParam(':password', $hashedPassword);
+                // Check if the leader exists
+                $stmt = $con->prepare("SELECT leader_email FROM teams WHERE leader_email = :leader_email");
+                $stmt->bindParam(':leader_email', $leader_email);
                 $stmt->execute();
+                $leader = $stmt->fetch(PDO::FETCH_ASSOC);
     
-                 // Set session and redirect
-                 session_start();
-                 $_SESSION['user_id'] = $member_email;
-                 setcookie('leader_email', $member_email, time() + 3600, "/");
-                 header("Location: ResearchInterests.php");
-                 exit();
+                if (!$leader) {
+                    $errors[] = "The leader should create an account first.";
+                } else {
+                    // Check if the member is part of the leader's team
+                    $stmt = $con->prepare("SELECT Registration_status FROM students WHERE email = :member_email AND team_email = :team_email");
+                    $stmt->bindParam(':member_email', $member_email);
+                    $stmt->bindParam(':team_email', $leader_email);
+                    $stmt->execute();
+                    $member = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+                    if (!$member) {
+                        $errors[] = "You are not in this group. Contact the leader.";
+                    } elseif ($member['Registration_status'] == 0) {
+                        // Update member's name and password
+                        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    
+                        $updateStmt = $con->prepare("UPDATE students SET name = :name, password = :password,Registration_status = 1 WHERE email = :member_email AND team_email = :team_email");
+                        $updateStmt->bindParam(':name', $member_name);
+                        $updateStmt->bindParam(':password', $hashedPassword);
+                        $updateStmt->bindParam(':member_email', $member_email);
+                        $updateStmt->bindParam(':team_email', $leader_email);
+                        $updateStmt->execute();
+    
+                        // Set session and redirect
+                        $_SESSION['user_id'] = $member_email;
+                        $_SESSION['role'] = 'member'; // Add the role to the session
+                        setcookie('email', $member_email, time() + 3600, "/", "", true, true);
+                        setcookie('role', 'member', time() + 3600, "/" ,"", true, true); // Add the role to the cookie
+                        
+                        header("Location: ResearchInterests.php");
+                        exit();
+                    } else {
+                        $errors[] = "Your registration has been completed and cannot be updated.";
+                    }
+                }
             } catch (PDOException $e) {
                 $errors[] = "Database error: " . $e->getMessage();
             }
         }
-    }
-    // Display errors
-    foreach ($errors as $error) {
-        echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">' . htmlspecialchars($error) . '</div>';
-    }
-
+    
+        // Display errors
+        foreach ($errors as $error) {
+            echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">' . htmlspecialchars($error) . '</div>';
+        }
+    }    
+}

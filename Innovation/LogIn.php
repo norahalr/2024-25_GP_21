@@ -155,20 +155,36 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
         echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">Invalid email or password retry or reset password.</div>';
     }
 } else { // Student
-    $stmt = $con->prepare("SELECT password FROM teams WHERE leader_email = :email");
-    $stmt->bindParam(':email', $email);
-    $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+  $stmt = $con->prepare("SELECT password, team_email FROM students WHERE email = :email");
+  $stmt->bindParam(':email', $email);
+  $stmt->execute();
+  $result = $stmt->fetch(PDO::FETCH_ASSOC);
+  
+  if ($result && password_verify($password, $result['password'])) {
+    // Start session and set session variables
+    session_start();
+    $_SESSION['user_id'] = $email;
+    $_SESSION['email'] = $email;
+    $_SESSION['user_type'] = 'student';
 
-    if ($result && password_verify($password, $result['password'])) {
-      $_SESSION['user_id'] = $email;
-      $_SESSION['email'] = $email;
-      $_SESSION['user_type'] = 'student';
-        header("Location: StudentHomePage.php");
-        exit();
+    // Determine the role based on the team_email
+    if ($result['team_email'] == $email) {
+       // $_SESSION['role'] = 'leader'; // User is a leader
+        setcookie('role', 'leader', time() + 3600, "/", "", true, true); // Set secure cookie for role
     } else {
-        echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">Invalid email or password.</div>';
+       // $_SESSION['role'] = 'member'; // User is a member
+        setcookie('role', 'member', time() + 3600, "/", "", true, true); // Set secure cookie for role
     }
+
+
+    // Redirect to the student homepage
+    header("Location: StudentHomePage.php");
+    exit();
+ } else {
+      // Display an error for invalid credentials
+      echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">Invalid email or password.</div>';
+  }
+  
 }
 
 }

@@ -13,6 +13,22 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userEmail = $_SESSION['user_id'] ; // Get user ID from session
+if (isset($_COOKIE['role'])) {
+    $role = $_COOKIE['role']; // Retrieve the role from the cookie
+    if ($role == 'leader') {
+        //echo "User is a leader.";
+        $welcomeMessage = "Welcome, Leader!";
+    } elseif ($role == 'member') {
+       // echo "User is a member.";
+        $welcomeMessage = "Welcome, Member!";
+    } else {
+        echo "Role is not defined.";
+    }
+} else {
+    echo "Role cookie not set.";
+}
+
+
 
 $stmt = $con->prepare("SELECT supervisor_email FROM teams WHERE leader_email = :email");
   $stmt->bindParam(':email', $userEmail);
@@ -233,7 +249,11 @@ if (isset($_SESSION['message'])) {
 <section id="initialSupervisors" class="u-align-center u-clearfix u-container-align-center u-gradient u-section-2" style="background-color: #e9f2fa; width: 100vw;">
     <!-- Supervisor display code here -->
     <div class="u-clearfix u-sheet u-sheet-1" style="max-width: 1600px; margin: 0 auto;">
-        <h2 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1" style="margin:10px 20px 20px 20px;">Welcome</h2>
+        <h2 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1" style="margin:10px 20px 20px 20px;">
+           <?php echo $welcomeMessage;
+        ?>
+    </h2>
+        </h2>
         <div class="u-expanded-width u-layout-grid u-list u-list-1">
             <div class="u-repeater u-repeater-1">
                 <?php foreach ($supervisors as $supervisor): ?>
@@ -258,11 +278,14 @@ if (isset($_SESSION['message'])) {
                                 </span>
                             </h6>
                             <?php if ($supervisor['availability'] !== 'Unavailable' && empty($teamData['supervisor_email'])): ?>
+                            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'leader'): ?>
                                 <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" 
-                                   class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
-                                   REQUEST
+                                class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
+                                REQUEST
                                 </a>
                             <?php endif; ?>
+                        <?php endif; ?>
+
                         </div>
                     </div>
                 <?php endforeach; ?>
