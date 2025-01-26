@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $interestsString = implode(',', $interests); // Convert array to comma-separated string
 
           // Update the teams table with the selected interests
-          $stmt = $con->prepare("UPDATE teams SET interest = :interests WHERE leader_email = :email");
+          $stmt = $con->prepare("UPDATE students SET interest = :interests WHERE email = :email");
           $stmt->bindParam(':interests', $interestsString);
           $stmt->bindParam(':email', $leader_email);
 

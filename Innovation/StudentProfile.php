@@ -12,17 +12,38 @@
     exit();
 }
 $userEmail = $_SESSION['user_id'] ; // Get user ID from session
-
- 
+if (isset($_COOKIE['role'])) {
+    $role = $_COOKIE['role']; // Retrieve the role from the cookie
+    if ($role == 'leader') {
+        $welcomeMessage = "Welcome, Leader!";
+    } elseif ($role == 'member') {
+        $welcomeMessage = "Welcome, Member!";
+    } else {
+        echo "Role is not defined.";
+    }
+} else {
+    echo "Role cookie not set.";
+}
+ // Fetch user information from the students table based on the email
+$studentStmt = $con->prepare("SELECT name, team_email FROM students WHERE email = :email");
+$studentStmt->bindParam(':email', $userEmail);
+$studentStmt->execute();
+$student = $studentStmt->fetch(PDO::FETCH_ASSOC);
+$teamEmail = $student['team_email'];
 
   // Fetch existing idea
-  $stmt = $con->prepare("SELECT logo, draft_ideas FROM teams WHERE leader_email = :email");
+  $stmt = $con->prepare("SELECT logo FROM teams WHERE leader_email = :email");
+  $stmt->bindParam(':email', $teamEmail);
+  $stmt->execute();
+  $teamLogo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  $stmt = $con->prepare("SELECT draft_ideas FROM students WHERE email = :email");
   $stmt->bindParam(':email', $userEmail);
   $stmt->execute();
-  $teamData = $stmt->fetch(PDO::FETCH_ASSOC);
+  $studentDraft = $stmt->fetch(PDO::FETCH_ASSOC);
   
-  $existingIdea = $teamData['draft_ideas'] ;
-  $logoPath = $teamData['logo'] ?? 'images/7973420.png'; // Default logo
+  $existingIdea = $studentDraft['draft_ideas'] ;
+  $logoPath = $teamLogo['logo'] ?? 'images/7973420.png'; // Default logo
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['textarea'])) {
@@ -30,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['textarea'])) {
 
 
         // Update existing idea
-        $updateStmt = $con->prepare("UPDATE teams SET draft_ideas = :idea WHERE leader_email = :email");
+        $updateStmt = $con->prepare("UPDATE students SET draft_ideas = :idea WHERE email = :email");
         $updateStmt->bindParam(':idea', $idea);
         $updateStmt->bindParam(':email', $userEmail);
         $updateStmt->execute();
@@ -61,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['textarea'])) {
             if (move_uploaded_file($file['tmp_name'], $fileDestination)) {
                 $stmt = $con->prepare("UPDATE teams SET logo = :logo WHERE leader_email = :email");
                 $stmt->bindParam(':logo', $fileDestination);
-                $stmt->bindParam(':email', $userEmail);
+                $stmt->bindParam(':email', $teamEmail);
 
                 if ($stmt->execute()) {
                     echo "Logo uploaded and saved!";
@@ -110,66 +131,123 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['textarea'])) {
 // }
 
 
+// $leaderEmail = $userEmail; // Set this from the session or wherever the leader's email is stored
 
+// // Fetch leader information from the teams table
+// $leaderStmt = $con->prepare("SELECT name, leader_email, supervisor_email FROM teams WHERE leader_email = :email");
+// $leaderStmt->bindParam(':email', $leaderEmail);
+// $leaderStmt->execute();
+// $leader = $leaderStmt->fetch(PDO::FETCH_ASSOC);
 
+// $leaderName = $leader['name'];
+// $leaderEmail = $leader['leader_email'];
 
+// // Fetch students information from the students table (team_email matches leader's email)
+// $studentsStmt = $con->prepare("SELECT name, email FROM students WHERE team_email = :team_email");
+// $studentsStmt->bindParam(':team_email', $leaderEmail);
+// $studentsStmt->execute();
+// $students = $studentsStmt->fetchAll(PDO::FETCH_ASSOC);
 
+// // Fetch project details from team_idea_request table
+// $projectStmt = $con->prepare("
+//     SELECT 
+//         tir.project_name, 
+//         tir.supervisor_email, 
+//         tir.description,
+//         'team_idea_request' AS request_type
+//     FROM team_idea_request tir
+//     WHERE tir.team_email = :team_email AND tir.status = 'Approved'
+//     UNION ALL
+//     SELECT 
+//         NULL AS project_name, 
+//         sir.supervisor_email, 
+//         s.idea AS description,
+//         'supervisor_idea_request' AS request_type
+//     FROM supervisor_idea_request sir
+//     JOIN supervisors s ON sir.supervisor_email = s.email
+//     WHERE sir.team_email = :team_email AND sir.status = 'Approved'
+// ");
 
-$leaderEmail = $userEmail; // Set this from the session or wherever the leader's email is stored
+// $projectStmt->bindParam(':team_email', $leaderEmail);
+// $projectStmt->execute();
+// $project = $projectStmt->fetch(PDO::FETCH_ASSOC);
 
-// Fetch leader information from the teams table
-$leaderStmt = $con->prepare("SELECT name, leader_email, supervisor_email FROM teams WHERE leader_email = :email");
-$leaderStmt->bindParam(':email', $leaderEmail);
-$leaderStmt->execute();
-$leader = $leaderStmt->fetch(PDO::FETCH_ASSOC);
-
-$leaderName = $leader['name'];
-$leaderEmail = $leader['leader_email'];
-
-// Fetch students information from the students table (team_email matches leader's email)
-$studentsStmt = $con->prepare("SELECT name, email FROM students WHERE team_email = :team_email");
-$studentsStmt->bindParam(':team_email', $leaderEmail);
-$studentsStmt->execute();
-$students = $studentsStmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Fetch project details from team_idea_request table
-$projectStmt = $con->prepare("
-    SELECT 
-        tir.project_name, 
-        tir.supervisor_email, 
-        tir.description,
-        'team_idea_request' AS request_type
-    FROM team_idea_request tir
-    WHERE tir.team_email = :team_email AND tir.status = 'Approved'
-    UNION ALL
-    SELECT 
-        NULL AS project_name, 
-        sir.supervisor_email, 
-        s.idea AS description,
-        'supervisor_idea_request' AS request_type
-    FROM supervisor_idea_request sir
-    JOIN supervisors s ON sir.supervisor_email = s.email
-    WHERE sir.team_email = :team_email AND sir.status = 'Approved'
-");
-
-$projectStmt->bindParam(':team_email', $leaderEmail);
-$projectStmt->execute();
-$project = $projectStmt->fetch(PDO::FETCH_ASSOC);
-
-if ($project) {
-    // Fetch supervisor name only if $project is not false
-    $supervisorStmt = $con->prepare("SELECT name FROM supervisors WHERE email = :supervisor_email");
-    $supervisorStmt->bindParam(':supervisor_email', $project['supervisor_email']);
-    $supervisorStmt->execute();
-    $supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
+// if ($project) {
+//     // Fetch supervisor name only if $project is not false
+//     $supervisorStmt = $con->prepare("SELECT name FROM supervisors WHERE email = :supervisor_email");
+//     $supervisorStmt->bindParam(':supervisor_email', $project['supervisor_email']);
+//     $supervisorStmt->execute();
+//     $supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
     
     
-} 
+// } 
 
 
 
+// Assuming the user email is stored in session as $_SESSION['user_id']
+$userEmail = $_SESSION['user_id']; // Email from the session
+
+$userRole = $_SESSION['role']; // 'leader' or 'member'
+
+// Fetch user information from the students table based on the email
+$studentStmt = $con->prepare("SELECT name, team_email FROM students WHERE email = :email");
+$studentStmt->bindParam(':email', $userEmail);
+$studentStmt->execute();
+$student = $studentStmt->fetch(PDO::FETCH_ASSOC);
+$teamEmail = $student['team_email'];
 
 
+if ($student) {
+    $studentName = $student['name'];
+
+        $teamStmt = $con->prepare("SELECT name, leader_email, supervisor_email FROM teams WHERE leader_email = :email");
+        $teamStmt->bindParam(':email', $teamEmail);
+        $teamStmt->execute();
+        $team = $teamStmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($team) {
+            $leaderName = $team['name'];
+            $supervisorEmail = $team['supervisor_email'];
+            $leader_email = $team['leader_email'];
+
+            // Fetch supervisor information if a supervisor is assigned
+            if ($supervisorEmail) {
+                $supervisorStmt = $con->prepare("SELECT name FROM supervisors WHERE email = :email");
+                $supervisorStmt->bindParam(':email', $supervisorEmail);
+                $supervisorStmt->execute();
+                $supervisor = $supervisorStmt->fetch(PDO::FETCH_ASSOC);
+                $supervisorName = $supervisor['name'];
+            }
+        }
+    
+    // Fetch all students associated with the team 
+    $studentsStmt = $con->prepare("SELECT name, email FROM students WHERE team_email = :team_email");
+    $studentsStmt->bindParam(':team_email', $teamEmail);
+    $studentsStmt->execute();
+    $students = $studentsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Fetch project details from team_idea_request table
+    $projectStmt = $con->prepare("
+        SELECT 
+            tir.project_name, 
+            tir.supervisor_email, 
+            tir.description
+        FROM team_idea_request tir
+        WHERE tir.team_email = :team_email AND tir.status = 'Approved'
+        UNION ALL
+        SELECT 
+            NULL AS project_name, 
+            sir.supervisor_email, 
+            s.idea AS description
+        FROM supervisor_idea_request sir
+        JOIN supervisors s ON sir.supervisor_email = s.email
+        WHERE sir.team_email = :team_email AND sir.status = 'Approved'
+    ");
+    $projectStmt->bindParam(':team_email', $teamEmail);
+    $projectStmt->execute();
+    $project = $projectStmt->fetch(PDO::FETCH_ASSOC);
+
+}
 
 
 
@@ -280,7 +358,7 @@ if ($project) {
               <div class="u-align-center u-container-align-center u-container-style u-layout-cell u-radius u-right-cell u-shape-round u-size-30 u-size-xs-60 u-layout-cell-2">
               <?php
                 $stmt = $con->prepare("SELECT logo FROM teams WHERE leader_email = :email");
-                $stmt->bindParam(':email', $userEmail);
+                $stmt->bindParam(':email', $teamEmail);
                 $stmt->execute();
                 
                 // Set default logo path in case no logo is found
@@ -314,56 +392,58 @@ if ($project) {
             <div class="custom-expanded u-form u-form-2">
 
 
-            <form id="studentForm" action="Edit_Student_Info.php" method="POST"class="u-clearfix u-form-spacing-30 u-form-vertical u-inner-form" source="email" name="form" style="padding: 15px;">
-    <!-- Leader Name -->
+            <form id="studentForm" action="Edit_Student_Info.php" method="POST" class="u-clearfix u-form-spacing-30 u-form-vertical u-inner-form" source="email" name="form" style="padding: 15px;">
+    <!-- Leader Name (Read-Only for Everyone, Editable for Leader) -->
     <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-3">
         <label for="name-8e541" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-2">Leader Name</label>
         <input type="text" placeholder="Leader name" id="name-8e541" name="name-1" 
         class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-2"
-         required value="<?php echo htmlspecialchars($leaderName); ?>" readonly>
+        required value="<?php echo htmlspecialchars($leaderName ?? ''); ?>" 
+        <?php echo ($userRole === 'leader' ? '' : 'readonly'); ?>>
     </div>
 
-    <!-- Leader Email -->
+    <!-- Leader Email (Read-Only for Everyone, Editable for Leader) -->
     <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-4">
         <label for="email-c6a3" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-3">Email</label>
-        <input type="text" placeholder="Leader email" id="email-c6a3" name="email-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-3" required="required" value="<?php echo htmlspecialchars($leaderEmail); ?>" readonly>
+        <input type="text" placeholder="Leader email" id="email-c6a3" name="email-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-3" required="required" value="<?php echo htmlspecialchars($leader_email); ?>" 
+        <?php echo ($userRole === 'leader' ? '' : 'readonly'); ?>>
     </div>
 
     <?php foreach ($students as $index => $student): ?>
-    <!-- Skip leader if already added -->
-    <?php if ($student['email'] !== $leader['leader_email']): ?>
-        <!-- Student Name -->
-        <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-<?php echo $index + 5; ?>">
-            <label for="name-<?php echo $index + 8; ?>" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-<?php echo $index + 4; ?>">Student Name</label>
-            <input type="text" 
-                   placeholder="Student name" 
-                   id="name-<?php echo $index + 8; ?>" 
-                   name="name-<?php echo $index + 1; ?>" 
-                   class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-<?php echo $index + 4; ?>" 
-                   required 
-                   value="<?php echo htmlspecialchars($student['name']); ?>"readonly>
-        </div>
+        <!-- Skip leader if already added -->
+        <?php if ($student['email'] !== $leader_email): ?>
+            <!-- Student Name (Read-Only) -->
+            <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-<?php echo $index + 5; ?>">
+                <label for="name-<?php echo $index + 8; ?>" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-<?php echo $index + 4; ?>">Student Name</label>
+                <input type="text" 
+                       placeholder="Student name" 
+                       id="name-<?php echo $index + 8; ?>" 
+                       name="name-<?php echo $index + 1; ?>" 
+                       class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-<?php echo $index + 4; ?>" 
+                       required 
+                       value="<?php echo htmlspecialchars($student['name']); ?>" readonly>
+            </div>
 
-        <!-- Student Email (Read-Only) -->
-        <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-<?php echo $index + 6; ?>">
-            <label for="email-<?php echo $index + 8; ?>" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-<?php echo $index + 5; ?>">Student Email</label>
-            <input type="text" 
-                   placeholder="Student email" 
-                   id="email-<?php echo $index + 8; ?>" 
-                   name="email-<?php echo $index + 1; ?>" 
-                   class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-<?php echo $index + 5; ?>" 
-                   required 
-                   value="<?php echo htmlspecialchars($student['email']); ?>" 
-                   readonly>
-        </div>
-    <?php endif; ?>
-<?php endforeach; ?>
+            <!-- Student Email (Read-Only) -->
+            <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-<?php echo $index + 6; ?>">
+                <label for="email-<?php echo $index + 8; ?>" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-<?php echo $index + 5; ?>">Student Email</label>
+                <input type="text" 
+                       placeholder="Student email" 
+                       id="email-<?php echo $index + 8; ?>" 
+                       name="email-<?php echo $index + 1; ?>" 
+                       class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-<?php echo $index + 5; ?>" 
+                       required 
+                       value="<?php echo htmlspecialchars($student['email']); ?>" 
+                       readonly>
+            </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
 
     <!-- Supervisor (Read-Only) -->
     <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-11">
         <label for="text-df08" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-10">Supervisor</label>
         <input type="text" placeholder="Current supervisor" id="text-df08" name="text" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-10" 
-        value="<?php echo htmlspecialchars($supervisor['name'] ?? ''); ?>" readonly>
+        value="<?php echo htmlspecialchars($supervisorName ?? ''); ?>" readonly>
     </div>
 
     <!-- Project Title (Read-Only) -->
@@ -378,14 +458,13 @@ if ($project) {
         <textarea rows="4" cols="50" id="textarea-a10a" name="textarea-2" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-12" placeholder="A brief about your project" readonly><?php echo htmlspecialchars($project['description'] ?? ''); ?></textarea>
     </div>
 
-    <!-- Edit Button -->
-    <div class="u-align-right u-form-group u-form-submit u-label-none u-form-group-14">
-    <!-- Edit Button -->
-    <a href="#" class="u-active-palette-1-light-3 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-3" id="editBtn">Edit</a>
-
-    <!-- Save Button (Hidden Initially) -->
-    <button type="button" id="saveBtn" class="u-btn u-btn-submit u-btn-round u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-3" style="display:none;">Save</button>
-</div>
+    <!-- Edit Button (Only visible to the Leader) -->
+    <?php if ($userRole === 'leader'): ?>
+        <div class="u-align-right u-form-group u-form-submit u-label-none u-form-group-14">
+            <a href="#" class="u-active-palette-1-light-3 u-border-none u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-3" id="editBtn">Edit</a>
+            <button type="button" id="saveBtn" class="u-btn u-btn-submit u-btn-round u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-3" style="display:none;">Save</button>
+        </div>
+    <?php endif; ?>
 </form>
 
 <!-- JavaScript to Enable/Disable Fields -->
