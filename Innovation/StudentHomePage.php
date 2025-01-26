@@ -278,7 +278,7 @@ if (isset($_SESSION['message'])) {
                                 </span>
                             </h6>
                             <?php if ($supervisor['availability'] !== 'Unavailable' && empty($teamData['supervisor_email'])): ?>
-                            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'leader'): ?>
+                            <?php if (isset($_COOKIE['role']) && $_COOKIE['role'] === 'leader'): ?>
                                 <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" 
                                 class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
                                 REQUEST
