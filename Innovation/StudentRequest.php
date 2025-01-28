@@ -2,14 +2,32 @@
   ob_start(); // Ensure no output is sent before headers
   session_start();
   require_once 'config/connect.php';
+
   
   // Check if the session has a user ID; otherwise, redirect to login
   if (!isset($_SESSION['user_id'])) {
-      $_SESSION['error'] = "You must be logged in to submit a request.";
-      header("Location: LogIn.php");
-      exit();
-  }
-  $userEmail = $_SESSION['user_id']; // Get user ID from session
+    $_SESSION['error'] = "You must be logged in to submit a request.";
+    header("Location: LogIn.php");
+    exit();
+}
+
+$userEmail = $_SESSION['user_id'] ; // Get user ID from session
+if (isset($_COOKIE['role'])) {
+    $role = $_COOKIE['role']; // Retrieve the role from the cookie
+    if ($role == 'leader') {
+        echo "User is a leader.";
+        $welcomeMessage = "Welcome, Leader!";
+    } elseif ($role == 'member') {
+       echo "User is a member.";
+        $welcomeMessage = "Welcome, Member!";
+    } else {
+        echo "Role is not defined.";
+    }
+} else {
+    echo "Role cookie not set.";
+}
+
+  
 
   try { 
     // Prepare the SQL statement to fetch requests from both the team_idea_request and supervisor_idea_request tables
@@ -227,7 +245,10 @@ if (isset($_SESSION['error'])) {
 
       <section class="u-align-center u-clearfix u-container-align-center u-section-1" id="carousel_2094">
     <div class="u-clearfix u-sheet u-sheet-1">
-        <a href="StudentHomePage.php" class="u-active-palette-1-light-3 u-border-none u-btn u-button-style u-hover-palette-1-light-1 u-palette-1-base u-text-white u-btn-1">Add​&nbsp;<span class="u-file-icon u-icon u-text-palette-1-light-1"><img src="images/1665629-c9014b65.png" alt=""></span></a>
+    <?php// if (isset($_COOKIE['role']) && $_COOKIE['role'] === 'leader'): ?>
+        <a href="StudentHomePage.php" class="u-active-palette-1-light-3 u-border-none u-btn u-button-style u-hover-palette-1-light-1 u-palette-1-base u-text-white u-btn-1">Add​&nbsp;
+            <span class="u-file-icon u-icon u-text-palette-1-light-1"><img src="images/1665629-c9014b65.png" alt=""></span></a>
+        <?php //endif ?>
         <h1 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1">Your Group Requests</h1>
         <div class="u-blog u-expanded-width u-blog-1">
             <div class="u-list-control"></div>
