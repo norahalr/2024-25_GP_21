@@ -245,11 +245,14 @@ if (isset($_SESSION['error'])) {
 
       <section class="u-align-center u-clearfix u-container-align-center u-section-1" id="carousel_2094">
     <div class="u-clearfix u-sheet u-sheet-1">
-    <?php// if (isset($_COOKIE['role']) && $_COOKIE['role'] === 'leader'): ?>
-        <a href="StudentHomePage.php" class="u-active-palette-1-light-3 u-border-none u-btn u-button-style u-hover-palette-1-light-1 u-palette-1-base u-text-white u-btn-1">Add​&nbsp;
-            <span class="u-file-icon u-icon u-text-palette-1-light-1"><img src="images/1665629-c9014b65.png" alt=""></span></a>
-        <?php //endif ?>
-        <h1 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1">Your Group Requests</h1>
+\    
+    <h1 class=" u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1">Your Group Requests</h1>
+    <?php if (isset($_COOKIE['role']) && $_COOKIE['role'] === 'leader'): ?>
+        <a href="StudentHomePage.php" class="u-btn u-button-style u-hover-palette-1-light-1 u-palette-1-base u-text-white u-btn-1">
+            Add&nbsp;
+            <span class="u-file-icon u-icon u-text-palette-1-light-1"><img src="images/1665629-c9014b65.png" alt=""></span>
+        </a>
+    <?php endif; ?>
         <div class="u-blog u-expanded-width u-blog-1">
             <div class="u-list-control"></div>
             <div class="u-repeater u-repeater-1">

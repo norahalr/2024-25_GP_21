@@ -47,19 +47,16 @@ $teamEmail = $student['team_email'];
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['textarea'])) {
-    $idea = $_POST['textarea'];
+  $idea = trim($_POST['textarea']); // Trim spaces before saving
 
+  // Update existing idea
+  $updateStmt = $con->prepare("UPDATE students SET draft_ideas = :idea WHERE email = :email");
+  $updateStmt->bindParam(':idea', $idea);
+  $updateStmt->bindParam(':email', $userEmail);
+  $updateStmt->execute();
 
-        // Update existing idea
-        $updateStmt = $con->prepare("UPDATE students SET draft_ideas = :idea WHERE email = :email");
-        $updateStmt->bindParam(':idea', $idea);
-        $updateStmt->bindParam(':email', $userEmail);
-        $updateStmt->execute();
-        //echo "Idea updated successfully.";
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit; // Ensure the script stops executing after the redirect
-    
-
+  header("Location: " . $_SERVER['PHP_SELF']);
+  exit;
 }
   if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['group_logo'])) {
     $file = $_FILES['group_logo'];
@@ -344,9 +341,9 @@ if ($student) {
     name="textarea" 
     class="u-input u-input-rectangle" 
     required 
-    placeholder="Write down your ideas to save them for you! (Draft)">
-    <?= htmlspecialchars($existingIdea ?? '') ?>
-</textarea>
+    placeholder="Write down your ideas to save them for you! (Draft)"
+><?= htmlspecialchars(trim($existingIdea ?? '')) ?></textarea>
+
          </div>
     <div class="u-align-right u-form-group u-form-submit">
     <button type="submit" class="u-btn u-btn-submit">Save</button>
@@ -396,18 +393,17 @@ if ($student) {
     <!-- Leader Name (Read-Only for Everyone, Editable for Leader) -->
     <div class="u-form-group u-form-name u-form-partition-factor-2 u-label-none u-form-group-3">
         <label for="name-8e541" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-2">Leader Name</label>
-        <input type="text" placeholder="Leader name" id="name-8e541" name="name-1" 
+        <input type="text" placeholder="Leader name" id="name-8e541" name="name-1"  readonly
         class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-2"
         required value="<?php echo htmlspecialchars($leaderName ?? ''); ?>" 
-        <?php echo ($userRole === 'leader' ? '' : 'readonly'); ?>>
+        >
     </div>
 
     <!-- Leader Email (Read-Only for Everyone, Editable for Leader) -->
     <div class="u-form-group u-form-partition-factor-2 u-label-none u-form-group-4">
         <label for="email-c6a3" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-3">Email</label>
-        <input type="text" placeholder="Leader email" id="email-c6a3" name="email-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-3" required="required" value="<?php echo htmlspecialchars($leader_email); ?>" 
-        <?php echo ($userRole === 'leader' ? '' : 'readonly'); ?>>
-    </div>
+        <input type="text" placeholder="Leader email" id="email-c6a3" name="email-1" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-3" required="required" value="<?php echo htmlspecialchars($leader_email); ?>"readonly >  
+        </div>
 
     <?php foreach ($students as $index => $student): ?>
         <!-- Skip leader if already added -->
@@ -478,28 +474,100 @@ document.addEventListener("DOMContentLoaded", function () {
     const nameInputs = studentForm.querySelectorAll('input[name^="name-"]');
     const emailInputs = studentForm.querySelectorAll('input[name^="email-"]');
 
+    // Function to validate name format (First Last)
+    function validateName(input) {
+        const nameRegex = /^[A-Za-z]+ [A-Za-z]+$/;
+        const errorElement = input.nextElementSibling;
+
+        if (!input.value.trim()) {
+            errorElement.textContent = "This field is required.";
+            return false;
+        } else if (!nameRegex.test(input.value.trim())) {
+            errorElement.textContent = "Enter first and last name (e.g., Norah Alrajhi).";
+            return false;
+        } else {
+            errorElement.textContent = ""; // Clear error message
+            return true;
+        }
+    }
+
+    // Function to validate email format
+    function validateEmail(input) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const errorElement = input.nextElementSibling;
+
+        if (!input.value.trim()) {
+            errorElement.textContent = "This field is required.";
+            return false;
+        } else if (!emailRegex.test(input.value.trim())) {
+            errorElement.textContent = "Enter a valid email.";
+            return false;
+        } else {
+            errorElement.textContent = "";
+            return true;
+        }
+    }
+
+    // Attach event listeners to name fields for validation
+    nameInputs.forEach(input => {
+        const errorSpan = document.createElement("small");
+        errorSpan.classList.add("error-message");
+        errorSpan.style.color = "red";
+        input.insertAdjacentElement("afterend", errorSpan);
+
+        input.addEventListener("blur", function () {
+            validateName(input);
+        });
+    });
+
+    // Attach event listeners to email fields for validation
+    emailInputs.forEach(input => {
+        const errorSpan = document.createElement("small");
+        errorSpan.classList.add("error-message");
+        errorSpan.style.color = "red";
+        input.insertAdjacentElement("afterend", errorSpan);
+
+        input.addEventListener("blur", function () {
+            validateEmail(input);
+        });
+    });
+
     // When Edit button is clicked
     editBtn.addEventListener("click", function (event) {
         event.preventDefault();
-        // Enable name inputs for editing
         nameInputs.forEach(input => input.removeAttribute("readonly"));
-        // Make email inputs readonly
         emailInputs.forEach(input => input.setAttribute("readonly", "readonly"));
-        
-        // Show the Save button and change the Edit button to Save
-        saveBtn.style.display = "block";  // Show Save button
-        editBtn.style.display = "none";  // Hide Edit button
+
+        saveBtn.style.display = "inline-block";
+        editBtn.style.display = "none";
     });
 
-    // When Save button is clicked, submit the form
+    // When Save button is clicked, validate and submit form
     saveBtn.addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent the default form submission
+        event.preventDefault();
+        let valid = true;
 
-        // Create FormData object to collect form data
+        // Validate all name fields
+        nameInputs.forEach(input => {
+            if (!validateName(input)) {
+                valid = false;
+            }
+        });
+
+        // Validate all email fields
+        emailInputs.forEach(input => {
+            if (!validateEmail(input)) {
+                valid = false;
+            }
+        });
+
+        if (!valid) {
+            alert("Please correct the errors before submitting.");
+            return;
+        }
+
+        // Submit form via AJAX if valid
         const formData = new FormData(studentForm);
-        console.log("Form data:", Array.from(formData.entries()));
-
-        // Submit the form via AJAX (using fetch)
         fetch(studentForm.action, {
             method: "POST",
             body: formData
@@ -507,14 +575,8 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.ok ? alert("Student information updated successfully!") : alert("Error updating student information."))
         .catch(error => alert("Error: " + error.message));
 
-        // Optionally hide the Save button and show the Edit button again after saving
-        saveBtn.style.display = "none";  // Hide Save button
-        editBtn.style.display = "block";  // Show Edit button again
-    });
-
-    // Handle the Idea Form (Draft Saving)
-    const ideaForm = document.getElementById("ideaForm");
-    ideaForm.addEventListener("submit", function (event) {
+        saveBtn.style.display = "none";
+        editBtn.style.display = "inline-block";
     });
 });
 

@@ -5,12 +5,12 @@
 .u-section-1 .u-btn-1 {
   background-image: none;
   text-transform: uppercase;
-  margin: 160px 0 0 auto;
+  margin: 0 0 0 auto;
   padding: 0 25px 0 24px;
 }
 
 .u-section-1 .u-text-1 {
-  margin: -98px auto 10%;
+  margin:5% auto 5%;
 }
 
 .u-section-1 .u-blog-1 {
@@ -292,14 +292,14 @@
   }
 
   .u-section-1 .u-btn-1 {
-    margin-top: 146px;
+    margin-top: 0;
     margin-right: -1px;
     padding: 1px 27px;
   }
 
   .u-section-1 .u-text-1 {
     width: auto;
-    margin-top: -107px;
+    margin:5% auto 5%;
   }
 
   .u-section-1 .u-blog-1 {
@@ -480,15 +480,14 @@
   }
 
   .u-section-1 .u-btn-1 {
-    margin-top: 103px;
+    margin-top: 0;
     margin-right: 1px;
     padding-right: 18px;
     padding-left: 17px;
   }
 
   .u-section-1 .u-text-1 {
-    margin-top: -128px;
-    margin-left: 0;
+    margin:5% auto 5%;
   }
 
   .u-section-1 .u-blog-1 {

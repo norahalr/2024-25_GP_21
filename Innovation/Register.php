@@ -814,25 +814,22 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
 }
 
               // Helper function to show error messages
-    function showError(input, message) {
-        let errorElement = input.nextElementSibling;
-        if (!errorElement || !errorElement.classList.contains('error-message')) {
-            errorElement = document.createElement('div');
-            errorElement.classList.add('error-message');
-            errorElement.style.color = 'red';
-            errorElement.style.fontSize = '12px';
-            input.parentNode.appendChild(errorElement);
-        }
-        errorElement.textContent = message;
-    }
+              function showError(input, message) {
+    clearError(input); // Ensure old error messages are removed first
 
+    let errorElement = document.createElement('div');
+    errorElement.classList.add('error-message');
+    errorElement.style.color = 'red';
+    errorElement.style.fontSize = '12px';
+    errorElement.textContent = message;
+
+    input.parentNode.appendChild(errorElement);
+}
     // Helper function to clear error messages
     function clearError(input) {
-        const errorElement = input.nextElementSibling;
-        if (errorElement && errorElement.classList.contains('error-message')) {
-            errorElement.remove();
-        }
-    }
+    const errorElements = input.parentNode.querySelectorAll('.error-message');
+    errorElements.forEach(error => error.remove());
+}
 
     // Validation for individual fields
     function validateField(input) {
@@ -871,14 +868,17 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
     }
 
     if (fieldName === 're-enter-password') {
-    const passwordField = input.closest('form').querySelector('input[name="password"]');
-    const password = passwordField ? passwordField.value : '';
-    if (value !== password) {
-        showError(input, 'Passwords do not match.');
-    } else {
-        clearError(input);
+        const passwordField = input.closest('form').querySelector('input[name="password"]');
+        const password = passwordField ? passwordField.value.trim() : '';
+
+        if (value !== password) {
+            showError(input, 'Passwords do not match.');
+            return;
+        }
     }
-}
+
+    clearError(input); // ✅ Clear error if field is valid
+
    
     
 }
