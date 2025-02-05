@@ -10,26 +10,38 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 // Check if request ID and type are provided
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'], $_POST['request_type'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'], $_POST['request_type'], $_POST['delete_reason'])) {
     $requestId = $_POST['request_id'];
     $requestType = $_POST['request_type'];
-echo $requestType;
+    $deleteReason = trim($_POST['delete_reason']); // FIXED
+
+    if (empty($deleteReason)) {
+        $_SESSION['error'] = "You must provide a reason for canceling the request.";
+        header("Location: StudentRequest.php");
+        exit();
+    }
+
     try {
-        // Determine the table based on request type
         $table = ($requestType === 'team_idea_request') ? 'team_idea_request' : 'supervisor_idea_request';
 
-        // Update the status to 'Canceled'
-        $stmt = $con->prepare("UPDATE $table SET status = 'Canceled' WHERE id = :id AND status != 'Approved' AND status != 'Rejected'");
-        $stmt->execute(['id' => $requestId]);
+        $stmt = $con->prepare("
+            UPDATE $table 
+            SET status = 'Canceled', delete_reason = :delete_reason 
+            WHERE id = :id AND status NOT IN ('Approved', 'Rejected')
+        ");
+        $stmt->execute([
+            'id' => $requestId,
+            'delete_reason' => $deleteReason
+        ]);
 
-        // Set a success message
-        $_SESSION['message'] = "The request has been marked as Canceled.";
+        $_SESSION['message'] = "The request has been marked as Canceled with reason: $deleteReason";
     } catch (PDOException $e) {
-        $_SESSION['error'] = "An error occurred while trying to delete the request: " . $e->getMessage();
+        $_SESSION['error'] = "An error occurred while canceling the request: " . $e->getMessage();
     }
 } else {
     $_SESSION['error'] = "Invalid request.";
 }
+
 
 // Redirect back to the main page
 header("Location: StudentRequest.php");

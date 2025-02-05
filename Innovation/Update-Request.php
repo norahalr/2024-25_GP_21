@@ -21,10 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Update only the `team_idea_request` table
         $stmt = $con->prepare("
             UPDATE team_idea_request
-            SET project_name = :project_name, 
-                description = :description
-            WHERE id = :id AND team_email = :team_email
-        ");
+        SET project_name = :project_name, 
+            description = :description,
+            is_updated = 1, 
+            last_updated = NOW()
+        WHERE id = :id AND team_email = :team_email
+    ");
         $stmt->bindParam(':id', $request_id);
         $stmt->bindParam(':project_name', $project_name);
         $stmt->bindParam(':description', $idea);

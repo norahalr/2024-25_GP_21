@@ -1575,17 +1575,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="ideaTextarea" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5" id="textareaLabel">
             Idea <span style="color: red;">*</span>
         </label>
-        <textarea 
-            rows="4" 
-            cols="50" 
-            id="ideaTextarea" 
-            name="Idea" 
-            class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"
-            <?= $hasSupervisorIdeas ? 'readonly' : '' ?>
-            placeholder="<?= $hasSupervisorIdeas ? '' : 'Write your idea here' ?>"
-        >
-            <?= $hasSupervisorIdeas ? htmlspecialchars($supervisors[0]['idea']) : '' ?>
-        </textarea>
+        <textarea id="ideaTextarea" name="Idea" rows="4" cols="50" 
+    class="u-border-2 u-border-no-left u-border-no-right u-border-no-top 
+    u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 
+    u-radius u-input-5"
+    <?= $hasSupervisorIdeas ? 'readonly' : '' ?>
+    placeholder="<?= $hasSupervisorIdeas ? '' : 'Write your idea here' ?>"
+><?= trim($hasSupervisorIdeas ? htmlspecialchars($supervisors[0]['idea']) : '') ?></textarea>
+
     </div>
 
     <div class="u-align-left u-form-group u-form-submit u-label-top u-block-d7f8-70">
@@ -1649,15 +1646,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Show project name input
             projectNameGroup.style.display = 'block';
 
-            // Enable textarea editing
+            // Enable textarea editing and clear content
             textarea.readOnly = false;
+            textarea.value = ''; // Clear the textarea
             textarea.placeholder = 'Write your idea here';
         } else {
             // Hide project name input
             projectNameGroup.style.display = 'none';
 
-            // Make textarea read-only with supervisor's idea
+            // Make textarea read-only and restore supervisor's idea
             textarea.readOnly = true;
+            textarea.value = "<?= trim(htmlspecialchars($supervisors[0]['idea'])) ?>"; // Restore supervisor idea
             textarea.placeholder = '';
         }
     });
@@ -1667,5 +1666,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         document.getElementById('projectPreference').dispatchEvent(new Event('change'));
     });
 </script>
+
 </body>
 </html>

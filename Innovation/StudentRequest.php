@@ -2,14 +2,38 @@
   ob_start(); // Ensure no output is sent before headers
   session_start();
   require_once 'config/connect.php';
+
   
   // Check if the session has a user ID; otherwise, redirect to login
   if (!isset($_SESSION['user_id'])) {
-      $_SESSION['error'] = "You must be logged in to submit a request.";
-      header("Location: LogIn.php");
-      exit();
-  }
-  $userEmail = $_SESSION['user_id']; // Get user ID from session
+    $_SESSION['error'] = "You must be logged in to submit a request.";
+    header("Location: LogIn.php");
+    exit();
+}
+
+$userEmail = $_SESSION['user_id'] ; // Get user ID from session
+if (isset($_SESSION['role'])) {
+    $role = $_SESSION['role']; // Retrieve the role
+    if ($role == 'leader') {
+        echo "User is a leader.";
+        $welcomeMessage = "Welcome, Leader!";
+    } elseif ($role == 'member') {
+       echo "User is a member.";
+        $welcomeMessage = "Welcome, Member!";
+    } else {
+        echo "Role is not defined.";
+    }
+} else {
+    echo "Role not set.";
+}
+
+// Prepare SQL query to get the leader's team email
+$stmt = $con->prepare("SELECT team_email FROM students WHERE email = :email");
+$stmt->bindParam(':email', $userEmail);
+$stmt->execute();
+$leader_email = $stmt->fetchColumn();
+
+  
 
   try { 
     // Prepare the SQL statement to fetch requests from both the team_idea_request and supervisor_idea_request tables
@@ -40,7 +64,7 @@
     JOIN supervisors s ON sir.supervisor_email = s.email
     WHERE sir.team_email = :team_email
 ");
-$stmt->execute(['team_email' => $userEmail]);
+$stmt->execute(['team_email' => $leader_email]);
 $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
@@ -227,12 +251,39 @@ if (isset($_SESSION['error'])) {
 
       <section class="u-align-center u-clearfix u-container-align-center u-section-1" id="carousel_2094">
     <div class="u-clearfix u-sheet u-sheet-1">
-        <a href="StudentHomePage.php" class="u-active-palette-1-light-3 u-border-none u-btn u-button-style u-hover-palette-1-light-1 u-palette-1-base u-text-white u-btn-1">Add​&nbsp;<span class="u-file-icon u-icon u-text-palette-1-light-1"><img src="images/1665629-c9014b65.png" alt=""></span></a>
-        <h1 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1">Your Group Requests</h1>
+\    
+    <h1 class=" u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1">Your Group Requests</h1>
+    <?php if (isset($_COOKIE['role']) && $_COOKIE['role'] === 'leader'): ?>
+        <a href="StudentHomePage.php" class="u-btn u-button-style u-hover-palette-1-light-1 u-palette-1-base u-text-white u-btn-1">
+            Add&nbsp;
+            <span class="u-file-icon u-icon u-text-palette-1-light-1"><img src="images/1665629-c9014b65.png" alt=""></span>
+        </a>
+    <?php endif; ?>
         <div class="u-blog u-expanded-width u-blog-1">
             <div class="u-list-control"></div>
             <div class="u-repeater u-repeater-1">
             <?php if (!empty($requests)): ?>
+                <?php
+// Custom sorting function to order by status and date
+usort($requests, function($a, $b) {
+    // Status order (Approved = 1, Pending = 2, Canceled = 3, Rejected = 4)
+    $statusOrder = [
+        'Approved' => 1,
+        'Pending' => 2,
+        'Canceled' => 3,
+        'Rejected' => 4
+    ];
+
+    // Compare statuses
+    $statusComparison = $statusOrder[$a['status']] <=> $statusOrder[$b['status']];
+    if ($statusComparison !== 0) {
+        return $statusComparison;
+    }
+
+    // If statuses are the same, compare by date (latest first)
+    return strtotime($b['request_date']) <=> strtotime($a['request_date']);
+});
+?>
     <?php foreach ($requests as $request): ?>
       <div class="u-blog-post u-repeater-item">
     <div class="u-container-layout u-similar-container u-valign-bottom-xs u-container-layout-<?= $request['id'] ?>">
@@ -298,115 +349,100 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
     text-align: right;
 ">
         <!-- Edit Button -->
-         
-        <?php if ($request['request_type'] === 'team_idea_request'): // Check if the status is not Canceled ?>
+        <div style="display: flex;justify-content: flex-end; align-items: center; gap: 10px;">  <!-- FLEX CONTAINER ADDED -->
 
-        <form action="edit-request.php" method="GET" style="display: inline-block;">
-    <input type="hidden" name="id" value="<?= htmlspecialchars($request['id'], ENT_QUOTES, 'UTF-8') ?>">
-    <input type="hidden" name="type" value="<?= htmlspecialchars($request['request_type'], ENT_QUOTES, 'UTF-8') ?>">
-    <button type="submit" 
-            class="u-btn u-btn-edit" 
-            style="
-                display: inline-block;
-                padding: 10px 20px;
-                background-color: #007BFF;
-                color: white;
-                text-decoration: none;
-                border-radius: 5px;
-                font-weight: bold;
-                border: none;
-                cursor: pointer;
-                margin-right: 10px;
-            ">
-        Edit
-    </button>
-</form>
+        <?php if ($request['request_type'] === 'team_idea_request' && isset($_SESSION['role']) && $_SESSION['role'] === 'leader'): ?>
+        
+        <!-- Edit Form -->
+        <form action="edit-request.php" method="GET">
+            <input type="hidden" name="id" value="<?= htmlspecialchars($request['id'], ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="type" value="<?= htmlspecialchars($request['request_type'], ENT_QUOTES, 'UTF-8') ?>">
+            <button type="submit" class="u-btn u-btn-edit" 
+                style="
+                    padding: 10px 20px;
+                    background-color: #007BFF;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    font-weight: bold;
+                    border: none;
+                    cursor: pointer;
+                ">
+                Edit
+            </button>
+        </form>
+<?php endif; ?>
+<?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'leader'): ?>
+
+        <!-- Delete Form -->
+        <form method="POST" action="delete-request.php" id="deleteForm">
+            <input type="hidden" name="request_id" value="<?= $request['id'] ?>">
+            <input type="hidden" name="request_type" value="<?= htmlspecialchars($request['request_type']) ?>">
+            <input type="hidden" name="delete_reason" id="deleteReasonInput">
+
+            <button type="button" class="u-btn u-btn-delete" onclick="showDeletePopup()"
+                style="
+                    padding: 10px 20px;
+                    background-color: #f8d7da;
+                    color: #721c24;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    font-weight: bold;
+                    border: none;
+                    left:5%;
+                    cursor: pointer;
+                ">
+                Cancel
+            </button>
+        </form>
+    </div>
 <?php endif; ?>
 
 
-
-
-        <!-- Delete Form -->
-<form method="POST" action="delete-request.php" style="display: inline;" id="deleteForm">
-    <input type="hidden" name="request_id" value="<?= $request['id'] ?>">
-    <input type="hidden" name="request_type" value="<?= htmlspecialchars($request['request_type']) ?>">
-    <button type="button" class="u-btn u-btn-delete" 
-        onclick="showDeletePopup()"
-        style="
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #f8d7da;
-            color: #721c24;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-        ">
-        Cancel
-    </button>
-</form>
-
 <!-- Custom Delete Confirmation Modal -->
-<div id="deletePopup" style="
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    z-index: 1000;
-    text-align: center;
-    color: black;
-">
+<div id="deletePopup" style="display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); background-color: white; padding: 20px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border-radius: 8px; z-index: 1000; 
+    text-align: center; color: black; width: 350px;">
     <p>Are you sure you want to delete this request? This action cannot be undone.</p>
-    <button id="confirmDeleteButton" style="
-        padding: 10px 20px;
-        background-color: #f8d7da;
-        color: #721c24;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-right: 10px;
-    ">Yes, Cancel</button>
-    <button id="cancelDeleteButton" style="
-        padding: 10px 20px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    ">No don't Cancel</button>
+
+    <label for="deleteReason">Please provide a reason for cancellation:</label>
+    <textarea id="deleteReason" style="width: 100%; height: 80px; margin-top: 5px;" required></textarea>
+
+    <br><br>
+    <button id="confirmDeleteButton" style="padding: 10px 20px; background-color: #f8d7da;
+        color: #721c24; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;"
+        onclick="confirmDelete()">Yes, Cancel</button>
+
+    <button id="cancelDeleteButton" style="padding: 10px 20px; background-color: #007BFF;
+        color: white; border: none; border-radius: 5px; cursor: pointer;"
+        onclick="hideDeletePopup()">No, Don't Cancel</button>
 </div>
-<div id="deleteOverlay" style="
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-"></div>
 
-<!-- JavaScript for Modal Functionality -->
+<div id="deleteOverlay" style="display: none; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
+</div>
+
 <script>
-    function showDeletePopup() {
-        document.getElementById('deletePopup').style.display = 'block';
-        document.getElementById('deleteOverlay').style.display = 'block';
+function showDeletePopup() {
+    document.getElementById('deletePopup').style.display = 'block';
+    document.getElementById('deleteOverlay').style.display = 'block';
+}
+
+function hideDeletePopup() {
+    document.getElementById('deletePopup').style.display = 'none';
+    document.getElementById('deleteOverlay').style.display = 'none';
+}
+
+function confirmDelete() {
+    let reason = document.getElementById('deleteReason').value.trim();
+    if (reason === "") {
+        alert("Please provide a reason for cancellation.");
+        return;
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('cancelDeleteButton').addEventListener('click', function() {
-            document.getElementById('deletePopup').style.display = 'none';
-            document.getElementById('deleteOverlay').style.display = 'none';
-        });
-
-        document.getElementById('confirmDeleteButton').addEventListener('click', function() {
-            document.getElementById('deleteForm').submit();
-        });
-    });
+    document.getElementById('deleteReasonInput').value = reason; // FIXED
+    document.getElementById('deleteForm').submit();
+}
 </script>
 
     <?php endif; ?>

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.1.2
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:8889
--- Generation Time: Dec 02, 2024 at 04:26 PM
--- Server version: 5.7.39
--- PHP Version: 7.4.33
+-- Host: localhost:3306
+-- Generation Time: Feb 05, 2025 at 10:05 PM
+-- Server version: 5.7.24
+-- PHP Version: 8.3.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `InnovationEngine`
+-- Database: `innovationengine`
 --
 
 -- --------------------------------------------------------
@@ -59,6 +59,13 @@ CREATE TABLE `external_departments_requests` (
   `admin_email` varchar(255) NOT NULL,
   `request_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `external_departments_requests`
+--
+
+INSERT INTO `external_departments_requests` (`id`, `faculty_name`, `email`, `collage`, `idea_description`, `status`, `admin_email`, `request_date`) VALUES
+(1, 'Norah alrajhi ', 'norah@ksu.edu.sa', 'College Of Applied Medical Science (كلية العلوم الطبية التطبيقية)', 'i want an app to track my movements ', 'Pending', '443200961@student.ksu.edu.sa', '2024-12-10');
 
 -- --------------------------------------------------------
 
@@ -236,22 +243,25 @@ CREATE TABLE `students` (
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `team_email` varchar(255) NOT NULL,
-  `phone_number` varchar(20) DEFAULT NULL
+  `Registration_status` tinyint(1) NOT NULL,
+  `Password` varchar(255) NOT NULL,
+  `interest` text,
+  `draft_ideas` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`name`, `email`, `team_email`, `phone_number`) VALUES
-('shoug alshaya', '443200001@student.ksu.edu.sa', '443200001@student.ksu.edu.sa', NULL),
-('Reema Alqassem', '443200002@student.ksu.edu.sa', '443200001@student.ksu.edu.sa', NULL),
-('Norah Alrajhi', '443200556@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', NULL),
-('Alhanouf Alshalan', '443200961@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', NULL),
-('Alia Alrassan', '443202519@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', NULL),
-('Marya Asaad', '443200794@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', NULL),
-('Sarah al', '443200003@student.ksu.edu.sa', '443200003@student.ksu.edu.sa', NULL),
-('myriam al', '443200004@student.ksu.edu.sa', '443200003@student.ksu.edu.sa', NULL);
+INSERT INTO `students` (`name`, `email`, `team_email`, `Registration_status`, `Password`, `interest`, `draft_ideas`) VALUES
+('shoug alshaya', '443200001@student.ksu.edu.sa', '443200001@student.ksu.edu.sa', 0, '', '', NULL),
+('Reema Alqassem', '443200002@student.ksu.edu.sa', '443200001@student.ksu.edu.sa', 0, '', '', NULL),
+('Sarah al', '443200003@student.ksu.edu.sa', '443200003@student.ksu.edu.sa', 0, '', '', NULL),
+('myriam al', '443200004@student.ksu.edu.sa', '443200003@student.ksu.edu.sa', 0, '', '', NULL),
+('Norah Alrajhii', '443200556@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', 1, '$2y$10$yp00WnJ93UOdHrZUEv6lDOAuIhyQR9FEeRrrZY3UYM1bOV2vNzHQm', '2,3', 'ni'),
+('Alhanouf Alshalannn', '443200961@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', 1, '$2y$10$0bly0a90.PfAWfma5V6JeumM85DSZhTBme32qgy09Dz0Bcml9Psa6', '3', 'yay'),
+('Alia Alrassan', '443202519@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', 0, '$2y$10$sYklsuJgwCcuKB3smoWAxOGSOkNdYA7cU0UOvMHRKrZPD1mR9e3A6', NULL, NULL),
+('Marya Asaaddd', '443200794@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', 0, '$2y$10$uDsh71wYtRhaeUaU9yeWuOHVSZc3nBy6Ya93yzUspnEqbFR6iUeC.', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -292,12 +302,13 @@ INSERT INTO `supervisors` (`email`, `name`, `password`, `track`, `idea`, `intere
 ('lalbraheem@KSU.EDU.SA', 'Lamia Albraheem', '1', 'Internet of Things', NULL, 'Internet of Things,VANET,Wireless Networking,GIS,LiFi ', 'Available', ''),
 ('laldubaie@KSU.EDU.SA', 'Lulwa Aldubaie', '1', NULL, NULL, 'Natural Language Processing', 'Available', ''),
 ('lalhusain@KSU.EDU.SA', 'Luluah Alhusain', '1', NULL, NULL, 'Smart Cities,Healthcare,Machine Learning', 'Available', ''),
-('lalsudias@KSU.EDU.SA', 'Lama Alsudias', '$2y$10$2q0PUN.pX8kkTjOLCZUhvO3/kkvj6WliQFeM98IOLikIefrRzTP16', 'Internet of Things', 'A web-based AI-powered platform designed to provide personalized insights and recommendations for businesses, students, and individuals. InsightBot AI leverages machine learning and NLP (Natural Language Processing) to analyze uploaded data, texts, or goals and provide actionable advice.', 'Natural Language Processing,Data Mining,Arabic applications', 'Available', '05555555556'),
+('lalsudias@KSU.EDU.SA', 'Lama Alsudias', '$2y$10$2q0PUN.pX8kkTjOLCZUhvO3/kkvj6WliQFeM98IOLikIefrRzTP16', 'Internet of Things', 'A web-based AI-powered platform designed to provide personalized insights and recommendations for businesses, students, and individuals. InsightBot AI leverages machine learning and NLP (Natural Language Processing) to analyze uploaded data, texts, or goals and provide actionable advice.', 'Natural Language Processing,Data Mining,Arabic applications', 'Unavailable', '05555555556'),
 ('lalzaben@KSU.EDU.SA', 'Lama Alzaben', '1', NULL, NULL, 'Natural Language Processing,Mobile Applications,Web Applications,Lifestyle Applications,Educational Applications,Health Applications,Fitness Applications,Textual Data,Machine Learning,Smart Search Engines', 'Available', ''),
 ('maldayel@KSU.EDU.SA', 'Mashael Aldayel	\r\n', '1', 'Artificial Intelligence', NULL, 'Artificial Intelligence,Data Science, Machine Learning,Brain Computer Interface,Multidisciplinary,Neuro Tourism,Neuromarketing,Emotion Recognition,Bioinformatics,Recommenders System', 'Available', ''),
 ('malshardan@KSU.EDU.SA', 'Mona Alshardan', '1', NULL, NULL, 'Information Systems,Design Thinking,User Experience,Food Trucks Applications', 'Available', ''),
 ('nalrumaih@KSU.EDU.SA', 'Nouf Alrumaih', '1', NULL, NULL, 'Artificial Intelligence,Internet of Things', 'Available', ''),
 ('nhakbani@KSU.EDU.SA', 'Noura Hakbani', '1', 'Internet of Things', NULL, 'Internet of Things,Robotics,Virtual Reality,Fitness Applications,Rehabilitation,Education ', 'Available', ''),
+('Norah@KSU.EDU.SA', 'Norah alrajhi', '$2y$10$zHJksRLlhJ2amPFOK8vUCulHHsddi7pQP1HJv3dbC5H2/sLVxWMT6', 'Artificial Intelligence', '', 'AI', 'Available', NULL),
 ('noralhammad@KSU.EDU.SA', 'Nora Alhammad', '1', NULL, NULL, 'Machine Learning,Artificial Intelligence', 'Available', ''),
 ('qalsmail@KSU.EDU.SA', 'Qatrunnada Alsmail', '$2y$10$lbt8RwIA1mi7RE.Db0IzBOyqThij9FQMj3yFqmFXBgTRAjKJEqLJO', 'Cybersecurity', NULL, 'Cybersecurity,Security', 'Available', ''),
 ('Qatrunnada@ksu.edu.sa', 'Qatrunnada', '$2y$10$lbt8RwIA1mi7RE.Db0IzBOyqThij9FQMj3yFqmFXBgTRAjKJEqLJO', 'Cybersecurity', 'A web-based AI-powered platform designed to provide advanced cybersecurity solutions for individuals and small businesses. SecureSphere AI helps users detect vulnerabilities, monitor threats, and take proactive measures to protect their digital assets.', '', 'Available', NULL),
@@ -317,16 +328,17 @@ CREATE TABLE `supervisor_idea_request` (
   `status` enum('Pending','Approved','Rejected','Canceled') NOT NULL,
   `team_email` varchar(255) NOT NULL,
   `supervisor_email` varchar(255) NOT NULL,
-  `request_date` date NOT NULL
+  `request_date` date NOT NULL,
+  `delete_reason` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `supervisor_idea_request`
 --
 
-INSERT INTO `supervisor_idea_request` (`id`, `status`, `team_email`, `supervisor_email`, `request_date`) VALUES
-(1, 'Pending', '443200001@student.ksu.edu.sa', 'lalsudias@KSU.EDU.SA', '2024-11-30'),
-(2, 'Pending', '443200556@student.ksu.edu.sa', 'lalsudias@KSU.EDU.SA', '2024-11-30');
+INSERT INTO `supervisor_idea_request` (`id`, `status`, `team_email`, `supervisor_email`, `request_date`, `delete_reason`) VALUES
+(1, 'Rejected', '443200001@student.ksu.edu.sa', 'lalsudias@KSU.EDU.SA', '2024-11-30', ''),
+(2, 'Pending', '443200556@student.ksu.edu.sa', 'healbassam@KSU.EDU.SA', '2025-02-04', '');
 
 -- --------------------------------------------------------
 
@@ -382,9 +394,7 @@ CREATE TABLE `teams` (
   `leader_email` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `interest` text,
   `logo` varchar(255) DEFAULT NULL,
-  `draft_ideas` text,
   `supervisor_email` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -392,10 +402,10 @@ CREATE TABLE `teams` (
 -- Dumping data for table `teams`
 --
 
-INSERT INTO `teams` (`leader_email`, `name`, `password`, `interest`, `logo`, `draft_ideas`, `supervisor_email`) VALUES
-('443200001@student.ksu.edu.sa', 'shoug alshaya', '$2y$10$W4vWyNsd8cKt6.QVgrH/n.m.XVdhhZtWIa.slZYU15QFepWX2Tsem', '2,4,6', NULL, NULL, 'lalsudias@KSU.EDU.SA'),
-('443200003@student.ksu.edu.sa', 'Sarah al', '$2y$10$crCeA/1deO7V2mE.XDMzIeb8AZAQu1AhO.otJJVyMX2Lv5CdUsvPq', '1,2,5', NULL, NULL, NULL),
-('443200556@student.ksu.edu.sa', 'Norah Alrajhi', '$2y$10$V17rQ0oPZ4gpvM4f1g.FSek1QSi.tkFlXhUGIVyyJu/cyMMYHWzvm', '6,7,8', NULL, NULL, NULL);
+INSERT INTO `teams` (`leader_email`, `name`, `password`, `logo`, `supervisor_email`) VALUES
+('443200001@student.ksu.edu.sa', 'shoug alshaya', '$2y$10$W4vWyNsd8cKt6.QVgrH/n.m.XVdhhZtWIa.slZYU15QFepWX2Tsem', NULL, 'lalsudias@KSU.EDU.SA'),
+('443200003@student.ksu.edu.sa', 'Sarah al', '$2y$10$crCeA/1deO7V2mE.XDMzIeb8AZAQu1AhO.otJJVyMX2Lv5CdUsvPq', NULL, NULL),
+('443200556@student.ksu.edu.sa', 'Norah Alrajhii', '$2y$10$yp00WnJ93UOdHrZUEv6lDOAuIhyQR9FEeRrrZY3UYM1bOV2vNzHQm', 'uploads/logos/679f71aae51bc5.04763369_lab4.4.jpg', NULL);
 
 -- --------------------------------------------------------
 
@@ -410,17 +420,23 @@ CREATE TABLE `team_idea_request` (
   `status` enum('Pending','Approved','Rejected','Canceled') NOT NULL,
   `team_email` varchar(255) NOT NULL,
   `supervisor_email` varchar(255) NOT NULL,
-  `request_date` date NOT NULL
+  `request_date` date NOT NULL,
+  `is_updated` tinyint(4) NOT NULL,
+  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `delete_reason` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `team_idea_request`
 --
 
-INSERT INTO `team_idea_request` (`id`, `project_name`, `description`, `status`, `team_email`, `supervisor_email`, `request_date`) VALUES
-(3, 'ParkFinder', 'A map-based app that helps users locate nearby parks and green spaces. Includes filters for amenities like playgrounds, trails, and picnic areas.', 'Pending', '443200001@student.ksu.edu.sa', 'alyahya@KSU.EDU.SA', '2024-11-30'),
-(6, 'StudyBuddy', 'A minimalist app for students to organize study schedules, set reminders for exams, and create flashcards for learning.', 'Pending', '443200003@student.ksu.edu.sa', 'lalsudias@KSU.EDU.SA', '2024-11-30'),
-(7, 'PetPal', 'An app to schedule reminders for pet care, like feeding, grooming, and vet appointments. It also includes a journal to track your pet’s milestones.', 'Pending', '443200003@student.ksu.edu.sa', 'qalsmail@KSU.EDU.SA', '2024-11-30');
+INSERT INTO `team_idea_request` (`id`, `project_name`, `description`, `status`, `team_email`, `supervisor_email`, `request_date`, `is_updated`, `last_updated`, `delete_reason`) VALUES
+(3, 'ParkFinder', 'A map-based app that helps users locate nearby parks and green spaces. Includes filters for amenities like playgrounds, trails, and picnic areas.', 'Pending', '443200001@student.ksu.edu.sa', 'alyahya@KSU.EDU.SA', '2024-11-30', 0, '2025-02-04 20:49:01', ''),
+(6, 'StudyBuddy', 'A minimalist app for students to organize study schedules, set reminders for exams, and create flashcards for learning.', 'Rejected', '443200003@student.ksu.edu.sa', 'lalsudias@KSU.EDU.SA', '2024-11-30', 0, '2025-02-04 20:49:01', ''),
+(7, 'PetPal', 'An app to schedule reminders for pet care, like feeding, grooming, and vet appointments. It also includes a journal to track your pet’s milestones.', 'Pending', '443200003@student.ksu.edu.sa', 'qalsmail@KSU.EDU.SA', '2024-11-30', 0, '2025-02-04 20:49:01', ''),
+(8, 'Norahs 2', '    an app2', 'Canceled', '443200556@student.ksu.edu.sa', 'ajafri@KSU.EDU.SA', '2025-02-04', 1, '2025-02-04 21:37:43', 'no'),
+(9, 'Norahs', 'an appp', 'Canceled', '443200556@student.ksu.edu.sa', 'alyahya@KSU.EDU.SA', '2025-02-04', 0, '2025-02-04 21:42:50', 'yay'),
+(10, 'hi', 'h', 'Pending', '443200556@student.ksu.edu.sa', 'dalsaeed@KSU.EDU.SA', '2025-02-04', 1, '2025-02-04 21:51:27', '');
 
 -- --------------------------------------------------------
 
@@ -535,7 +551,7 @@ ALTER TABLE `technologies`
 -- AUTO_INCREMENT for table `external_departments_requests`
 --
 ALTER TABLE `external_departments_requests`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `past_projects`
@@ -553,7 +569,7 @@ ALTER TABLE `supervisor_idea_request`
 -- AUTO_INCREMENT for table `team_idea_request`
 --
 ALTER TABLE `team_idea_request`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `technologies`

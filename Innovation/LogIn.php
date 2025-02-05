@@ -169,10 +169,10 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
 
     // Determine the role based on the team_email
     if ($result['team_email'] == $email) {
-       // $_SESSION['role'] = 'leader'; // User is a leader
+       $_SESSION['role'] = 'leader'; // User is a leader
         setcookie('role', 'leader', time() + 3600, "/", "", true, true); // Set secure cookie for role
     } else {
-       // $_SESSION['role'] = 'member'; // User is a member
+       $_SESSION['role'] = 'member'; // User is a member
         setcookie('role', 'member', time() + 3600, "/", "", true, true); // Set secure cookie for role
     }
 
@@ -283,7 +283,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
                             <h1 class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">Students Login </h1>
                             <div class="u-form-group u-label-none">
                               <label for="email-da97" class="u-label">Email <span style="color:red;">*</span></label>
-                              <input type="text" placeholder="Enter leader email address" id="email-da97" name="email"
+                              <input type="text" placeholder="Enter your email address" id="email-da97" name="email"
                               class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none"
                               required="required">
                             </div>

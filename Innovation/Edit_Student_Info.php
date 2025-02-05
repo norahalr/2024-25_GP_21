@@ -23,25 +23,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($_POST as $key => $value) {
             if (preg_match('/^name-(\d+)$/', $key, $matches)) {
                 $studentIndex = $matches[1];
-                $updatedName = $value;
+                $updatedName = trim($value); // Remove leading/trailing spaces
                 $studentEmail = $_POST["email-$studentIndex"];
-                
+        
+                // Validate name format: Must contain at least two words (First and Last)
+                if (!preg_match('/^[A-Za-z]+(?:\s+[A-Za-z]+)+$/', $updatedName)) {
+                    error_log("Invalid name format for email: $studentEmail");
+                    echo json_encode(['error' => "Invalid name format for $studentEmail. Please enter a first and last name."]);
+                    exit;
+                }
+        
                 error_log("Updating name for email: $studentEmail to $updatedName");
-
+        
                 // Update the student's name in the database
                 $updateStmt = $con->prepare("UPDATE students SET name = :name WHERE email = :email");
                 $updateStmt->execute(['name' => $updatedName, 'email' => $studentEmail]);
-
+        
                 // If the student being updated is the leader, update the teams table as well
                 if ($studentEmail == $userEmail) {  // Check if this student is the leader
                     $leaderUpdated = true;
-
+        
                     // Update the leader's name and email in the teams table
                     $updateTeamStmt = $con->prepare("UPDATE teams SET leader_email = :leader_email, name = :leader_name WHERE leader_email = :leader_email");
                     $updateTeamStmt->execute(['leader_email' => $studentEmail, 'leader_name' => $updatedName]);
                 }
             }
         }
+        
 
         // Commit the transaction
         $con->commit();

@@ -11,6 +11,8 @@ if (!isset($_SESSION['user_id'])) {
 
 $userEmail = $_SESSION['user_id']; // Get user ID from session
 
+
+  
 $request_id = $_GET['id'] ?? null; // Get request ID from URL
 $request_type = $_GET['type'] ?? null; // Get request type from URL
 
@@ -1418,24 +1420,22 @@ $supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Textarea for Project Idea -->
     <div class="u-form-group u-form-message u-label-top u-block-d7f8-67">
-        <label for="ideaTextarea" class="u-label">
-            Idea <span style="color: red;">*</span>
-        </label>
-        <textarea 
-    required
-    rows="4" 
-    cols="50" 
-    id="ideaTextarea" 
-    name="idea" 
-    class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"
-    <?= $hasSupervisorIdeas ? 'readonly' : '' ?>
-    placeholder= 'Write your idea here' 
->
-    <?= htmlspecialchars($request['description'])  ?>
-</textarea>
-
-    </div>
-
+    <label for="ideaTextarea" class="u-label">
+        Idea <span style="color: red;">*</span>
+    </label>
+    <textarea 
+        required
+        rows="4" 
+        cols="50" 
+        id="ideaTextarea" 
+        name="idea" 
+        class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"
+        <?= $hasSupervisorIdeas ? 'readonly' : '' ?>
+        placeholder="Write your idea here" 
+    >
+        <?= htmlspecialchars(trim($request['description']))  ?>  
+    </textarea>
+</div>
     <!-- Submit and Cancel Buttons -->
     <div class="u-align-left u-form-group u-form-submit">
         <button type="submit" class="u-btn u-radius u-btn-1">Update Request</button>
