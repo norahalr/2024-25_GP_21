@@ -106,7 +106,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $errors[] = "Database error: " . $e->getMessage();
             }
         }
-    }   elseif ($role == "member") {
+    }   elseif ($role == "member") 
+    {
         $member_name = $_POST['member-name'];
         $member_email = $_POST['member-email'];
         $leader_email = $_POST['leader-email'];
