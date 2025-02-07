@@ -387,59 +387,95 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
     
-            if (empty($errors)) {
+            if (empty($errors)) { 
                 try {
+                    $conflictingEmails = [];
+            
+                    // Function to check if an email exists
+                    function emailExists($con, $email) {
+                        $stmt = $con->prepare("
+                            SELECT COUNT(*) AS count FROM (
+                                SELECT leader_email FROM teams WHERE leader_email = :email
+                                UNION 
+                                SELECT email FROM students WHERE email = :email
+                                UNION
+                                SELECT team_email FROM students WHERE team_email = :email
+                            ) AS combined");
+                        $stmt->bindParam(':email', $email);
+                        $stmt->execute();
+                        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                        return $result['count'] > 0;
+                    }
+            
+                    // Check leader email
+                    if (emailExists($con, $leader_email)) {
+                        $conflictingEmails[] = $leader_email;
+                    }
+            
+                    // Check student emails
+                    foreach ($student_emails as $email) {
+                        if (emailExists($con, $email)) {
+                            $conflictingEmails[] = $email;
+                        }
+                    }
+            
+                    // If there are conflicts, stop registration
+                    if (!empty($conflictingEmails)) {
+                        throw new Exception("The following email(s) are already registered: " . implode(', ', $conflictingEmails));
+                    }
+            
                     $con->beginTransaction();
-                    
-                    // Insert leader into teams table
+            
+                    // Hash the password
                     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+            
+                    // Insert leader into teams table
                     $stmt = $con->prepare("INSERT INTO teams (leader_email, name, password) VALUES (:email, :name, :password)");
                     $stmt->bindParam(':email', $leader_email);
                     $stmt->bindParam(':name', $leader_name);
                     $stmt->bindParam(':password', $hashedPassword);
                     $stmt->execute();
-    
-                    // Example default password (hashed using bcrypt)
-                    
+            
                     // Insert leader into the 'students' table
-                    $team_email = $leader_email;
                     $stmt = $con->prepare("INSERT INTO students (name, email, team_email, password, Registration_status) 
                                            VALUES (:name, :email, :team_email, :password, 1)");
                     $stmt->bindParam(':name', $leader_name);
                     $stmt->bindParam(':email', $leader_email);
-                    $stmt->bindParam(':team_email', $team_email);
+                    $stmt->bindParam(':team_email', $leader_email);
                     $stmt->bindParam(':password', $hashedPassword);
                     $stmt->execute();
-                    
+            
                     // Insert students into the 'students' table
-                    for ($i = 0; $i < count($student_names); $i++) {
+                    foreach ($student_names as $index => $student_name) {
                         $default_password = password_hash('default_password', PASSWORD_BCRYPT);
-    
                         $stmt = $con->prepare("INSERT INTO students (name, email, team_email, password, Registration_status) 
                                                VALUES (:name, :email, :team_email, :password, 0)");
-                        $stmt->bindParam(':name', $student_names[$i]);
-                        $stmt->bindParam(':email', $student_emails[$i]);
-                        $stmt->bindParam(':team_email', $team_email);
+                        $stmt->bindParam(':name', $student_name);
+                        $stmt->bindParam(':email', $student_emails[$index]);
+                        $stmt->bindParam(':team_email', $leader_email);
                         $stmt->bindParam(':password', $default_password);
                         $stmt->execute();
                     }
-                    
-    
+            
                     $con->commit();
-    
+            
                     // Set session and redirect
                     session_start();
                     $_SESSION['user_id'] = $leader_email;
                     $_SESSION['role'] = 'leader'; // Add the role to the session
                     setcookie('email', $leader_email, time() + 3600, "/", "", true, true);
-                    setcookie('role', 'leader', time() + 3600, "/","",true, true); // Add the role to the cookie
+                    setcookie('role', 'leader', time() + 3600, "/", "", true, true); // Add the role to the cookie
                     header("Location: ResearchInterests.php");
                     exit();
-                } catch (PDOException $e) {
-                    $con->rollBack();
-                    $errors[] = "Database error: " . $e->getMessage();
+                } catch (Exception $e) {
+                    if ($con->inTransaction()) {
+                        $con->rollBack();
+                    }
+                    $errors[] = $e->getMessage();
                 }
             }
+                  
+            
         
     }
 

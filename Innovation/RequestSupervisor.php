@@ -97,15 +97,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } elseif ($projectPreference === 'Your Own Idea') {
           $project_name=$_POST["project_name"];
-          $query = "INSERT INTO team_idea_request (project_name, description, status, team_email, supervisor_email, request_date) VALUES (:project_name, :description, :status, :team_email, :supervisor_email, :request_date)";
+          $query = "INSERT INTO team_idea_request 
+                    (project_name, description, status, team_email, supervisor_email, request_date, is_updated, delete_reason) 
+                    VALUES 
+                    (:project_name, :description, :status, :team_email, :supervisor_email, :request_date, :is_updated, :delete_reason)";
+      
           $stmt = $con->prepare($query);
-          $stmt->execute([
+          $stmt->execute([ 
               'project_name' => $project_name,
               'description' => $idea,
               'status' => $status,
               'team_email' => $userEmail,
               'supervisor_email' => $supervisorEmail,
-              'request_date' => $requestDate
+              'request_date' => $requestDate,
+              'is_updated' => 0 , // New requests are not updated yet
+              'delete_reason' => ''   // Empty string instead of NULL
+
           ]);
             $_SESSION['message'] = "Request for your idea submitted successfully.";
             header("Location: StudentHomePage.php");

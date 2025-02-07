@@ -144,110 +144,150 @@ $supervisorEmail=$_SESSION['user_id'];
         </div>
     </header>
     <section class="u-clearfix u-container-align-center-xs u-gradient u-section-1" id="carousel_adc9">
-        <div class="u-clearfix u-sheet u-sheet-1">
-            <div class="header-container">
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <div class="header-container">
             <?php
-                $sql = "SELECT name FROM supervisors WHERE email = :email";
+            $sql = "SELECT name FROM supervisors WHERE email = :email";
+            $stmt = $con->prepare($sql);
+            $stmt->bindParam(':email', $supervisorEmail);
+            $stmt->execute();
+            $request = $stmt->fetch(PDO::FETCH_ASSOC);
+            ?>
+            <h2 class="u-align-left u-text u-text-default u-text-1" data-animation-name="customAnimationIn"
+                data-animation-duration="1200" data-animation-delay="0">
+                Welcome Dr.<?php echo $request["name"]; ?>
+            </h2>
+            <a href="supervisorProfile.php"
+                class="u-active-white u-align-center u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-base u-border-palette-1-base u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black u-block-5fc4-58"
+                data-animation-name="" data-animation-duration="0" data-animation-delay="0"
+                data-animation-direction="">Add an idea</a>
+        </div>
+
+        <div class="u-expanded-width u-layout-grid u-list u-list-1">
+            <div class="u-repeater u-repeater-1">
+                <?php
+                $sql = "
+                SELECT * FROM (
+                    SELECT 
+                        CONCAT('SUP_', sir.id) AS request_number, 
+                        status,
+                        'Supervisor idea' AS leader_name, 
+                        s.idea AS idea_description, 
+                        'supervisor' AS source,
+                        sir.request_date AS sort_date, 
+                        sir.request_date,
+                        NULL AS last_updated, 
+                        sir.id AS request_id,
+                        0 AS is_updated,
+                        NULL AS delete_reason
+                    FROM 
+                        supervisor_idea_request sir 
+                    JOIN 
+                        supervisors s ON sir.supervisor_email = s.email
+                    WHERE sir.supervisor_email = '".$supervisorEmail."'
+
+                    UNION
+
+                    SELECT 
+                        CONCAT('TEAM_', tir.id) AS request_number, 
+                        status,
+                        tir.project_name AS leader_name, 
+                        tir.description AS idea_description, 
+                        'team' AS source,
+                        COALESCE(tir.last_updated, tir.request_date) AS sort_date, 
+                        tir.request_date,
+                        tir.last_updated, 
+                        tir.id AS request_id,
+                        tir.is_updated,
+                        tir.delete_reason
+                    FROM 
+                        team_idea_request tir 
+                    JOIN 
+                        teams t ON tir.team_email = t.leader_email
+                    WHERE tir.supervisor_email = '".$supervisorEmail."'
+                ) AS combined_requests 
+                ORDER BY 
+                    CASE 
+                        WHEN status = 'Approved' THEN 1
+                        WHEN status = 'Pending' THEN 2
+                        WHEN status = 'Canceled' THEN 3
+                        WHEN status = 'Rejected' THEN 4
+                    END,
+                    sort_date ASC;
+                ";
+
                 $stmt = $con->prepare($sql);
-                $stmt->bindParam(':email', $supervisorEmail);
                 $stmt->execute();
-                $request = $stmt->fetch(PDO::FETCH_ASSOC);
+                $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach ($requests as $request) {
+                    $request_number = $request['request_number'];
+                    $leader_name = $request['leader_name'];
+                    $idea_description = $request['idea_description'];
+                    $request_id = $request['request_id'];
+                    $source = $request['source'];
+                    $is_updated = $request['is_updated'];
+                    $delete_reason = $request['delete_reason'];
+
+                    // Style border color based on status
+                    if ($request['status'] == 'Approved') {
+                        $style = "style='border:4px solid green'";
+                    } elseif ($request['status'] == 'Rejected' || $request['status'] == 'Canceled') {
+                        $style = "style='border:4px solid red'";
+                    } else {
+                        $style = "";
+                    }
+
+                    // Update indicator
+                    $updateBadge = ($is_updated) ? "<span class='update-badge'>New Update Available</span>" : "";
+
+                    echo '<div ' . $style . ' class="u-list-item u-radius u-repeater-item u-shape-round u-white u-list-item-1"
+                            data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="200">
+                            <div class="u-container-layout u-similar-container u-valign-top u-container-layout-1">
+                                <img src="images/image13.png" alt=""
+                                     class="u-expanded-width u-image u-image-contain u-image-round u-radius u-image-1"
+                                     data-image-width="256" data-image-height="256">
+                                <h5 class="u-align-center u-text u-text-2">REQUEST: ' . $request_number . '</h5>
+                                <h4 class="u-align-center u-text u-text-palette-1-base u-text-3">' . $leader_name . '</h4>';
+                    
+                    // If the request was deleted, show the reason instead of description
+                    if (!empty($delete_reason)) {
+                        echo '<p class="u-align-left u-text u-text-4" style="color: red; font-weight: bold;">Deleted Request: ' . htmlspecialchars($delete_reason) . '</p>';
+                    } else {
+                        echo '<p class="u-align-left u-text u-text-4" style="margin:1rem;"> ' . htmlspecialchars($idea_description) . '</p>';
+                    }
+
+                    echo $updateBadge; // Display update indicator if available
+
+                    // View button (only if request is not deleted)
+                    if (empty($delete_reason)) {
+                        echo '<a href="ViewSpecificRequest.php?id=' . $request_id . '&type=' . $source . '"
+                                  class="u-active-white u-align-center u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-base u-border-palette-1-base u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black u-btn-1"
+                                  data-animation-name="" data-animation-duration="0" data-animation-delay="0"
+                                  data-animation-direction=""> View REQUEST </a>';
+                    }
+
+                    echo '</div></div>';
+                }
                 ?>
-                <h2 class="u-align-left u-text u-text-default u-text-1" data-animation-name="customAnimationIn"
-                    data-animation-duration="1200" data-animation-delay="0">
-                    Welcome <?php echo $request["name"]; ?>
-                </h2>
-                <a href="supervisorProfile.php"
-                    class="u-active-white u-align-center u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-base u-border-palette-1-base u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black u-block-5fc4-58"
-                    data-animation-name="" data-animation-duration="0" data-animation-delay="0"
-                    data-animation-direction="">Add an idea</a>
-            </div>
-
-            <div class="u-expanded-width u-layout-grid u-list u-list-1">
-                <div class="u-repeater u-repeater-1">
-
-
-                    <?php
-               
-    $sql = "
-    SELECT * FROM (
-        SELECT 
-            CONCAT('SUP_', sir.id) AS request_number, 
-            status,
-            'Supervisor idea' AS leader_name, 
-            s.idea AS idea_description, 
-            'supervisor' AS source,
-            sir.request_date,
-            sir.id AS request_id
-        FROM 
-            supervisor_idea_request sir 
-        JOIN 
-            supervisors s ON sir.supervisor_email = s.email
-        WHERE sir.supervisor_email='".$supervisorEmail."'
-        UNION
-
-        SELECT 
-            CONCAT('TEAM_', tir.id) AS request_number, 
-            status,
-            tir.project_name AS leader_name, 
-            tir.description AS idea_description, 
-            'team' AS source,
-            tir.request_date,
-            tir.id AS request_id
-        FROM 
-            team_idea_request tir 
-        JOIN 
-            teams t ON tir.team_email = t.leader_email
-        WHERE tir.supervisor_email='".$supervisorEmail."'
-    ) AS combined_requests 
-    ORDER BY request_date DESC;
-    ";
-
-    $stmt = $con->prepare($sql);
-    $stmt->execute();
-    $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    foreach ($requests as $request) {
-        $request_number = $request['request_number'];
-        $leader_name = $request['leader_name'];
-        $idea_description = $request['idea_description'];
-        $request_id = $request['request_id'];
-        $source = $request['source'];
-
-if($request['status']=='Approved'){
-  $style="style='border:4px solid green' ";
-}else if($request['status']=='Rejected'||$request['status']=='Canceled'){
-  $style="style='border:4px solid red' ";
-}else{
-  $style="";
-}
-        echo '
-        <div '.$style.' class="u-list-item u-radius u-repeater-item u-shape-round u-white u-list-item-1"
-             data-animation-name="customAnimationIn" data-animation-duration="1500"
-             data-animation-delay="200">
-            <div class="u-container-layout u-similar-container u-valign-top u-container-layout-1">
-                <img src="images/image13.png" alt=""
-                     class="u-expanded-width u-image u-image-contain u-image-round u-radius u-image-1"
-                     data-image-width="256" data-image-height="256">
-                <h5 class="u-align-center u-text u-text-2">REQUEST: ' . $request_number . '</h5>
-                <h4 class="u-align-center u-text u-text-palette-1-base u-text-3">' . $leader_name . '</h4>
-                <p class="u-align-left u-text u-text-4" style="margin:1rem;"> ' . htmlspecialchars($idea_description) . '</p>
-                <a href="ViewSpecificRequest.php?id=' . $request_id . '&type=' . $source . '"
-                   class="u-active-white u-align-center u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-base u-border-palette-1-base u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black u-btn-1"
-                   data-animation-name="" data-animation-duration="0" data-animation-delay="0"
-                   data-animation-direction=""> View REQUEST </a>
-            </div>
-        </div>';
-    }
-
-
-?>
-
-
-                </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
+<style>
+    .update-badge {
+        display: inline-block;
+        background-color: yellow;
+        color: black;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin-top: 5px;
+        text-align: center;
+    }
+</style>
+
 
     <section
         class="u-black u-clearfix u-container-style u-dialog-block u-opacity u-opacity-70 u-payment-dialog u-valign-middle u-dialog-section-5"
