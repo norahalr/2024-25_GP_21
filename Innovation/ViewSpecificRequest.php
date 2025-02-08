@@ -14,13 +14,21 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
                     tir.team_email,
                     tir.supervisor_email,
                     tir.request_date,
-                    tir.status
+                    tir.status,
+                    t.name AS leader_name,  -- Fetch leader name from teams table
+                    s.email AS student_email,
+                    s.name AS student_name
                 FROM 
                     team_idea_request tir
+                JOIN 
+                    teams t ON tir.team_email = t.leader_email
+                LEFT JOIN 
+                    students s ON tir.team_email = s.team_email  -- Get all team members
                 WHERE 
                     tir.id = :request_id";
         $params = ['request_id' => $request_id];
-    } else if ($type == 'supervisor') {
+    }
+    else if ($type == 'supervisor') {
         $sql = "SELECT 
                     sir.id AS request_number,
                     'supervisor idea' AS project_name, 
@@ -28,15 +36,23 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
                     sir.team_email,
                     sir.supervisor_email,
                     sir.request_date,
-                    sir.status
+                    sir.status,
+                    t.name AS leader_name,  -- Fetch leader name from teams table
+                    stu.email AS student_email, 
+                    stu.name AS student_name
                 FROM 
                     supervisor_idea_request sir
                 JOIN 
                     supervisors s ON sir.supervisor_email = s.email
+                LEFT JOIN 
+                    teams t ON sir.team_email = t.leader_email  -- Get leader name
+                LEFT JOIN 
+                    students stu ON sir.team_email = stu.team_email  -- Get all team members
                 WHERE 
                     sir.id = :request_id";
         $params = ['request_id' => $request_id];
-    } else {
+    }
+     else {
         header("Location: SupervisorHomePage.php");
         exit;
     }
@@ -44,17 +60,32 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
     try {
         $stmt = $con->prepare($sql);
         $stmt->execute($params);
-
-        $request = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($request) {
-            $request_number = $request['request_number'];
-            $project_name = $request['project_name'];
-            $idea_description = $request['idea_description'];
-            $team_email = $request['team_email'];
-            $supervisor_email = $request['supervisor_email'];
-            $request_date = $request['request_date'];
-            $status = $request['status'];
+        $requests = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all rows
+        
+        if (!empty($requests)) {
+            // Get common details from the first row
+            $request_number = $requests[0]['request_number'];
+            $project_name = $requests[0]['project_name'];
+            if($project_name == null){
+                $project_name = 'Students Idea';
+            }
+            $idea_description = $requests[0]['idea_description'];
+            $team_email = $requests[0]['team_email'];
+            $supervisor_email = $requests[0]['supervisor_email'];
+            $request_date = $requests[0]['request_date'];
+            $status = $requests[0]['status'];
+            $leader_name = $requests[0]['leader_name'];
+    
+            // Store team members in an array
+            $team_members = [];
+            foreach ($requests as $row) {
+                if (!empty($row['student_email'])) {
+                    $team_members[] = [
+                        'email' => $row['student_email'],
+                        'name' => $row['student_name']
+                    ];
+                }
+            }
         } else {
             header("Location: SupervisorHomePage.php");
             exit;
@@ -63,6 +94,7 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
         echo "Error: " . $e->getMessage();
         exit;
     }
+    
 } else {
     header("Location: SupervisorHomePage.php");
     exit;
@@ -124,21 +156,7 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
                                 <rect y="236" width="302" height="30"></rect>
                                 <rect y="136" width="302" height="30"></rect>
                             </g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
+                        
                         </svg>
                     </a>
                 </div>
@@ -222,32 +240,86 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
                             <div class="u-product-control u-product-full-desc u-text u-text-2">Idea:  <?php echo $idea_description; ?> </div>
                             <!--/product_description-->
                             <div class="custom-expanded u-layout-grid u-list u-list-1">
-                                <div class="u-repeater u-repeater-1">
-                                    <div class="u-container-style u-list-item u-repeater-item">
-                                        <div class="u-container-layout u-similar-container u-container-layout-3">
-                                            <h4 class="u-text u-text-3">Supervisor Email:&nbsp;</h4>
-                                            <p class="u-text u-text-4"> <?php echo $supervisor_email; ?> </p>
-                                        </div>
-                                    </div>
-                                    <div class="u-container-style u-list-item u-repeater-item">
-                                        <div class="u-container-layout u-similar-container u-container-layout-4">
-                                            <h4 class="u-text u-text-5">Team Email:&nbsp;</h4>
-                                            <p class="u-text u-text-6"> <?php echo $team_email; ?> </p>
-                                        </div>
-                                    </div>
-                                    <div class="u-container-style u-list-item u-repeater-item">
-                                        <div class="u-container-layout u-similar-container u-container-layout-3">
-                                            <h4 class="u-text u-text-3">Request Date:&nbsp;</h4>
-                                            <p class="u-text u-text-4"> <?php echo $request_date; ?> </p>
-                                        </div>
-                                    </div>
-                                    <div class="u-container-style u-list-item u-repeater-item">
-                                        <div class="u-container-layout u-similar-container u-container-layout-4">
-                                            <h4 class="u-text u-text-5">Status:&nbsp;</h4>
-                                            <p class="u-text u-text-6"> <?php echo $status; ?> </p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="u-repeater u-repeater-1">
+    <!-- Supervisor Email -->
+    <div class="u-container-style u-list-item u-repeater-item">
+        <div class="u-container-layout u-similar-container u-container-layout-3">
+            <h4 class="u-text u-text-3">Supervisor Email:&nbsp;</h4>
+            <p class="u-text u-text-4"><?php echo $supervisor_email; ?></p>
+        </div>
+    </div>
+
+    <!-- Request Date -->
+    <div class="u-container-style u-list-item u-repeater-item">
+        <div class="u-container-layout u-similar-container u-container-layout-3">
+            <h4 class="u-text u-text-3">Request Date:&nbsp;</h4>
+            <p class="u-text u-text-4"><?php echo $request_date; ?></p>
+        </div>
+    </div>
+
+    <!-- Team Leader Name -->
+    <div class="u-container-style u-list-item u-repeater-item">
+        <div class="u-container-layout u-similar-container u-container-layout-3">
+            <h4 class="u-text u-text-3">Team Leader Name:&nbsp;</h4>
+            <p class="u-text u-text-4"><?php echo $leader_name; ?></p>
+        </div>
+    </div>
+
+    <!-- Team Leader Email -->
+    <div class="u-container-style u-list-item u-repeater-item">
+        <div class="u-container-layout u-similar-container u-container-layout-4">
+            <h4 class="u-text u-text-5">Team Leader Email:&nbsp;</h4>
+            <p class="u-text u-text-6"><?php echo $team_email; ?></p>
+        </div>
+    </div>
+
+    <!-- Loop Through Team Members -->
+    <?php 
+    if (!empty($team_members)) {
+        foreach ($team_members as $member) { 
+    if ($member['email'] == $team_email) {
+        continue; // Skip the leader
+    }
+?>
+    <!-- Team Member Name -->
+    <div class="u-container-style u-list-item u-repeater-item">
+        <div class="u-container-layout u-similar-container u-container-layout-3">
+            <h4 class="u-text u-text-3">Student Name:&nbsp;</h4>
+            <p class="u-text u-text-4"><?php echo $member['name']; ?></p>
+        </div>
+    </div>
+
+    <!-- Team Member Email -->
+    <div class="u-container-style u-list-item u-repeater-item">
+        <div class="u-container-layout u-similar-container u-container-layout-4">
+            <h4 class="u-text u-text-5">Student Email:&nbsp;</h4>
+            <p class="u-text u-text-6"><?php echo $member['email']; ?></p>
+        </div>
+    </div>
+<?php 
+}
+
+    } else { ?>
+        <div class="u-container-style u-list-item u-repeater-item">
+            <div class="u-container-layout u-similar-container u-container-layout-3">
+                <h4 class="u-text u-text-3">Team Members:&nbsp;</h4>
+                <p class="u-text u-text-4">No additional team members.</p>
+            </div>
+        </div>
+    <?php } ?>
+
+    
+
+    <!-- Status -->
+    <div class="u-container-style u-list-item u-repeater-item">
+        <div class="u-container-layout u-similar-container u-container-layout-4">
+            <h4 class="u-text u-text-5">Status:&nbsp;</h4>
+            <p class="u-text u-text-6"><?php echo $status; ?></p>
+        </div>
+    </div>
+</div>
+
+
                             </div>
 
                             <?php 

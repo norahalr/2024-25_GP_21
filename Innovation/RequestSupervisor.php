@@ -84,13 +84,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Insert into the appropriate table based on project preference
         if ($projectPreference === 'Supervisor Idea') {
-          $query = "INSERT INTO supervisor_idea_request (status, team_email, supervisor_email, request_date) VALUES (:status, :team_email, :supervisor_email, :request_date)";
+          $query = "INSERT INTO supervisor_idea_request (status, team_email, supervisor_email, request_date, delete_reason) VALUES (:status, :team_email, :supervisor_email, :request_date,:delete_reason)";
           $stmt = $con->prepare($query);
           $stmt->execute([
               'status' => $status,
               'team_email' => $userEmail,
               'supervisor_email' => $supervisorEmail,
-              'request_date' => $requestDate
+              'request_date' => $requestDate,
+              'delete_reason' => ''   // Empty string instead of NULL
+
           ]);
             $_SESSION['message'] = "Request for supervisor's idea submitted successfully.";
             header("Location: StudentHomePage.php");

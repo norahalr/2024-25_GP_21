@@ -166,56 +166,58 @@ $supervisorEmail=$_SESSION['user_id'];
         <div class="u-expanded-width u-layout-grid u-list u-list-1">
             <div class="u-repeater u-repeater-1">
                 <?php
-                $sql = "
-                SELECT * FROM (
-                    SELECT 
-                        CONCAT('SUP_', sir.id) AS request_number, 
-                        status,
-                        'Supervisor idea' AS leader_name, 
-                        s.idea AS idea_description, 
-                        'supervisor' AS source,
-                        sir.request_date AS sort_date, 
-                        sir.request_date,
-                        NULL AS last_updated, 
-                        sir.id AS request_id,
-                        0 AS is_updated,
-                        NULL AS delete_reason
-                    FROM 
-                        supervisor_idea_request sir 
-                    JOIN 
-                        supervisors s ON sir.supervisor_email = s.email
-                    WHERE sir.supervisor_email = '".$supervisorEmail."'
-
-                    UNION
-
-                    SELECT 
-                        CONCAT('TEAM_', tir.id) AS request_number, 
-                        status,
-                        tir.project_name AS leader_name, 
-                        tir.description AS idea_description, 
-                        'team' AS source,
-                        COALESCE(tir.last_updated, tir.request_date) AS sort_date, 
-                        tir.request_date,
-                        tir.last_updated, 
-                        tir.id AS request_id,
-                        tir.is_updated,
-                        tir.delete_reason
-                    FROM 
-                        team_idea_request tir 
-                    JOIN 
-                        teams t ON tir.team_email = t.leader_email
-                    WHERE tir.supervisor_email = '".$supervisorEmail."'
-                ) AS combined_requests 
-                ORDER BY 
-                    CASE 
-                        WHEN status = 'Approved' THEN 1
-                        WHEN status = 'Pending' THEN 2
-                        WHEN status = 'Canceled' THEN 3
-                        WHEN status = 'Rejected' THEN 4
-                    END,
-                    sort_date ASC;
-                ";
-
+               $sql = "
+               SELECT * FROM (
+                   -- Supervisor Requests
+                   SELECT 
+                       CONCAT('SUP_', sir.id) AS request_number, 
+                       status,
+                       'Supervisor idea' AS leader_name,  -- Fixed text for supervisor-submitted requests
+                       s.idea AS idea_description, 
+                       'supervisor' AS source,
+                       sir.request_date AS sort_date, 
+                       sir.request_date,
+                       NULL AS last_updated, 
+                       sir.id AS request_id,
+                       0 AS is_updated,
+                       NULL AS delete_reason
+                   FROM 
+                       supervisor_idea_request sir 
+                   JOIN 
+                       supervisors s ON sir.supervisor_email = s.email
+                   WHERE sir.supervisor_email = '".$supervisorEmail."'
+               
+                   UNION
+               
+                   -- Team Requests (Fetching leader name from the teams table)
+                   SELECT 
+                       CONCAT('TEAM_', tir.id) AS request_number, 
+                       tir.status,
+                       'Students idea' AS leader_name,  -- Fetch leader's actual name
+                       tir.description AS idea_description, 
+                       'team' AS source,
+                       COALESCE(tir.last_updated, tir.request_date) AS sort_date, 
+                       tir.request_date,
+                       tir.last_updated, 
+                       tir.id AS request_id,
+                       tir.is_updated,
+                       tir.delete_reason
+                   FROM 
+                       team_idea_request tir 
+                   JOIN 
+                       teams t ON tir.team_email = t.leader_email  -- Get leader name from the teams table
+                   WHERE tir.supervisor_email = '".$supervisorEmail."'
+               ) AS combined_requests 
+               ORDER BY 
+                   CASE 
+                       WHEN status = 'Approved' THEN 1
+                       WHEN status = 'Pending' THEN 2
+                       WHEN status = 'Canceled' THEN 3
+                       WHEN status = 'Rejected' THEN 4
+                   END,
+                   sort_date ASC;
+               ";
+               
                 $stmt = $con->prepare($sql);
                 $stmt->execute();
                 $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -239,7 +241,7 @@ $supervisorEmail=$_SESSION['user_id'];
                     }
 
                     // Update indicator
-                    $updateBadge = ($is_updated) ? "<span class='update-badge'>New Update Available</span>" : "";
+                    $updateBadge = ($is_updated && is_null($delete_reason)) ? "<span class='update-badge'>New Update Available</span>" : "";
 
                     echo '<div ' . $style . ' class="u-list-item u-radius u-repeater-item u-shape-round u-white u-list-item-1"
                             data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="200">
@@ -253,19 +255,20 @@ $supervisorEmail=$_SESSION['user_id'];
                     // If the request was deleted, show the reason instead of description
                     if (!empty($delete_reason)) {
                         echo '<p class="u-align-left u-text u-text-4" style="color: red; font-weight: bold;">Deleted Request: ' . htmlspecialchars($delete_reason) . '</p>';
-                    } else {
-                        echo '<p class="u-align-left u-text u-text-4" style="margin:1rem;"> ' . htmlspecialchars($idea_description) . '</p>';
-                    }
+                    
+                }
+                echo '<p class="u-align-left u-text u-text-4" style="margin:1rem;"> ' . htmlspecialchars($idea_description) . '</p>';
+
 
                     echo $updateBadge; // Display update indicator if available
 
                     // View button (only if request is not deleted)
-                    if (empty($delete_reason)) {
+                    //if (empty($delete_reason)) {
                         echo '<a href="ViewSpecificRequest.php?id=' . $request_id . '&type=' . $source . '"
                                   class="u-active-white u-align-center u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-base u-border-palette-1-base u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black u-btn-1"
                                   data-animation-name="" data-animation-duration="0" data-animation-delay="0"
                                   data-animation-direction=""> View REQUEST </a>';
-                    }
+                   // }
 
                     echo '</div></div>';
                 }
