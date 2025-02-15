@@ -97,29 +97,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['message'] = "Request for supervisor's idea submitted successfully.";
             header("Location: StudentHomePage.php");
 
-        } elseif ($projectPreference === 'Your Own Idea') {
-          $project_name=$_POST["project_name"];
+        } if ($projectPreference === 'Your Own Idea') {
+          $project_name = $_POST["project_name"];
+          $idea = trim($_POST['Idea']);
+      
+          // Call Python API for semantic search
+          $api_url = "http://127.0.0.1:5000/check_duplicate";  
+          $data = json_encode(["idea" => $idea]);
+      
+          $options = [
+              "http" => [
+                  "header"  => "Content-Type: application/json",
+                  "method"  => "POST",
+                  "content" => $data,
+              ],
+          ];
+          $context = stream_context_create($options);
+          $result = file_get_contents($api_url, false, $context);
+          $response = json_decode($result, true);
+          var_dump($response);
+          // exit();
+
+          // Extract similarity results
+          $cosine_similarity = $response['cosine_similarity']['similarity'] ?? 0;
+          $cosine_project_name = $response['cosine_similarity']['project_name'] ?? '';
+      
+          $dice_similarity = $response['dice_coefficient']['similarity'] ?? 0;
+          $dice_project_name = $response['dice_coefficient']['project_name'] ?? '';
+      
+          // Use cosine similarity as the main threshold check
+          if ($response && $response['semantic_similarity']['similarity'] >= 0.7) {
+            $_SESSION['message'] = "Warning: Your idea is highly similar to an existing project ({$response['semantic_similarity']['project_name']}) with a similarity score of {$response['semantic_similarity']['similarity']}. Please modify your idea.";
+            header("Location: StudentHomePage.php");
+            exit();
+        }
+        
+      
+          // Insert new idea since no duplicate was found
           $query = "INSERT INTO team_idea_request 
                     (project_name, description, status, team_email, supervisor_email, request_date, is_updated, delete_reason) 
                     VALUES 
                     (:project_name, :description, :status, :team_email, :supervisor_email, :request_date, :is_updated, :delete_reason)";
-      
+          
           $stmt = $con->prepare($query);
-          $stmt->execute([ 
+          $stmt->execute([
               'project_name' => $project_name,
               'description' => $idea,
-              'status' => $status,
+              'status' => 'Pending',
               'team_email' => $userEmail,
               'supervisor_email' => $supervisorEmail,
-              'request_date' => $requestDate,
-              'is_updated' => 0 , // New requests are not updated yet
-              'delete_reason' => ''   // Empty string instead of NULL
-
+              'request_date' => date('Y-m-d'),
+              'is_updated' => 0,
+              'delete_reason' => ''
           ]);
-            $_SESSION['message'] = "Request for your idea submitted successfully.";
-            header("Location: StudentHomePage.php");
-
-        } else {
+      
+          $_SESSION['message'] = "✅ Request for your idea submitted successfully.";
+          header("Location: StudentHomePage.php");
+          exit();
+      }
+      
+       else {
             $_SESSION['message'] = "Error: Invalid project preference selected.";
             header("Location: StudentHomePage.php");
         }
