@@ -287,69 +287,284 @@
                     </div> 
                   -->
 
-
- <?php
+                  <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-   if ($_POST['type'] == 1) { // Supervisor Register
-    $sname = $_POST['sname-1'];
-    $semail = $_POST['semail'];
-    $select = $_POST['select'];
-    $textarea = $_POST['textarea'];
-    $pass = $_POST['pass'];
-    $passcheck = $_POST['passcheck'];
+    $role = $_POST['type']; // Determine user type
     $errors = [];
 
-    if (empty($sname)) {
-        $errors[] = "Name is required.";
-    }
-    if (empty($semail)) {
-        $errors[] = "Email is required.";
-    } elseif (!preg_match("/@ksu\.edu\.sa$/i", $semail)) { // Add 'i' flag for case-insensitivity
-        $errors[] = "Email must be from the domain @ksu.edu.sa.";
-    }
-    
-    if (empty($select)) {
-        $errors[] = "Track is required.";
-    }
-    if (empty($textarea)) {
-        $errors[] = "Idea description is required.";
-    }
-    if (empty($pass)) {
-        $errors[] = "Password is required.";
-    } elseif (!preg_match("/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/", $pass)) {
-        $errors[] = "Password must be at least 8 characters long, contain an upper case letter, a lower case letter, a number, and a special character.";
-    }
-    if ($pass !== $passcheck) {
-        $errors[] = "Password and password confirmation do not match.";
-    }
+    // Supervisor Registration
+    if ($role == 1) { 
+        $sname = $_POST['sname-1'];
+        $semail = $_POST['semail'];
+        $select = $_POST['select'];
+        $textarea = $_POST['textarea'];
+        $pass = $_POST['pass'];
+        $passcheck = $_POST['passcheck'];
 
-    if (empty($errors)) {
-        $hashedPassword = password_hash($pass, PASSWORD_BCRYPT);
-        $stmt = $con->prepare("INSERT INTO supervisors (email, name, password, track, idea, interest, availability) VALUES (:email, :name, :password, :track, '', :interest, 'Available')");
-        $stmt->bindParam(':email', $semail);
-        $stmt->bindParam(':name', $sname);
-        $stmt->bindParam(':password', $hashedPassword);
-        $stmt->bindParam(':track', $select);
-        $stmt->bindParam(':interest', $textarea);
-
-        if ($stmt->execute()) {
-            $_SESSION['user_id'] = $semail; // Set session variable
-            setcookie('Supervisor_email', $semail, time() + 3600, "/"); // Set cookie for 1 hour
-
-            // Redirect to ResearchInterests.php
-            header("Location: SupervisorHomePage.php");
-            exit();        
-        } else {
-            echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message"> Unable to register. Please try again later. </div>';
+        if (empty($sname)) {
+            $errors[] = "Name is required.";
         }
-    } else {
+        if (empty($semail) || !preg_match("/@ksu\.edu\.sa$/i", $semail)) {
+            $errors[] = "Email must be from the domain @ksu.edu.sa.";
+        }
+        if (empty($select)) {
+            $errors[] = "Track is required.";
+        }
+        if (empty($textarea)) {
+            $errors[] = "Idea description is required.";
+        }
+        if (empty($pass) || !preg_match("/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/", $pass)) {
+            $errors[] = "Password must meet the security requirements.";
+        }
+        if ($pass !== $passcheck) {
+            $errors[] = "Password and confirmation do not match.";
+        }
+
+        if (empty($errors)) {
+            try {
+                $hashedPassword = password_hash($pass, PASSWORD_BCRYPT);
+                $stmt = $con->prepare("INSERT INTO supervisors (email, name, password, track, idea, interest, availability) VALUES (:email, :name, :password, :track, '', :interest, 'Available')");
+                $stmt->bindParam(':email', $semail);
+                $stmt->bindParam(':name', $sname);
+                $stmt->bindParam(':password', $hashedPassword);
+                $stmt->bindParam(':track', $select);
+                $stmt->bindParam(':interest', $textarea);
+
+                if ($stmt->execute()) {
+                    session_start();
+                    $_SESSION['user_id'] = $semail;
+                    setcookie('Supervisor_email', $semail, time() + 3600, "/");
+                    header("Location: SupervisorHomePage.php");
+                    exit();
+                }
+            } catch (PDOException $e) {
+                $errors[] = "Database error: " . $e->getMessage();
+            }
+        }
+    }
+
+    // Team Leader Registration
+    elseif ($role == "leader") {
+            // Leader-specific fields
+            $num_students = $_POST['num-students'];
+            $leader_name = $_POST['leader-name'];
+            $leader_email = $_POST['leader-email'];
+            $password = $_POST['password'];
+            $reenter_password = $_POST['re-enter-password'];
+            $student_names = [];
+            $student_emails = [];
+    
+            // Collecting additional students' information
+            for ($i = 1; $i <= $num_students - 1; $i++) {
+                $student_names[] = $_POST['student-name-' . $i];
+                $student_emails[] = $_POST['student-email-' . $i];
+            }
+    
+            // Validation
+            if (empty($num_students) || $num_students < 2 || $num_students > 5) {
+                $errors[] = "Group size must be between 2 and 5.";
+            }
+            if (empty($leader_name) || !preg_match("/^[A-Za-z]+\s[A-Za-z]+$/", $leader_name)) {
+                $errors[] = "Leader name must be in 'First Last' format.";
+            }
+            if (empty($leader_email) || !preg_match("/@student\.ksu\.edu\.sa$/i", $leader_email)) {
+                $errors[] = "Leader email must be from the domain @student.ksu.edu.sa.";
+            }
+            if (empty($password) || !preg_match("/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/", $password)) {
+                $errors[] = "Password must be at least 8 characters long, contain uppercase, lowercase, a number, and a special character.";
+            }
+            if ($password !== $reenter_password) {
+                $errors[] = "Password confirmation does not match.";
+            }
+            foreach ($student_names as $index => $student_name) {
+                if (empty($student_name) || !preg_match("/^[A-Za-z]+\s[A-Za-z]+$/", $student_name)) {
+                    $errors[] = "Student name " . ($index + 1) . " must be in 'First Last' format.";
+                }
+            }
+            foreach ($student_emails as $index => $student_email) {
+                if (empty($student_email) || !preg_match("/@student\.ksu\.edu\.sa$/", $student_email)) {
+                    $errors[] = "Student email " . ($index + 1) . " must be from the domain @student.ksu.edu.sa.";
+                }
+            }
+    
+            if (empty($errors)) { 
+                try {
+                    $conflictingEmails = [];
+            
+                    // Function to check if an email exists
+                    function emailExists($con, $email) {
+                        $stmt = $con->prepare("
+                            SELECT COUNT(*) AS count FROM (
+                                SELECT leader_email FROM teams WHERE leader_email = :email
+                                UNION 
+                                SELECT email FROM students WHERE email = :email
+                                UNION
+                                SELECT team_email FROM students WHERE team_email = :email
+                            ) AS combined");
+                        $stmt->bindParam(':email', $email);
+                        $stmt->execute();
+                        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                        return $result['count'] > 0;
+                    }
+            
+                    // Check leader email
+                    if (emailExists($con, $leader_email)) {
+                        $conflictingEmails[] = $leader_email;
+                    }
+            
+                    // Check student emails
+                    foreach ($student_emails as $email) {
+                        if (emailExists($con, $email)) {
+                            $conflictingEmails[] = $email;
+                        }
+                    }
+            
+                    // If there are conflicts, stop registration
+                    if (!empty($conflictingEmails)) {
+                        throw new Exception("The following email(s) are already registered: " . implode(', ', $conflictingEmails));
+                    }
+            
+                    $con->beginTransaction();
+            
+                    // Hash the password
+                    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+            
+                    // Insert leader into teams table
+                    $stmt = $con->prepare("INSERT INTO teams (leader_email, name, password) VALUES (:email, :name, :password)");
+                    $stmt->bindParam(':email', $leader_email);
+                    $stmt->bindParam(':name', $leader_name);
+                    $stmt->bindParam(':password', $hashedPassword);
+                    $stmt->execute();
+            
+                    // Insert leader into the 'students' table
+                    $stmt = $con->prepare("INSERT INTO students (name, email, team_email, password, Registration_status) 
+                                           VALUES (:name, :email, :team_email, :password, 1)");
+                    $stmt->bindParam(':name', $leader_name);
+                    $stmt->bindParam(':email', $leader_email);
+                    $stmt->bindParam(':team_email', $leader_email);
+                    $stmt->bindParam(':password', $hashedPassword);
+                    $stmt->execute();
+            
+                    // Insert students into the 'students' table
+                    foreach ($student_names as $index => $student_name) {
+                        $default_password = password_hash('default_password', PASSWORD_BCRYPT);
+                        $stmt = $con->prepare("INSERT INTO students (name, email, team_email, password, Registration_status) 
+                                               VALUES (:name, :email, :team_email, :password, 0)");
+                        $stmt->bindParam(':name', $student_name);
+                        $stmt->bindParam(':email', $student_emails[$index]);
+                        $stmt->bindParam(':team_email', $leader_email);
+                        $stmt->bindParam(':password', $default_password);
+                        $stmt->execute();
+                    }
+            
+                    $con->commit();
+            
+                    // Set session and redirect
+                    session_start();
+                    $_SESSION['user_id'] = $leader_email;
+                    $_SESSION['role'] = 'leader'; // Add the role to the session
+                    setcookie('email', $leader_email, time() + 3600, "/", "", true, true);
+                    setcookie('role', 'leader', time() + 3600, "/", "", true, true); // Add the role to the cookie
+                    header("Location: ResearchInterests.php");
+                    exit();
+                } catch (Exception $e) {
+                    if ($con->inTransaction()) {
+                        $con->rollBack();
+                    }
+                    $errors[] = $e->getMessage();
+                }
+            }
+                  
+            
+        
+    }
+
+    // Team Member Registration
+    elseif ($role == "member") {
+        $member_name = $_POST['member-name'];
+        $member_email = $_POST['member-email'];
+        $leader_email = $_POST['leader-email'];
+        $password = $_POST['password'];
+        $reenter_password = $_POST['re-enter-password'];
+    
+        // Validate inputs
+        if (empty($member_name) || !preg_match("/^[A-Za-z\s]+$/", $member_name)) {
+            $errors[] = "Please enter a valid name.";
+        }
+        if (empty($member_email) || !preg_match("/@student\.ksu\.edu\.sa$/i", $member_email)) {
+            $errors[] = "Please enter a valid member email from the domain @student.edu.edu.sa.";
+        }
+        if (empty($leader_email) || !preg_match("/@student\.ksu\.edu\.sa$/i", $leader_email)) {
+            $errors[] = "Please enter a valid leader email from the domain @student.ksu.edu.sa.";
+        }
+        if (empty($password) || !preg_match("/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/", $password)) {
+            $errors[] = "Password must be at least 8 characters long, contain uppercase, lowercase, a number, and a special character.";
+        }
+        if ($password !== $reenter_password) {
+            $errors[] = "Passwords do not match.";
+        }
+    
+        // Check for errors
+        if (empty($errors)) {
+            try {
+                // Check if the leader exists
+                $stmt = $con->prepare("SELECT leader_email FROM teams WHERE leader_email = :leader_email");
+                $stmt->bindParam(':leader_email', $leader_email);
+                $stmt->execute();
+                $leader = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+                if (!$leader) {
+                    $errors[] = "The leader should create an account first.";
+                } else {
+                    // Check if the member is part of the leader's team
+                    $stmt = $con->prepare("SELECT Registration_status FROM students WHERE email = :member_email AND team_email = :team_email");
+                    $stmt->bindParam(':member_email', $member_email);
+                    $stmt->bindParam(':team_email', $leader_email);
+                    $stmt->execute();
+                    $member = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+                    if (!$member) {
+                        $errors[] = "You are not in this group. Contact the leader.";
+                    } elseif ($member['Registration_status'] == 0) {
+                        // Update member's name and password
+                        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    
+                        $updateStmt = $con->prepare("UPDATE students SET name = :name, password = :password,Registration_status = 1 WHERE email = :member_email AND team_email = :team_email");
+                        $updateStmt->bindParam(':name', $member_name);
+                        $updateStmt->bindParam(':password', $hashedPassword);
+                        $updateStmt->bindParam(':member_email', $member_email);
+                        $updateStmt->bindParam(':team_email', $leader_email);
+                        $updateStmt->execute();
+    
+                        // Set session and redirect
+                        $_SESSION['user_id'] = $member_email;
+                        $_SESSION['role'] = 'member'; // Add the role to the session
+                        setcookie('email', $member_email, time() + 3600, "/", "", true, true);
+                        setcookie('role', 'member', time() + 3600, "/" ,"", true, true); // Add the role to the cookie
+                        
+                        header("Location: ResearchInterests.php");
+                        exit();
+                    } else {
+                        $errors[] = "Your registration has been completed and cannot be updated.";
+                    }
+                }
+            } catch (PDOException $e) {
+                $errors[] = "Database error: " . $e->getMessage();
+            }
+        }
+
+    }
+
+    // Display Errors
+    if (!empty($errors)) {
         foreach ($errors as $error) {
             echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">' . htmlspecialchars($error) . '</div>';
         }
-      }
-}
+    }
 }
 ?>
+
+ 
 
 
 <div
@@ -359,13 +574,14 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
 
 <!-- Add Radio Buttons to choose between Supervisor or Student -->
 <div class="radio-btn-container">
+    
+<label for="supervisor" class="radio-btn">Supervisor</label>
+<label for="student" class="radio-btn">Student</label>
 <input type="radio" name="user-role" id="supervisor" value="supervisor" checked>
 <input type="radio" name="user-role" id="student"
   value="student">
 <span class="slider-tab"></span>
 
-<label for="supervisor" class="radio-btn">Supervisor</label>
-<label for="student" class="radio-btn">Student</label>
 </div>
 
 <form action="Register.php" method="POST" id="supervisor-signup-form">
@@ -475,17 +691,17 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
         Are you the group leader or a member? <span style="color:red;">*</span>
     </label>
     <div class="radio-btn-container2" style="display: inline-block;">
+    <label for="leader" class="role-label">Leader</label>
         <input type="radio" id="leader" name="role" value="leader" onclick="toggleForm('leader-form')" required class="role-radio" checked />
-        <label for="leader" class="role-label">Leader</label>
-        <input type="radio" id="member" name="role" value="member" onclick="toggleForm('member-form')" required class="role-radio" />
         <label for="member" class="role-label">Member</label>
+        <input type="radio" id="member" name="role" value="member" onclick="toggleForm('member-form')" required class="role-radio" />
         <span class="slider-tab"></span> 
     </div>
 </div>
 
 
 <!-- Leader Form -->
-<form action="studentRegister.php" method="POST" id="leader-form" style="display: block;">
+<form action="Register.php" method="POST" id="leader-form" style="display: block;">
     <h1 class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">
         Leader Registration
     </h1>
@@ -498,7 +714,7 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
         <input type="number" id="num-students" placeholder="Number of students" name="num-students" min="2" max="5" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required onchange="showStudentFields()" />
     </div>
 
-    <div id="student-fields">
+  <div id="student-fields">
         <div class="student-info">
             <div class="u-form-group">
                 <label for="leader-name" class="u-custom-font u-font-georgia u-label">
@@ -513,20 +729,28 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
                 <input type="email" placeholder="Enter a valid email address" id="L-leader-email" name="leader-email" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
             </div>
         </div>
-    </div>
+    </div> 
 
     <div class="input-wrapper">
         <label for="password" class="u-custom-font u-font-georgia u-label">
             Password <span style="color:red;">*</span>
         </label>
-        <input type="password" placeholder="Enter a strong password" id="password" name="password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
+        <input type="password" placeholder="Enter a strong password" id="password" name="password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" 
+        required="required">
+  <a href="javascript:void(0);" onclick="togglePasswordVisibility('password')" id="toggle-text-8" style="color: blue; text-decoration: underline; font-size: 12px;">
+    Show Password
+  </a>
     </div>
 
     <div class="u-form-group">
         <label for="re-enter-password" class="u-custom-font u-font-georgia u-label">
             Re-enter Password <span style="color:red;">*</span>
         </label>
-        <input type="password" placeholder="Re-enter password" id="re-enter-password" name="re-enter-password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
+        <input type="password" placeholder="Re-enter password" id="re-enter-password" name="re-enter-password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" 
+        required="required">
+  <a href="javascript:void(0);" onclick="togglePasswordVisibility('re-enter-password')" id="toggle-text-9" style="color: blue; text-decoration: underline; font-size: 12px;">
+    Show Password
+  </a>
     </div>
 
     <div class="u-form-group u-form-submit">
@@ -537,7 +761,7 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
 </form>
 
 <!-- Member Form -->
-<form action="studentRegister.php" method="POST" id="member-form" style="display: none;">
+<form action="Register.php" method="POST" id="member-form" style="display: none;">
     <h1 class="u-align-center u-text u-text-custom-color-1 u-text-default u-text-1">
         Member Registration
     </h1>
@@ -565,14 +789,22 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
         <label for="M-password" class="u-custom-font u-font-georgia u-label">
             Password <span style="color:red;">*</span>
         </label>
-        <input type="password" placeholder="Enter a strong password" id="M-password" name="password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
+        <input type="password" placeholder="Enter a strong password" id="M-password" name="password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" 
+        required="required">
+  <a href="javascript:void(0);" onclick="togglePasswordVisibility('M-password')" id="toggle-text-1" style="color: blue; text-decoration: underline; font-size: 12px;">
+    Show Password
+  </a>
     </div>
 
     <div class="u-form-group">
         <label for="M-re-enter-password" class="u-custom-font u-font-georgia u-label">
             Re-enter Password <span style="color:red;">*</span>
         </label>
-        <input type="password" placeholder="Re-enter password" id="M-re-enter-password" name="re-enter-password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" required />
+        <input type="password" placeholder="Re-enter password" id="M-re-enter-password" name="re-enter-password" class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-light-1 u-input u-input-rectangle u-none" 
+        required="required">
+  <a href="javascript:void(0);" onclick="togglePasswordVisibility('M-re-enter-password')" id="text-2" style="color: blue; text-decoration: underline; font-size: 12px;">
+    Show Password
+  </a>
     </div>
 
     <div class="u-form-group u-form-submit">
@@ -587,8 +819,7 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
         document.getElementById('leader-form').style.display = formId === 'leader-form' ? 'block' : 'none';
         document.getElementById('member-form').style.display = formId === 'member-form' ? 'block' : 'none';
     }
-</script>
-    <script>
+
         
         function togglePasswordVisibility(inputId) {
     const passwordField = document.getElementById(inputId);
@@ -619,84 +850,121 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
 }
 
               // Helper function to show error messages
-    function showError(input, message) {
-        let errorElement = input.nextElementSibling;
-        if (!errorElement || !errorElement.classList.contains('error-message')) {
-            errorElement = document.createElement('div');
-            errorElement.classList.add('error-message');
-            errorElement.style.color = 'red';
-            errorElement.style.fontSize = '12px';
-            input.parentNode.appendChild(errorElement);
-        }
-        errorElement.textContent = message;
-    }
+              function showError(input, message) {
+    clearError(input); // Ensure old error messages are removed first
 
+    let errorElement = document.createElement('div');
+    errorElement.classList.add('error-message');
+    errorElement.style.color = 'red';
+    errorElement.style.fontSize = '12px';
+    errorElement.textContent = message;
+
+    input.parentNode.appendChild(errorElement);
+}
     // Helper function to clear error messages
     function clearError(input) {
-        const errorElement = input.nextElementSibling;
-        if (errorElement && errorElement.classList.contains('error-message')) {
-            errorElement.remove();
-        }
-    }
+    const errorElements = input.parentNode.querySelectorAll('.error-message');
+    errorElements.forEach(error => error.remove());
+}
 
     // Validation for individual fields
     function validateField(input) {
-        const fieldName = input.name;
-        const value = input.value.trim();
+    const fieldName = input.name;
+    const value = input.value.trim();
 
-        if (fieldName === 'leader-name' || fieldName.startsWith('student-name')) {
-            if (!/^[A-Za-z]+\s[A-Za-z]+$/.test(value)) {
-                showError(input, 'Please enter a valid full name (First Last).');
-            } else {
-                clearError(input);
-            }
-        }
-
-        if (fieldName === 'leader-email' || fieldName.startsWith('student-email')) {
-    if (!/^[^\s@]+@student\.ksu\.edu\.sa$/i.test(value)) { // Add 'i' flag for case-insensitivity
-        showError(input, 'Please enter a valid KSU student email.');
-    } else {
-        clearError(input);
+    // Check if the field is empty
+    if (!value) {
+        showError(input, 'This field is required.');
+        return; // Stop further validation if the field is empty
     }
+
+    // Validation for individual fields
+    if (fieldName === 'leader-name'|| fieldName === 'member-name'|| fieldName.startsWith('student-name')) {
+        if (!/^[A-Za-z]+\s[A-Za-z]+$/.test(value)) {
+            showError(input, 'Please enter a valid full name (First Last).');
+        } else {
+            clearError(input);
+        }
+    }
+
+    if (fieldName === 'leader-email' || fieldName === 'member-email'|| fieldName.startsWith('student-email')) {
+        if (!/^[^\s@]+@student\.ksu\.edu\.sa$/i.test(value)) { // Add 'i' flag for case-insensitivity
+            showError(input, 'Please enter a valid KSU student email.');
+        } else {
+            clearError(input);
+        }
+    }
+
+    if (fieldName === 'password') {
+        if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)) {
+            showError(input, 'Password must be 8+ characters with upper, lower, number, and special character.');
+        } else {
+            clearError(input);
+        }
+    }
+
+    if (fieldName === 're-enter-password') {
+        const passwordField = input.closest('form').querySelector('input[name="password"]');
+        const password = passwordField ? passwordField.value.trim() : '';
+
+        if (value !== password) {
+            showError(input, 'Passwords do not match.');
+            return;
+        }
+    }
+
+    clearError(input); // ✅ Clear error if field is valid
+
+   
+    
 }
-
-
-        if (fieldName === 'password') {
-            if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)) {
-                showError(input, 'Password must be 8+ characters with upper, lower, number, and special character.');
-            } else {
-                clearError(input);
-            }
-        }
-
-        if (fieldName === 're-enter-password') {
-            const password = document.getElementById('password').value;
-            if (value !== password) {
-                showError(input, 'Passwords do not match.');
-            } else {
-                clearError(input);
-            }
-        }
-    }
-
-    // Attach blur event listeners to all inputs
-    document.querySelectorAll('#student-signup-form input').forEach(input => {
+    
+// Attach blur event listeners to all inputs
+    document.querySelectorAll('#member-form input').forEach(input => {
         input.addEventListener('blur', function () {
             validateField(input);
         });
     });
+    document.querySelectorAll('#leader-form input').forEach(input => {
+        input.addEventListener('blur', function () {
+            validateField(input);
+        });
+    });
+    function validateForm(form) {
+    let isValid = true;
+    form.querySelectorAll('input').forEach(input => {
+        validateField(input);
+        if (input.nextElementSibling && input.nextElementSibling.classList.contains('error-message')) {
+            isValid = false; // Prevent form submission if there are errors
+        }
+    });
+    return isValid;
+}
 
-                                                    function showStudentFields() {
-                                                        const numStudents = document.getElementById('num-students')
-                                                            .value;
-                                                        const studentFieldsContainer = document.getElementById(
-                                                            'student-fields');
+document.getElementById('leader-form').addEventListener('submit', function (e) {
+    if (!validateForm(this)) {
+        e.preventDefault(); // Stop form submission if validation fails
+    }
+});
 
-                                                        // Clear existing student fields if any
-                                                        studentFieldsContainer.innerHTML = '';
+document.getElementById('member-form').addEventListener('submit', function (e) {
+    if (!validateForm(this)) {
+        e.preventDefault(); // Stop form submission if validation fails
+    }
+});
 
-                                                        // Always include leader fields
-                                                        studentFieldsContainer.innerHTML += `
+function showStudentFields() {
+
+                    const numStudents = document.getElementById('num-students')
+                        .value;
+                    const studentFieldsContainer = document.getElementById(
+                        'student-fields');
+
+                    // Clear existing student fields if any
+                    studentFieldsContainer.innerHTML = '';
+
+                    // Always include leader fields
+                    studentFieldsContainer.innerHTML += `
                               <div class="student-info">
                                   <div class="u-form-group">
                                       <label for="leader-name" class="u-custom-font u-font-georgia u-label">Leader Name <span style="color:red;">*</span></label>
@@ -738,8 +1006,15 @@ class="u-container-style u-group u-opacity u-opacity-30 u-palette-1-light-2 u-ra
                                   </div>
                               `;
                                                         }
+                                                        // Attach validation listeners to dynamically added inputs
+studentFieldsContainer.querySelectorAll('input').forEach(input => {
+    input.addEventListener('blur', function () {
+        validateField(input);
+    });
+});
                                                     }
-    </script>
+   
+   </script>
 
                                                 </div>
                                                 <a href="LogIn.php"

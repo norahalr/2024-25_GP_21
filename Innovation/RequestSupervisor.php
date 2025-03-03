@@ -84,33 +84,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Insert into the appropriate table based on project preference
         if ($projectPreference === 'Supervisor Idea') {
-          $query = "INSERT INTO supervisor_idea_request (status, team_email, supervisor_email, request_date) VALUES (:status, :team_email, :supervisor_email, :request_date)";
+          $query = "INSERT INTO supervisor_idea_request (status, team_email, supervisor_email, request_date, delete_reason) VALUES (:status, :team_email, :supervisor_email, :request_date,:delete_reason)";
           $stmt = $con->prepare($query);
           $stmt->execute([
               'status' => $status,
               'team_email' => $userEmail,
               'supervisor_email' => $supervisorEmail,
-              'request_date' => $requestDate
+              'request_date' => $requestDate,
+              'delete_reason' => ''   // Empty string instead of NULL
+
           ]);
             $_SESSION['message'] = "Request for supervisor's idea submitted successfully.";
             header("Location: StudentHomePage.php");
 
-        } elseif ($projectPreference === 'Your Own Idea') {
-          $project_name=$_POST["project_name"];
-          $query = "INSERT INTO team_idea_request (project_name, description, status, team_email, supervisor_email, request_date) VALUES (:project_name, :description, :status, :team_email, :supervisor_email, :request_date)";
+        } if ($projectPreference === 'Your Own Idea') {
+          $project_name = $_POST["project_name"];
+          $idea = trim($_POST['Idea']);
+      
+          // Call Python API for semantic search
+          $api_url = "http://127.0.0.1:5000/check_duplicate";  
+          $data = json_encode(["idea" => $idea]);
+      
+          $options = [
+              "http" => [
+                  "header"  => "Content-Type: application/json",
+                  "method"  => "POST",
+                  "content" => $data,
+              ],
+          ];
+          $context = stream_context_create($options);
+          $result = file_get_contents($api_url, false, $context);
+          $response = json_decode($result, true);
+          var_dump($response);
+          // exit();
+
+          // Extract similarity results
+          $cosine_similarity = $response['cosine_similarity']['similarity'] ?? 0;
+          $cosine_project_name = $response['cosine_similarity']['project_name'] ?? '';
+      
+          $dice_similarity = $response['dice_coefficient']['similarity'] ?? 0;
+          $dice_project_name = $response['dice_coefficient']['project_name'] ?? '';
+      
+          // Use cosine similarity as the main threshold check
+          if ($response && $response['semantic_similarity']['similarity'] >= 0.7) {
+            $_SESSION['message'] = "Warning: Your idea is highly similar to an existing project ({$response['semantic_similarity']['project_name']}) with a similarity score of {$response['semantic_similarity']['similarity']}. Please modify your idea.";
+            header("Location: StudentHomePage.php");
+            exit();
+        }
+        
+      
+          // Insert new idea since no duplicate was found
+          $query = "INSERT INTO team_idea_request 
+                    (project_name, description, status, team_email, supervisor_email, request_date, is_updated, delete_reason) 
+                    VALUES 
+                    (:project_name, :description, :status, :team_email, :supervisor_email, :request_date, :is_updated, :delete_reason)";
+          
           $stmt = $con->prepare($query);
           $stmt->execute([
               'project_name' => $project_name,
               'description' => $idea,
-              'status' => $status,
+              'status' => 'Pending',
               'team_email' => $userEmail,
               'supervisor_email' => $supervisorEmail,
-              'request_date' => $requestDate
+              'request_date' => date('Y-m-d'),
+              'is_updated' => 0,
+              'delete_reason' => ''
           ]);
-            $_SESSION['message'] = "Request for your idea submitted successfully.";
-            header("Location: StudentHomePage.php");
-
-        } else {
+      
+          $_SESSION['message'] = "✅ Request for your idea submitted successfully.";
+          header("Location: StudentHomePage.php");
+          exit();
+      }
+      
+       else {
             $_SESSION['message'] = "Error: Invalid project preference selected.";
             header("Location: StudentHomePage.php");
         }
@@ -1575,17 +1621,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="ideaTextarea" class="u-custom-font u-font-georgia u-label u-spacing-0 u-label-5" id="textareaLabel">
             Idea <span style="color: red;">*</span>
         </label>
-        <textarea 
-            rows="4" 
-            cols="50" 
-            id="ideaTextarea" 
-            name="Idea" 
-            class="u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 u-radius u-input-5"
-            <?= $hasSupervisorIdeas ? 'readonly' : '' ?>
-            placeholder="<?= $hasSupervisorIdeas ? '' : 'Write your idea here' ?>"
-        >
-            <?= $hasSupervisorIdeas ? htmlspecialchars($supervisors[0]['idea']) : '' ?>
-        </textarea>
+        <textarea id="ideaTextarea" name="Idea" rows="4" cols="50" 
+    class="u-border-2 u-border-no-left u-border-no-right u-border-no-top 
+    u-border-palette-1-base u-input u-input-rectangle u-palette-1-light-3 
+    u-radius u-input-5"
+    <?= $hasSupervisorIdeas ? 'readonly' : '' ?>
+    placeholder="<?= $hasSupervisorIdeas ? '' : 'Write your idea here' ?>"
+><?= trim($hasSupervisorIdeas ? htmlspecialchars($supervisors[0]['idea']) : '') ?></textarea>
+
     </div>
 
     <div class="u-align-left u-form-group u-form-submit u-label-top u-block-d7f8-70">
@@ -1649,15 +1692,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Show project name input
             projectNameGroup.style.display = 'block';
 
-            // Enable textarea editing
+            // Enable textarea editing and clear content
             textarea.readOnly = false;
+            textarea.value = ''; // Clear the textarea
             textarea.placeholder = 'Write your idea here';
         } else {
             // Hide project name input
             projectNameGroup.style.display = 'none';
 
-            // Make textarea read-only with supervisor's idea
+            // Make textarea read-only and restore supervisor's idea
             textarea.readOnly = true;
+            textarea.value = "<?= trim(htmlspecialchars($supervisors[0]['idea'])) ?>"; // Restore supervisor idea
             textarea.placeholder = '';
         }
     });
@@ -1667,5 +1712,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         document.getElementById('projectPreference').dispatchEvent(new Event('change'));
     });
 </script>
+
 </body>
 </html>

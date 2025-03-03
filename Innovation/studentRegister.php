@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (empty($leader_email) || !filter_var($leader_email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = "A valid leader email is required.";
         }
-        if (empty($password) || !preg_match("/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/", $password)) {
+        if (empty($leader_email) || !preg_match("/@student\.ksu\.edu\.sa$/i", $leader_email)) {
             $errors[] = "Password must be at least 8 characters long, contain uppercase, lowercase, a number, and a special character.";
         }
         if ($password !== $reenter_password) {
@@ -106,7 +106,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $errors[] = "Database error: " . $e->getMessage();
             }
         }
-    }   elseif ($role == "member") {
+    }   elseif ($role == "member") 
+    {
         $member_name = $_POST['member-name'];
         $member_email = $_POST['member-email'];
         $leader_email = $_POST['leader-email'];

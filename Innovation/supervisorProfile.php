@@ -27,6 +27,51 @@ if ($request) {
     echo "No data found for this supervisor.";
     exit();
 }
+if (isset($_SESSION['message'])) {
+    $message = htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
+    echo "
+    <div id='popup' style='
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        z-index: 1000;
+        text-align: center;
+    '>
+        <p>$message</p>
+        <button id='confirmButton' style='
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        '>OK</button>
+    </div>
+    <div id='overlay' style='
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    '></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('confirmButton').addEventListener('click', function() {
+                document.getElementById('popup').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            });
+        });
+    </script>
+    ";
+    unset($_SESSION['message']);
+}
 ?>
 
 
@@ -171,14 +216,7 @@ if ($request) {
                         <div class="u-align-center u-container-align-center u-container-style u-layout-cell u-left-cell u-palette-1-light-3 u-radius u-shape-round u-size-60 u-size-xs-60 u-layout-cell-1"
                             src="">
                             <div class="u-container-layout u-container-layout-1">
-                                <?php
-                              if(isset($_GET['do'])&& $_GET['do']=='success'){
-                                echo '<div class="u-form-send-message u-form-send-success"> Supervisor information updated successfully! </div>';
-                              }
-                              if(isset($_GET['do'])&& $_GET['do']=='error'){
-                                echo '<div class="u-form-send-error u-form-send-message"> Unable to update supervisor </div>';
-                              }
-                            ?>
+                                
 
                                 <div
                                     class="custom-expanded u-border-1 u-border-custom-color-3 u-container-style u-group u-opacity u-opacity-80 u-radius u-shape-round u-white u-group-1">
