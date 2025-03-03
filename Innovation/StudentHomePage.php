@@ -4,17 +4,17 @@ session_start();
 
 require_once 'config/connect.php';
 
-// Check if the session has a user ID; otherwise, redirect to login
-if (!isset($_SESSION['user_id'])) {
-  echo "Error: User is not logged in.";
-  header("Location: LogIn.php");
+// // Check if the session has a user ID; otherwise, redirect to login
+// if (!isset($_SESSION['user_id'])) {
+//   echo "Error: User is not logged in.";
+//   header("Location: LogIn.php");
 
-  exit();
-}
+//   exit();
+// }
 
-$userEmail = $_SESSION['user_id'] ; // Get user ID from session
-if (isset($_COOKIE['role'])) {
-    $role = $_COOKIE['role']; // Retrieve the role from the cookie
+// $userEmail = $_SESSION['user_id'] ; // Get user ID from session
+if (isset($_SESSION['role'])) {
+    $role = $_SESSION['role']; // Retrieve the role from the cookie
     if ($role == 'leader') {
         //echo "User is a leader.";
         $welcomeMessage = "Welcome, Leader!";
@@ -28,13 +28,10 @@ if (isset($_COOKIE['role'])) {
     echo "Role cookie not set.";
 }
 
-
-
 $stmt = $con->prepare("SELECT supervisor_email FROM teams WHERE leader_email = :email");
-  $stmt->bindParam(':email', $userEmail);
-  $stmt->execute();
-  $teamData = $stmt->fetch(PDO::FETCH_ASSOC);
-
+$stmt->bindParam(':email', $userEmail);
+$stmt->execute();
+$teamData = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (isset($_SESSION['message'])) {
     $message = htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
@@ -82,53 +79,51 @@ if (isset($_SESSION['message'])) {
     unset($_SESSION['message']);
 }
 
-
-
-// Include the database connection
-require_once 'config/connect.php'; // Ensure the path is correct for your directory structure
-
 try {
-    // Fetch distinct fields for the field filter dropdown
+
     $fieldStmt = $con->prepare("SELECT DISTINCT field FROM past_projects");
     $fieldStmt->execute();
     $fields = $fieldStmt->fetchAll(PDO::FETCH_COLUMN);
 
-    // Fetch distinct technologies for the technology filter dropdown
     $techStmt = $con->prepare("SELECT DISTINCT name FROM technologies");
     $techStmt->execute();
     $technologies = $techStmt->fetchAll(PDO::FETCH_COLUMN);
 
-    // Fetch initial list of supervisors
     $supervisorStmt = $con->prepare("SELECT name, email, interest, availability FROM supervisors");
     $supervisorStmt->execute();
     $supervisors = $supervisorStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Fetch all project data including id, name, description, and document link
     $projectsStmt = $con->prepare("SELECT id, name, description, document FROM past_projects");
     $projectsStmt->execute();
     $projects = $projectsStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Ensure the projects array is correctly retrieved
     if (empty($projects)) {
         throw new Exception("No projects found in the database. Please check the `past_projects` table.");
     }
 
 } catch (PDOException $e) {
-    // Handle query or connection errors gracefully
     die("Database error: " . htmlspecialchars($e->getMessage()));
 } catch (Exception $e) {
-    // Handle custom exceptions for missing data
     die("Application error: " . htmlspecialchars($e->getMessage()));
 }
 
-// Display a session message if available
-if (isset($_SESSION['message'])) {
-    $sanitizedMessage = htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
-    echo "<div class='message'>{$sanitizedMessage}</div>";
-    unset($_SESSION['message']); // Clear the message after displaying
-}
-?>
 
+// استخدام إيميل ثابت للاختبار مؤقتًا
+$testEmail = '443200556@student.ksu.edu.sa';  // هنا ضع الإيميل الذي تريد استخدامه للاختبار
+$apiUrl = 'http://127.0.0.1:5000/recommend?student_id=' . urlencode($testEmail);
+
+$response = @file_get_contents($apiUrl); // استخدم @ لتجنب إظهار الخطأ مباشرةً
+
+if ($response === FALSE) {
+    echo "Error: Unable to reach the recommendation service.";
+    $response = json_encode([]); // تعيينه إلى مصفوفة فارغة لتجنب الخطأ
+} 
+
+$data = json_decode($response, true);
+
+$supervisors = isset($data['recommended_supervisors']) ? $data['recommended_supervisors'] : [];
+
+?>
 
 
 <!DOCTYPE html>
@@ -246,31 +241,33 @@ if (isset($_SESSION['message'])) {
     </div>
 </div>
 
-<section id="initialSupervisors" class="u-align-center u-clearfix u-container-align-center u-gradient u-section-2" style="background-color: #e9f2fa; width: 100vw;">
-    <!-- Supervisor display code here -->
-    <div class="u-clearfix u-sheet u-sheet-1" style="max-width: 1600px; margin: 0 auto;">
-        <h2 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1" style="margin:10px 20px 20px 20px;">
-           <?php echo $welcomeMessage;
-        ?>
-    </h2>
-        </h2>
-        <div class="u-expanded-width u-layout-grid u-list u-list-1">
-            <div class="u-repeater u-repeater-1">
-                <?php foreach ($supervisors as $supervisor): ?>
-                    <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
-                         style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); margin-bottom: 20px;">
-                        <div class="u-container-layout u-similar-container u-container-layout-1">
-                            <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2"><?= htmlspecialchars($supervisor['name']) ?></h5>
-                            <div class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-2" style="margin-bottom: 35px;"></div>
-                            <a href="ViewSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
-                            <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-3"><?= htmlspecialchars($supervisor['email']) ?></h6>
-                            <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-4">Interest:</h6>
-                            <ul class="u-align-left u-text u-text-5">
-                                <?php foreach (explode(',', $supervisor['interest']) as $interest): ?>
-                                    <li><?= htmlspecialchars(trim($interest)) ?></li>
-                                <?php endforeach; ?>
-                            </ul>
-                            <h6 class="u-align-center-xs u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-custom-font u-font-oswald u-text u-text-6" 
+
+
+    <section id="initialSupervisors" class="u-align-center u-clearfix u-container-align-center u-gradient u-section-2" style="background-color: #e9f2fa; width: 100vw;">
+        <div class="u-clearfix u-sheet u-sheet-1" style="max-width: 1600px; margin: 0 auto;">
+            <h2 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1" style="margin:10px 20px 20px 20px;">
+            
+            </h2>
+            <div class="u-expanded-width u-layout-grid u-list u-list-1">
+                <div class="u-repeater u-repeater-1">
+                    <?php foreach ($supervisors as $supervisor): ?>
+                        <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
+                             style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); margin-bottom: 20px;">
+                            <div class="u-container-layout u-similar-container u-container-layout-1">
+                           
+                                <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2"><?= htmlspecialchars($supervisor['name']) ?></h5>
+                                <div class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-2" style="margin-bottom: 35px;"></div>
+                                <a href="ViewSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
+                                <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-3"><?= htmlspecialchars($supervisor['email']) ?></h6>
+                                <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-4">Interest:</h6>
+                                <ul class="u-align-left u-text u-text-5">
+                                    <?php foreach (explode(',', $supervisor['interest']) as $interest): ?>
+                                        <li><?= htmlspecialchars(trim($interest)) ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+
+
+                                <h6 class="u-align-center-xs u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-custom-font u-font-oswald u-text u-text-6" 
                                 style="color: <?= $supervisor['availability'] === 'Unavailable' ? 'red' : '#5cb85c'; ?>; display: inline;">
                                 <?= htmlspecialchars($supervisor['availability']) ?>
                                 <span class="u-file-icon u-icon u-icon-1" style="display: inline; vertical-align: middle; margin-left: 5px; margin-bottom: 10px;">
@@ -278,7 +275,7 @@ if (isset($_SESSION['message'])) {
                                 </span>
                             </h6>
                             <?php if ($supervisor['availability'] !== 'Unavailable' && empty($teamData['supervisor_email'])): ?>
-                            <?php if (isset($_COOKIE['role']) && $_COOKIE['role'] === 'leader'): ?>
+                            <?php if (isset($_COOKIE['role']) && $_SESSION['role'] === 'leader'): ?>
                                 <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" 
                                 class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
                                 REQUEST
@@ -286,13 +283,16 @@ if (isset($_SESSION['message'])) {
                             <?php endif; ?>
                         <?php endif; ?>
 
+
+                            </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
+
 
 <div id="searchResults"></div>
 
