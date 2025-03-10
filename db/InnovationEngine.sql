@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.2
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Feb 05, 2025 at 10:05 PM
--- Server version: 5.7.24
--- PHP Version: 8.3.1
+-- Host: localhost:8889
+-- Generation Time: Mar 10, 2025 at 01:04 AM
+-- Server version: 5.7.39
+-- PHP Version: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `innovationengine`
+-- Database: `InnovationEngine`
 --
 
 -- --------------------------------------------------------
@@ -258,10 +258,10 @@ INSERT INTO `students` (`name`, `email`, `team_email`, `Registration_status`, `P
 ('Reema Alqassem', '443200002@student.ksu.edu.sa', '443200001@student.ksu.edu.sa', 0, '', '', NULL),
 ('Sarah al', '443200003@student.ksu.edu.sa', '443200003@student.ksu.edu.sa', 0, '', '', NULL),
 ('myriam al', '443200004@student.ksu.edu.sa', '443200003@student.ksu.edu.sa', 0, '', '', NULL),
-('Norah Alrajhii', '443200556@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', 1, '$2y$10$yp00WnJ93UOdHrZUEv6lDOAuIhyQR9FEeRrrZY3UYM1bOV2vNzHQm', '2,3', 'ni'),
-('Alhanouf Alshalannn', '443200961@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', 1, '$2y$10$0bly0a90.PfAWfma5V6JeumM85DSZhTBme32qgy09Dz0Bcml9Psa6', '3', 'yay'),
-('Alia Alrassan', '443202519@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', 0, '$2y$10$sYklsuJgwCcuKB3smoWAxOGSOkNdYA7cU0UOvMHRKrZPD1mR9e3A6', NULL, NULL),
-('Marya Asaaddd', '443200794@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', 0, '$2y$10$uDsh71wYtRhaeUaU9yeWuOHVSZc3nBy6Ya93yzUspnEqbFR6iUeC.', NULL, NULL);
+('Norah Alrajhii', '443200556@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', 1, '$2y$10$yp00WnJ93UOdHrZUEv6lDOAuIhyQR9FEeRrrZY3UYM1bOV2vNzHQm', 'Networking Technologies', 'ni'),
+('Marya Asaaddd', '443200794@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', 0, '$2y$10$uDsh71wYtRhaeUaU9yeWuOHVSZc3nBy6Ya93yzUspnEqbFR6iUeC.', NULL, NULL),
+('Alhanouf Alshalannn', '443200961@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', 1, '$2y$10$0bly0a90.PfAWfma5V6JeumM85DSZhTBme32qgy09Dz0Bcml9Psa6', '', 'yay'),
+('Alia Alrassan', '443202519@student.ksu.edu.sa', '443200556@student.ksu.edu.sa', 0, '$2y$10$sYklsuJgwCcuKB3smoWAxOGSOkNdYA7cU0UOvMHRKrZPD1mR9e3A6', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -293,7 +293,7 @@ INSERT INTO `supervisors` (`email`, `name`, `password`, `track`, `idea`, `intere
 ('eabdulqader@KSU.EDU.SA', 'Ebtisam Alabdulqader', '1', NULL, NULL, 'Human Computer Interaction,Internet of Things,Artificial Intelligence', 'Available', ''),
 ('ealkhamis@KSU.EDU.SA', 'Esra Alkhamis', '$2y$10$kV.nQZVm28Ts8Y.NFHBX1eXSKkvgMvGzRYrQCY7lVSbdvkOtiOi8y', 'Cybersecurity', NULL, 'Usable Security,Information Security', 'Available', ''),
 ('halbaity@KSU.EDU.SA', 'Heyam AlBaity	', '1', NULL, NULL, 'Artificial Intelligence,Data Science,Machine Learning,Computer Vision,Biometrics', 'Available', ''),
-('halhindi@KSU.EDU.SA', 'Hanan Alhindi', '1', 'Cybersecurity', NULL, 'Cybersecurity,Security', 'Available', ''),
+('halhindi@KSU.EDU.SA', 'Hanan Alhindi', '1', 'Cybersecurity', NULL, 'Cybersecurity', 'Available', ''),
 ('halsaaran@KSU.EDU.SA', 'Hessah Alsaaran', '1', 'Artificial Intelligence', NULL, 'Computer Vision,Image Analysis,Video Analysis,Machine Learning,Artificial Intelligence', 'Available', ''),
 ('healbassam@KSU.EDU.SA', 'Hend Albassam', '1', 'Artificial Intelligence', 'application designed to simplify the management of personal and professional schedules using Artificial Neural Networks (ANNs). The app integrates with users’ calendars, emails, and task management tools to analyze and prioritize activities based on deadlines, importance, and personal preference.', 'Software Engineering,User Experience Design,Artificial Intelligenc, prompt engineering.', 'Available', ''),
 ('hmokhtar@KSU.EDU.SA', 'Hala Mokhtar', '1', NULL, NULL, 'Internet of Things, Wireless Networks,Artificial Intelligence,Machine Learning,Smart Education Systems', 'Available', ''),
@@ -308,10 +308,8 @@ INSERT INTO `supervisors` (`email`, `name`, `password`, `track`, `idea`, `intere
 ('malshardan@KSU.EDU.SA', 'Mona Alshardan', '1', NULL, NULL, 'Information Systems,Design Thinking,User Experience,Food Trucks Applications', 'Available', ''),
 ('nalrumaih@KSU.EDU.SA', 'Nouf Alrumaih', '1', NULL, NULL, 'Artificial Intelligence,Internet of Things', 'Available', ''),
 ('nhakbani@KSU.EDU.SA', 'Noura Hakbani', '1', 'Internet of Things', NULL, 'Internet of Things,Robotics,Virtual Reality,Fitness Applications,Rehabilitation,Education ', 'Available', ''),
-('Norah@KSU.EDU.SA', 'Norah alrajhi', '$2y$10$zHJksRLlhJ2amPFOK8vUCulHHsddi7pQP1HJv3dbC5H2/sLVxWMT6', 'Artificial Intelligence', '', 'AI', 'Available', NULL),
 ('noralhammad@KSU.EDU.SA', 'Nora Alhammad', '1', NULL, NULL, 'Machine Learning,Artificial Intelligence', 'Available', ''),
 ('qalsmail@KSU.EDU.SA', 'Qatrunnada Alsmail', '$2y$10$lbt8RwIA1mi7RE.Db0IzBOyqThij9FQMj3yFqmFXBgTRAjKJEqLJO', 'Cybersecurity', NULL, 'Cybersecurity,Security', 'Available', ''),
-('Qatrunnada@ksu.edu.sa', 'Qatrunnada', '$2y$10$lbt8RwIA1mi7RE.Db0IzBOyqThij9FQMj3yFqmFXBgTRAjKJEqLJO', 'Cybersecurity', 'A web-based AI-powered platform designed to provide advanced cybersecurity solutions for individuals and small businesses. SecureSphere AI helps users detect vulnerabilities, monitor threats, and take proactive measures to protect their digital assets.', '', 'Available', NULL),
 ('ralmurshed@KSU.EDU.SA', 'Rana Almurshed', '1', 'Artificial Intelligence', NULL, 'Image Processing,Artificial Intelligence', 'Available', ''),
 ('salrabiaah@KSU.EDU.SA', 'Sumayah AlRabiaa', '1', NULL, NULL, 'Optimization', 'Available', ''),
 ('sharefah@KSU.EDU.SA', 'Sharefah Al Ghamdi', '1', NULL, NULL, 'Natural Language Processing,Machine Learning', 'Available', ''),
@@ -498,6 +496,7 @@ ALTER TABLE `projects_technology`
 -- Indexes for table `students`
 --
 ALTER TABLE `students`
+  ADD PRIMARY KEY (`email`),
   ADD KEY `FK_teamemail_team` (`team_email`);
 
 --
