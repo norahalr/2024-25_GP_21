@@ -3,14 +3,14 @@
 session_start();
 require_once 'config/connect.php';
 
-// // Check if the session has a user ID; otherwise, redirect to login
-// if (!isset($_SESSION['user_id'])) {
-//     echo "Error: User is not logged in.";
-//     header("Location: LogIn.php");
-//     exit();
-// }
+// Check if the session has a user ID; otherwise, redirect to login
+if (!isset($_SESSION['user_id'])) {
+    echo "Error: User is not logged in.";
+    header("Location: LogIn.php");
+    exit();
+}
 
-// $userEmail = $_SESSION['user_id']; // Get user ID from session
+$userEmail = $_SESSION['user_id']; // Get user ID from session
 if (isset($_GET['supervisor_email'])||isset($_POST['supervisor_email'])) {
   $supervisorEmail = $_GET['supervisor_email'];
 } else {
