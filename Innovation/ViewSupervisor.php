@@ -324,57 +324,54 @@ INNER JOIN past_projects ON past_projects.id=supervisor_projects.pastproject_id
             </div>
         </div>
     </section>
+
+
     <section class="u-align-center u-clearfix u-container-align-center u-section-2" id="sec-de73">
-        <div class="u-clearfix u-sheet u-sheet-1">
-            <div class="u-expanded-width u-list u-list-1">
-                <h3 class="u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-2 u-text-0">Recommended
-                    supervisor:</h3>
-                <div class="u-repeater u-repeater-1">
-                    <div class="u-align-left u-container-align-left u-container-style u-list-item u-repeater-item">
-                        <div class="u-container-layout u-similar-container u-valign-top u-container-layout-1">
-                            <img class="u-expanded-width u-image u-image-default u-image-1" alt=""
-                                data-image-width="512" data-image-height="512" src="images/Icon.webp">
-                            <h4 class="u-align-left u-text u-text-1">Sample Headline</h4>
-                            <a href="#"
-                                class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">View
-                            </a>
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <div class="u-expanded-width u-list u-list-1">
+            <h3 class="u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-2 u-text-0">
+                Recommended Supervisors:
+            </h3>
+            <div class="u-repeater u-repeater-1">
+                <?php
+                // Fetch similar supervisors from Flask API
+                // $apiUrl = "http://localhost:5000/supervisor/" . urlencode($supervisorEmail);
+                $apiUrl = "http://127.0.0.1:5001/supervisor/".urlencode($supervisorEmail);
+                $response = file_get_contents($apiUrl);
+                $data = json_decode($response, true);
+                
+                if (isset($data['similar_supervisors']) && !empty($data['similar_supervisors'])) {
+                    $similarSupervisors = $data['similar_supervisors'];
+
+                    foreach ($similarSupervisors as $supervisor) {
+                        $similarName = $supervisor['name'];
+                        $similarEmail = $supervisor['email'];
+                        // $similarInterest = $supervisor['interest']; //this is the interest <p class="u-align-left u-text u-text-2">Interest: ' . $similarInterest . '</p>
+                        $viewLink = "viewSupervisor.php?supervisor_email=" . urlencode($similarEmail);
+
+                        echo '
+                        <div class="u-align-left u-container-align-left u-container-style u-list-item u-repeater-item">
+                            <div class="u-container-layout u-similar-container u-valign-top u-container-layout-1">
+                                <img class="u-expanded-width u-image u-image-default u-image-1" alt="" src="images/Icon.webp">
+                                <h4 class="u-align-left u-text u-text-1">' . $similarName . '</h4>
+                                
+
+                                <a href="' . $viewLink . '" 
+                                   class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">
+                                   View
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="u-align-left u-container-align-left u-container-style u-list-item u-repeater-item">
-                        <div class="u-container-layout u-similar-container u-valign-top u-container-layout-2">
-                            <img class="u-expanded-width u-image u-image-default u-image-2" alt=""
-                                data-image-width="512" data-image-height="512" src="images/Icon.webp">
-                            <h4 class="u-align-left u-text u-text-3">Sample Headline</h4>
-                            <a href="#"
-                                class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">View
-                            </a>
-                        </div>
-                    </div>
-                    <div class="u-align-left u-container-align-left u-container-style u-list-item u-repeater-item">
-                        <div class="u-container-layout u-similar-container u-valign-top u-container-layout-3">
-                            <img class="u-expanded-width u-image u-image-default u-image-3" alt=""
-                                data-image-width="512" data-image-height="512" src="images/Icon.webp">
-                            <h4 class="u-align-left u-text u-text-5">Sample Headline</h4>
-                            <a href="#"
-                                class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">View
-                            </a>
-                        </div>
-                    </div>
-                    <div class="u-align-left u-container-align-left u-container-style u-list-item u-repeater-item">
-                        <div class="u-container-layout u-similar-container u-valign-top u-container-layout-3">
-                            <img class="u-expanded-width u-image u-image-default u-image-3" alt=""
-                                data-image-width="512" data-image-height="512" src="images/Icon.webp">
-                            <h4 class="u-align-left u-text u-text-5">Sample Headline</h4>
-                            <a href="#"
-                                class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-1">View
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                        ';
+                    }
+                } else {
+                    echo '<h4>No similar supervisors found.</h4>';
+                }
+                ?>
             </div>
         </div>
-    </section>
-
+    </div>
+</section>
 
 
 
@@ -436,5 +433,4 @@ INNER JOIN past_projects ON past_projects.id=supervisor_projects.pastproject_id
     </footer>
 
 </body>
-
-</html>s
+</html>

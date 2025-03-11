@@ -8,13 +8,12 @@ require_once 'config/connect.php';
 if (!isset($_SESSION['user_id'])) {
   echo "Error: User is not logged in.";
   header("Location: LogIn.php");
-
   exit();
 }
 
 $userEmail = $_SESSION['user_id'] ; // Get user ID from session
-if (isset($_COOKIE['role'])) {
-    $role = $_COOKIE['role']; // Retrieve the role from the cookie
+if (isset($_SESSION['role'])) {
+    $role = $_SESSION['role']; // Retrieve the role from the cookie
     if ($role == 'leader') {
         //echo "User is a leader.";
         $welcomeMessage = "Welcome, Leader!";
@@ -28,13 +27,10 @@ if (isset($_COOKIE['role'])) {
     echo "Role cookie not set.";
 }
 
-
-
 $stmt = $con->prepare("SELECT supervisor_email FROM teams WHERE leader_email = :email");
-  $stmt->bindParam(':email', $userEmail);
-  $stmt->execute();
-  $teamData = $stmt->fetch(PDO::FETCH_ASSOC);
-
+$stmt->bindParam(':email', $userEmail);
+$stmt->execute();
+$teamData = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (isset($_SESSION['message'])) {
     $message = htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
@@ -82,54 +78,54 @@ if (isset($_SESSION['message'])) {
     unset($_SESSION['message']);
 }
 
-
-
-// Include the database connection
-require_once 'config/connect.php'; // Ensure the path is correct for your directory structure
-
 try {
-    // Fetch distinct fields for the field filter dropdown
+
     $fieldStmt = $con->prepare("SELECT DISTINCT field FROM past_projects");
     $fieldStmt->execute();
     $fields = $fieldStmt->fetchAll(PDO::FETCH_COLUMN);
 
-    // Fetch distinct technologies for the technology filter dropdown
     $techStmt = $con->prepare("SELECT DISTINCT name FROM technologies");
     $techStmt->execute();
     $technologies = $techStmt->fetchAll(PDO::FETCH_COLUMN);
 
-    // Fetch initial list of supervisors
     $supervisorStmt = $con->prepare("SELECT name, email, interest, availability FROM supervisors");
     $supervisorStmt->execute();
     $supervisors = $supervisorStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Fetch all project data including id, name, description, and document link
     $projectsStmt = $con->prepare("SELECT id, name, description, document FROM past_projects");
     $projectsStmt->execute();
     $projects = $projectsStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Ensure the projects array is correctly retrieved
     if (empty($projects)) {
         throw new Exception("No projects found in the database. Please check the `past_projects` table.");
     }
 
 } catch (PDOException $e) {
-    // Handle query or connection errors gracefully
     die("Database error: " . htmlspecialchars($e->getMessage()));
 } catch (Exception $e) {
-    // Handle custom exceptions for missing data
     die("Application error: " . htmlspecialchars($e->getMessage()));
 }
 
-// Display a session message if available
-if (isset($_SESSION['message'])) {
-    $sanitizedMessage = htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
-    echo "<div class='message'>{$sanitizedMessage}</div>";
-    unset($_SESSION['message']); // Clear the message after displaying
+
+$userEmail = $_SESSION['user_id'];  
+$apiUrl = 'http://127.0.0.1:5000/recommend?student_id=' . urlencode($userEmail);
+
+$response = @file_get_contents($apiUrl); 
+if ($response === FALSE) {
+    echo "Error: Unable to reach the recommendation service.";
+    $recommendedSupervisors = []; 
+} else {
+    $data = json_decode($response, true);
+    $recommendedSupervisors = isset($data['recommended_supervisors']) ? $data['recommended_supervisors'] : [];
 }
+
+
+$recommendedEmails = array_column($recommendedSupervisors, 'email');
+
+$otherSupervisors = array_filter($supervisors, function($supervisor) use ($recommendedEmails) {
+    return !in_array($supervisor['email'], $recommendedEmails);
+});
 ?>
-
-
 
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en">
@@ -146,130 +142,52 @@ if (isset($_SESSION['message'])) {
 
 <header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
       <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" data-responsive-from="MD">
-        <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px; font-weight: 700; text-transform: uppercase;">
-          <a class="u-button-style u-custom-active-border-color u-custom-active-color u-custom-border u-custom-border-color u-custom-borders u-custom-hover-border-color u-custom-hover-color u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-nav-link" href="#" style="padding: 0px; font-size: calc(1em + 0.5px);">
+        <div class="menu-collapse">
+          <a class="u-button-style u-nav-link" href="#">
             <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 302 302"><use xlink:href="#svg-5247"></use></svg>
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="svg-5247" x="0px" y="0px" viewBox="0 0 302 302" style="enable-background:new 0 0 302 302;" xml:space="preserve" class="u-svg-content"><g><rect y="36" width="302" height="30"></rect><rect y="236" width="302" height="30"></rect><rect y="136" width="302" height="30"></rect>
-  </g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>
           </a>
         </div>
         <div class="u-custom-menu u-nav-container">
           <ul class="u-nav u-spacing-30 u-unstyled u-nav-1">
-        <li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.php" style="padding: 10px 0px;">Student Home page</a>
-  </li>
-  
-  <li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentProfile.php">Profile</a>
-  </li>
-  
-  <li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentRequest.php">Request list</a>
-  
-  </li>
-  
-  <li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.php">Log out</a>
-  </li></ul>
+        <li class="u-nav-item"><a class="u-nav-link" href="StudentHomePage.php">Student Home page</a></li>
+        <li class="u-nav-item"><a class="u-nav-link" href="StudentProfile.php">Profile</a></li>
+        <li class="u-nav-item"><a class="u-nav-link" href="StudentRequest.php">Request list</a></li>
+        <li class="u-nav-item"><a class="u-nav-link" href="index.php">Log out</a></li>
+          </ul>
         </div>
       </nav>
-      <a href="#" class="u-image u-logo u-image-1" data-image-width="276" data-image-height="194">
+      <a href="#" class="u-image u-logo u-image-1">
         <img src="images/logo_GP-noname.png" class="u-logo-image u-logo-image-1">
       </a>
     </div></header>
-
-<section class="u-clearfix u-section-1" id="sec-9f4c" style="padding-bottom:20px;">
+<!-- بداية عرض المشرفين المرشحين -->
+<?php if (!empty($recommendedSupervisors)): ?>
+<section id="recommendedSupervisors" class="u-align-center u-clearfix u-container-align-center u-gradient u-section-2" style="background-color: #e9f2fa; width: 100vw;">
     <div class="u-clearfix u-sheet u-sheet-1">
-        <div class="custom-expanded u-form u-form-1">
-            <form id="searchForm" class="u-clearfix u-form-horizontal u-inner-form" style="padding: 10px;">
-                <div class="u-form-group u-form-select u-label-none u-form-group-1">
-                    <label for="select-7000" class="u-label">Search by</label>
-                    <div class="u-form-select-wrapper">
-                        <select id="select-7000" name="search_category" class="u-input u-input-rectangle" onchange="updateSearchField()" style="width:400px;">
-                            <option value="SupervisorName">Supervisor Name</option>
-                            <option value="Track">Supervisor Track</option>
-                            <option value="ProjectName">Project Name</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="u-form-group u-form-select u-label-none u-form-group-2" id="trackDropdown" style="display: none;">
-                    <label for="select-90a6" class="u-label">Track</label>
-                    <div class="u-form-select-wrapper">
-                        <select id="select-90a6" name="track" class="u-input u-input-rectangle">
-                            <option value="Artificial Intelligence">AI</option>
-                            <option value="Cybersecurity">Security</option>
-                            <option value="Internet of Things">IoT</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="u-form-group u-label-none u-form-group-3" id="textField">
-                    <label for="text-5fe6" class="u-label">-</label>
-                    <input type="text" placeholder="Search" id="text-5fe6" name="query" class="u-input u-input-rectangle" style=" width:300px;">
-                </div>
-
-                <div class="u-align-left u-form-group u-form-submit u-label-none">
-                <button type="button" class="u-btn u-btn-submit u-button-style u-btn-1" onclick="performSearch()">
-                <img src="/images/211817_search_strong_icon.png" alt="Search Icon" style="width: 20px; height: 20px;">
-</button>                </div>
-            </form>
-        </div>
-    </div>
-</section>
-
-<!-- Filter Bar -->
-<div style="background-color: #e7f1fa; width: 100vw; height: 70px; display: flex; justify-content: right;">
-    <div class="custom-expanded u-form u-form-1" id="filterBar" style="display: none; margin-top: 20px; width: 670px; float: right; margin: 20px 20px 20px 0px;">
-        <form id="filterForm" class="u-clearfix u-form-horizontal u-inner-form" style="display: flex; align-items: center;">
-            <div class="u-form-group u-form-select u-label-none u-form-group-1" style="flex: 1;">
-                <label for="fieldFilter" class="u-label">Filter by Field</label>
-                <div class="u-form-select-wrapper">
-                    <select id="fieldFilter" name="field" class="u-input u-input-rectangle" style="width: 100%;">
-                        <option value="">Select Field</option>
-                        <?php foreach ($fields as $field): ?>
-                            <option value="<?= htmlspecialchars($field) ?>"><?= htmlspecialchars($field) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-            <div class="u-form-group u-form-select u-label-none u-form-group-2" style="flex: 1;">
-                <label for="technologyFilter" class="u-label">Filter by Technology</label>
-                <div class="u-form-select-wrapper">
-                    <select id="technologyFilter" name="technology" class="u-input u-input-rectangle" style="width: 100%;">
-                        <option value="">Select Technology</option>
-                        <?php foreach ($technologies as $technology): ?>
-                            <option value="<?= htmlspecialchars($technology) ?>"><?= htmlspecialchars($technology) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-            <div class="u-align-left u-form-group u-form-submit u-label-none">
-                <button type="button" class="u-btn u-btn-submit u-button-style u-btn-1" onclick="performFilter()">Filter</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<section id="initialSupervisors" class="u-align-center u-clearfix u-container-align-center u-gradient u-section-2" style="background-color: #e9f2fa; width: 100vw;">
-    <!-- Supervisor display code here -->
-    <div class="u-clearfix u-sheet u-sheet-1" style="max-width: 1600px; margin: 0 auto;">
-        <h2 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1" style="margin:10px 20px 20px 20px;">
-           <?php echo $welcomeMessage;
-        ?>
-    </h2>
-        </h2>
-        <div class="u-expanded-width u-layout-grid u-list u-list-1">
+        <h2 class="u-align-center u-text u-text-palette-1-dark-1 u-text-1" style="margin:10px;">Recommended Supervisors</h2>
+        <div class="u-layout-grid u-list u-list-1">
             <div class="u-repeater u-repeater-1">
-                <?php foreach ($supervisors as $supervisor): ?>
+                <?php foreach ($recommendedSupervisors as $supervisor): ?>
                     <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
                          style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); margin-bottom: 20px;">
                         <div class="u-container-layout u-similar-container u-container-layout-1">
-                            <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2"><?= htmlspecialchars($supervisor['name']) ?></h5>
+
+                            
+                            <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2">
+                                 <?= htmlspecialchars($supervisor['name']) ?> (Recommended)
+                            </h5>
+
                             <div class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-2" style="margin-bottom: 35px;"></div>
                             <a href="ViewSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
                             <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-3"><?= htmlspecialchars($supervisor['email']) ?></h6>
+                            <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-4"> </h6>
                             <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-4">Interest:</h6>
                             <ul class="u-align-left u-text u-text-5">
                                 <?php foreach (explode(',', $supervisor['interest']) as $interest): ?>
                                     <li><?= htmlspecialchars(trim($interest)) ?></li>
                                 <?php endforeach; ?>
                             </ul>
+
                             <h6 class="u-align-center-xs u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-custom-font u-font-oswald u-text u-text-6" 
                                 style="color: <?= $supervisor['availability'] === 'Unavailable' ? 'red' : '#5cb85c'; ?>; display: inline;">
                                 <?= htmlspecialchars($supervisor['availability']) ?>
@@ -277,14 +195,67 @@ if (isset($_SESSION['message'])) {
                                     <img src="images/<?= $supervisor['availability'] === 'Unavailable' ? 'Incorrect.png' : '3699459-d2dcaf9f.png'; ?>" alt="Availability Icon" style="width: 16px; height: 16px; vertical-align: middle;">
                                 </span>
                             </h6>
+
                             <?php if ($supervisor['availability'] !== 'Unavailable' && empty($teamData['supervisor_email'])): ?>
-                            <?php if (isset($_COOKIE['role']) && $_COOKIE['role'] === 'leader'): ?>
-                                <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" 
-                                class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
-                                REQUEST
-                                </a>
+                                <?php if (isset($_COOKIE['role']) && $_SESSION['role'] === 'leader'): ?>
+                                    <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" 
+                                    class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
+                                    REQUEST
+                                    </a>
+                                <?php endif; ?>
                             <?php endif; ?>
-                        <?php endif; ?>
+
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+<!-- </section> -->
+<?php endif; ?>
+<!-- نهاية المشرفين المرشحين -->
+
+
+<!-- بداية المشرفين الآخرين -->
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <h2 class="u-align-center u-text u-text-palette-1-dark-1 u-text-1" style="margin:10px;">Other Supervisors</h2>
+        <div class="u-layout-grid u-list u-list-1">
+            <div class="u-repeater u-repeater-1">
+                <?php foreach ($otherSupervisors as $supervisor): ?>
+                    <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
+                         style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); margin-bottom: 20px;">
+                        <div class="u-container-layout u-similar-container u-container-layout-1">
+
+                          
+                            <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2"><?= htmlspecialchars($supervisor['name']) ?></h5>
+
+                            <div class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-2" style="margin-bottom: 35px;"></div>
+                            <a href="ViewSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
+                            <h6 class="u-align-left u-text u-text-default-lg u-text-default-md u-text-default-sm u-text-default-xl u-text-3"><?= htmlspecialchars($supervisor['email']) ?></h6>
+                            <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-4"> </h6>
+                            <h6 class="u-align-left u-text u-text-default u-text-palette-1-dark-1 u-text-4">Interest:</h6>
+                            <ul class="u-align-left u-text u-text-5">
+                                <?php foreach (explode(',', $supervisor['interest']) as $interest): ?>
+                                    <li><?= htmlspecialchars(trim($interest)) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+
+                            <h6 class="u-align-center-xs u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xl u-custom-font u-font-oswald u-text u-text-6" 
+                                style="color: <?= $supervisor['availability'] === 'Unavailable' ? 'red' : '#5cb85c'; ?>; display: inline;">
+                                <?= htmlspecialchars($supervisor['availability']) ?>
+                                <span class="u-file-icon u-icon u-icon-1" style="display: inline; vertical-align: middle; margin-left: 5px; margin-bottom: 10px;">
+                                    <img src="images/<?= $supervisor['availability'] === 'Unavailable' ? 'Incorrect.png' : '3699459-d2dcaf9f.png'; ?>" alt="Availability Icon" style="width: 16px; height: 16px; vertical-align: middle;">
+                                </span>
+                            </h6>
+
+                            <?php if ($supervisor['availability'] !== 'Unavailable' && empty($teamData['supervisor_email'])): ?>
+                                <?php if (isset($_COOKIE['role']) && $_SESSION['role'] === 'leader'): ?>
+                                    <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" 
+                                    class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
+                                    REQUEST
+                                    </a>
+                                <?php endif; ?>
+                            <?php endif; ?>
 
                         </div>
                     </div>
@@ -293,6 +264,8 @@ if (isset($_SESSION['message'])) {
         </div>
     </div>
 </section>
+<!-- نهاية المشرفين الآخرين -->
+
 
 <div id="searchResults"></div>
 
@@ -361,10 +334,6 @@ function performSearch() {
 }
 
 
-
-
-
-
 // Function to load initial projects when needed
 function loadInitialProjects() {
     fetch("search.php", {
@@ -381,9 +350,6 @@ function loadInitialProjects() {
     })
     .catch(error => console.error("Error fetching initial projects:", error));
 }
-
-
-
 
 
 // Filter function that applies filters to the correct data
@@ -415,8 +381,6 @@ function performFilter() {
         .catch(error => console.error("Error:", error));
     }
 }
-
-
 
 
 function openDocument(documentPath) {

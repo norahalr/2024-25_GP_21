@@ -177,7 +177,6 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     }
 
 
-    // Redirect to the student homepage
     header("Location: StudentHomePage.php");
     exit();
  } else {
