@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_id'])) {
   header("Location: LogIn.php");
   exit();
 }
-
 $userEmail = $_SESSION['user_id'] ; // Get user ID from session
 if (isset($_SESSION['role'])) {
     $role = $_SESSION['role']; // Retrieve the role from the cookie
@@ -109,6 +108,8 @@ try {
 
 $userEmail = $_SESSION['user_id'];  
 $apiUrl = 'http://127.0.0.1:5000/recommend?student_id=' . urlencode($userEmail);
+// $userEmail = '443200556@student.ksu.edu.sa';  
+// $apiUrl = 'http://127.0.0.1:5000/recommend?student_id=' . urlencode($userEmail);
 
 $response = @file_get_contents($apiUrl); 
 if ($response === FALSE) {
@@ -160,6 +161,80 @@ $otherSupervisors = array_filter($supervisors, function($supervisor) use ($recom
         <img src="images/logo_GP-noname.png" class="u-logo-image u-logo-image-1">
       </a>
     </div></header>
+
+
+    <section class="u-clearfix u-section-1" id="sec-9f4c" style="padding-bottom:20px;">
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <div class="custom-expanded u-form u-form-1">
+            <form id="searchForm" class="u-clearfix u-form-horizontal u-inner-form" style="padding: 10px;">
+                <div class="u-form-group u-form-select u-label-none u-form-group-1">
+                    <label for="select-7000" class="u-label">Search by</label>
+                    <div class="u-form-select-wrapper">
+                        <select id="select-7000" name="search_category" class="u-input u-input-rectangle" onchange="updateSearchField()" style="width:400px;">
+                            <option value="SupervisorName">Supervisor Name</option>
+                            <option value="Track">Supervisor Track</option>
+                            <option value="ProjectName">Project Name</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="u-form-group u-form-select u-label-none u-form-group-2" id="trackDropdown" style="display: none;">
+                    <label for="select-90a6" class="u-label">Track</label>
+                    <div class="u-form-select-wrapper">
+                        <select id="select-90a6" name="track" class="u-input u-input-rectangle">
+                            <option value="Artificial Intelligence">AI</option>
+                            <option value="Cybersecurity">Security</option>
+                            <option value="Internet of Things">IoT</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="u-form-group u-label-none u-form-group-3" id="textField">
+                    <label for="text-5fe6" class="u-label">-</label>
+                    <input type="text" placeholder="Search" id="text-5fe6" name="query" class="u-input u-input-rectangle" style=" width:300px;">
+                </div>
+
+                <div class="u-align-left u-form-group u-form-submit u-label-none">
+                <button type="button" class="u-btn u-btn-submit u-button-style u-btn-1" onclick="performSearch()">
+                <img src="/images/211817_search_strong_icon.png" alt="Search Icon" style="width: 20px; height: 20px;">
+</button>                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Filter Bar -->
+<div style="background-color: #e7f1fa; width: 100vw; height: 70px; display: flex; justify-content: right;">
+    <div class="custom-expanded u-form u-form-1" id="filterBar" style="display: none; margin-top: 20px; width: 670px; float: right; margin: 20px 20px 20px 0px;">
+        <form id="filterForm" class="u-clearfix u-form-horizontal u-inner-form" style="display: flex; align-items: center;">
+            <div class="u-form-group u-form-select u-label-none u-form-group-1" style="flex: 1;">
+                <label for="fieldFilter" class="u-label">Filter by Field</label>
+                <div class="u-form-select-wrapper">
+                    <select id="fieldFilter" name="field" class="u-input u-input-rectangle" style="width: 100%;">
+                        <option value="">Select Field</option>
+                        <?php foreach ($fields as $field): ?>
+                            <option value="<?= htmlspecialchars($field) ?>"><?= htmlspecialchars($field) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="u-form-group u-form-select u-label-none u-form-group-2" style="flex: 1;">
+                <label for="technologyFilter" class="u-label">Filter by Technology</label>
+                <div class="u-form-select-wrapper">
+                    <select id="technologyFilter" name="technology" class="u-input u-input-rectangle" style="width: 100%;">
+                        <option value="">Select Technology</option>
+                        <?php foreach ($technologies as $technology): ?>
+                            <option value="<?= htmlspecialchars($technology) ?>"><?= htmlspecialchars($technology) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="u-align-left u-form-group u-form-submit u-label-none">
+                <button type="button" class="u-btn u-btn-submit u-button-style u-btn-1" onclick="performFilter()">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+    
 <!-- بداية عرض المشرفين المرشحين -->
 <?php if (!empty($recommendedSupervisors)): ?>
 <section id="recommendedSupervisors" class="u-align-center u-clearfix u-container-align-center u-gradient u-section-2" style="background-color: #e9f2fa; width: 100vw;">
@@ -217,6 +292,7 @@ $otherSupervisors = array_filter($supervisors, function($supervisor) use ($recom
 
 
 <!-- بداية المشرفين الآخرين -->
+<div id="otherSupervisorsSection" class="u-clearfix u-sheet u-sheet-1">
     <div class="u-clearfix u-sheet u-sheet-1">
         <h2 class="u-align-center u-text u-text-palette-1-dark-1 u-text-1" style="margin:10px;">Other Supervisors</h2>
         <div class="u-layout-grid u-list u-list-1">
@@ -263,6 +339,7 @@ $otherSupervisors = array_filter($supervisors, function($supervisor) use ($recom
             </div>
         </div>
     </div>
+</div>
 </section>
 <!-- نهاية المشرفين الآخرين -->
 
@@ -277,27 +354,44 @@ let isSearchPerformed = false; // Tracks if a search has been executed
 
 // Update search field visibility based on the selected category
 function updateSearchField() {
-    const searchCategory = document.getElementById("select-7000").value;
-    const trackDropdown = document.getElementById("trackDropdown");
-    const textField = document.getElementById("textField");
-    const filterBar = document.getElementById("filterBar");
+const searchCategory = document.getElementById("select-7000").value;
+const trackDropdown = document.getElementById("trackDropdown");
+const textField = document.getElementById("textField");
+const filterBar = document.getElementById("filterBar");
+const recommendedSection = document.getElementById("recommendedSupervisors");
+const otherSupervisorsSection = document.getElementById("otherSupervisorsSection");
 
-    // Reset visibility of fields
-    trackDropdown.style.display = "none";
-    textField.style.display = "none";
-    filterBar.style.display = "none";
+// Reset input visibility
+trackDropdown.style.display = "none";
+textField.style.display = "none";
+filterBar.style.display = "none";
 
-    if (searchCategory === "SupervisorName") {
-        textField.style.display = "block"; // Show text input for Supervisor Name
-    } else if (searchCategory === "Track") {
-        trackDropdown.style.display = "block"; // Show dropdown for Track
-    } else if (searchCategory === "ProjectName") {
-        textField.style.display = "block"; // Show text input for Project Name
-        filterBar.style.display = "flex"; // Show additional filters for Project Name
-        loadInitialProjects(); // Ensure initial projects load when Project Name is selected
-    }
+// Show input fields based on selected category
+if (searchCategory === "SupervisorName") {
+    textField.style.display = "block";
+    // Show supervisors
+    if (recommendedSection) recommendedSection.style.display = "block";
+    if (otherSupervisorsSection) otherSupervisorsSection.style.display = "block";
+
+} else if (searchCategory === "Track") {
+    trackDropdown.style.display = "block";
+    // Show supervisors
+    if (recommendedSection) recommendedSection.style.display = "block";
+    if (otherSupervisorsSection) otherSupervisorsSection.style.display = "block";
+
+} else if (searchCategory === "ProjectName") {
+    textField.style.display = "block";
+    filterBar.style.display = "flex";
+
+    // Hide supervisors
+    if (recommendedSection) recommendedSection.style.display = "none";
+    if (otherSupervisorsSection) otherSupervisorsSection.style.display = "none";
+
+    loadInitialProjects(); // Fetch initial projects list
+}
 }
 
+const recommendedEmails = <?= json_encode($recommendedEmails); ?>;
 
 function performSearch() {
     const searchCategory = document.getElementById("select-7000").value;
@@ -328,7 +422,12 @@ function performSearch() {
             displayResults(data); // Display results
             lastSearchData = data; // Cache results for filters
             isSearchPerformed = true; // Mark search as performed
-            document.getElementById("initialSupervisors").style.display = "none"; // Hide initial supervisors
+            // document.getElementById("initialSupervisors").style.display = "none"; // Hide initial supervisors
+            // Hide recommended and other supervisors sections
+            const recommendedSection = document.getElementById("recommendedSupervisors");
+            const otherSupervisorsSection = document.getElementById("otherSupervisorsSection");
+            if (recommendedSection) recommendedSection.style.display = "none";
+            if (otherSupervisorsSection) otherSupervisorsSection.style.display = "none";
         })
         .catch((error) => console.error("Error:", error));
 }
@@ -438,7 +537,7 @@ function displayResults(data) {
 
     resultsDiv.innerHTML = `
         <section class="u-align-center u-clearfix u-container-align-center u-gradient u-section-2 u-body u-xl-mode" 
-            style="background-image: linear-gradient(#e9f2fa, #adcce9); width: 100vw; padding: 30px 0; box-sizing: border-box; margin-left: calc(-50vw + 50%);">
+            style="background-image: linear-gradient(#e9f2fa, #adcce9); width: 100vw; padding: 30px -40; box-sizing: border-box; margin-left: calc(-50vw + 50%);">
                 
             <div class="u-clearfix u-sheet u-sheet-1" style="max-width: 1200px; margin: 0 auto; padding: 30px;">
                 <h2 class="u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1">Search Results</h2>
@@ -463,7 +562,9 @@ function displayResults(data) {
      style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); margin-bottom: 20px;">
                                 
     <div class="u-container-layout u-similar-container u-container-layout-1">
-        <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2">${item.name}</h5>
+    <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2">
+    ${item.name}${recommendedEmails.includes(item.email) ? ' (Recommended)' : ''}
+</h5>
         <div class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-2" data-image-width="309" data-image-height="309" style="margin-bottom: 35px;"></div>
         
         <a href="ViewSupervisor.php?supervisor_email=${encodeURIComponent(item.email)}" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
