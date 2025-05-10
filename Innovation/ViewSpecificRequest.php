@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
   require_once 'config/connect.php';
 if (isset($_GET['id']) && isset($_GET['type'])) {
     $request_id = $_GET['id'];  
@@ -6,52 +9,67 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
     $sql = '';
     $params = [];
 
-    if ($type == 'team') {
-        $sql = "SELECT 
-                    tir.id AS request_number,
-                    tir.project_name,
-                    tir.description AS idea_description,
-                    tir.team_email,
-                    tir.supervisor_email,
-                    tir.request_date,
-                    tir.status,
-                    t.name AS leader_name,  -- Fetch leader name from teams table
-                    s.email AS student_email,
-                    s.name AS student_name
-                FROM 
-                    team_idea_request tir
-                JOIN 
-                    teams t ON tir.team_email = t.leader_email
-                LEFT JOIN 
-                    students s ON tir.team_email = s.team_email  -- Get all team members
-                WHERE 
-                    tir.id = :request_id";
-        $params = ['request_id' => $request_id];
-    }
-    else if ($type == 'supervisor') {
-        $sql = "SELECT 
-                    sir.id AS request_number,
-                    'supervisor idea' AS project_name, 
-                    s.idea AS idea_description,  
-                    sir.team_email,
-                    sir.supervisor_email,
-                    sir.request_date,
-                    sir.status,
-                    t.name AS leader_name,  -- Fetch leader name from teams table
-                    stu.email AS student_email, 
-                    stu.name AS student_name
-                FROM 
-                    supervisor_idea_request sir
-                JOIN 
-                    supervisors s ON sir.supervisor_email = s.email
-                LEFT JOIN 
-                    teams t ON sir.team_email = t.leader_email  -- Get leader name
-                LEFT JOIN 
-                    students stu ON sir.team_email = stu.team_email  -- Get all team members
-                WHERE 
-                    sir.id = :request_id";
-        $params = ['request_id' => $request_id];
-    }
+   if ($type == 'team') {
+    $sql = "SELECT 
+        tir.id AS request_number,
+        tir.project_name,
+        tir.description AS idea_description,
+        tir.team_email,
+        tir.supervisor_email,
+        sup.name AS supervisor_name,
+        tir.request_date,
+        tir.status,
+        t.name AS leader_name,
+        t.leader_email AS leader_email,
+        s.email AS student_email,
+        s.name AS student_name,
+        tir.reject_reason
+    FROM 
+        team_idea_request tir
+    JOIN 
+        teams t ON tir.team_email = t.leader_email
+    LEFT JOIN 
+        students s ON tir.team_email = s.team_email
+    LEFT JOIN 
+        supervisors sup ON tir.supervisor_email = sup.email
+    WHERE 
+        tir.id = :request_id";
+    $params = ['request_id' => $request_id];
+}
+
+
+
+
+else if ($type == 'supervisor') {
+    $sql =  "SELECT 
+        sir.id AS request_number,
+        'supervisor idea' AS project_name, 
+        s.idea AS idea_description,  
+        sir.team_email,
+        s.email AS supervisor_email,
+        s.name AS supervisor_name,
+        sir.request_date,
+        sir.status,
+        t.name AS leader_name,
+        t.leader_email AS leader_email,
+        stu.email AS student_email, 
+        stu.name AS student_name,
+        sir.reject_reason
+    FROM 
+        supervisor_idea_request sir
+    JOIN 
+        supervisors s ON sir.supervisor_email = s.email
+    LEFT JOIN 
+        teams t ON sir.team_email = t.leader_email
+    LEFT JOIN 
+        students stu ON sir.team_email = stu.team_email
+    WHERE 
+        sir.id = :request_id";
+    $params = ['request_id' => $request_id];
+}
+
+
+
      else {
         header("Location: SupervisorHomePage.php");
         exit;
@@ -72,10 +90,12 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
             $idea_description = $requests[0]['idea_description'];
             $team_email = $requests[0]['team_email'];
             $supervisor_email = $requests[0]['supervisor_email'];
+            $supervisor_name = $requests[0]['supervisor_name'] ?? '';
             $request_date = $requests[0]['request_date'];
             $status = $requests[0]['status'];
             $leader_name = $requests[0]['leader_name'];
-    
+            $leader_email = $requests[0]['leader_email'];
+
             // Store team members in an array
             $team_members = [];
             foreach ($requests as $row) {
@@ -98,6 +118,13 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
 } else {
     header("Location: SupervisorHomePage.php");
     exit;
+}
+if ($_GET['type'] === 'team') {
+    $sql = "UPDATE team_idea_request SET is_updated = 0 WHERE id = :id";
+ 
+$stmt = $con->prepare($sql);
+$stmt->bindParam(':id', $_GET['id']);
+$stmt->execute();
 }
 ?>
 
@@ -261,8 +288,9 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
     <div class="u-container-style u-list-item u-repeater-item">
         <div class="u-container-layout u-similar-container u-container-layout-3">
             <h4 class="u-text u-text-3">Team Leader Name:&nbsp;</h4>
-            <p class="u-text u-text-4"><?php echo $leader_name; ?></p>
-        </div>
+<p class="u-text u-text-4">
+    <?php echo !empty($leader_name) ? $leader_name : 'Leader name not found'; ?>
+</p>        </div>
     </div>
 
     <!-- Team Leader Email -->
@@ -318,22 +346,49 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
         </div>
     </div>
 </div>
+<?php 
+$student_query_params = '';
+foreach ($team_members as $i => $member) {
+    $student_query_params .= '&student_email[]=' . urlencode($member['email']) . '&student_name[]=' . urlencode($member['name']);
+}
 
+?>
 
                             </div>
 
                             <?php 
-                              if($status=='Pending'){
-                                echo '
-                                  <a href="action.php?id='.$_GET['id'].'&type='.$_GET['type'].'&status=Rejected"
-                                class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-light-2 u-radius u-btn-1">REJECT
-                            </a>
-                            <a href="action.php?id='.$_GET['id'].'&type='.$_GET['type'].'&email='.$supervisor_email.'&status=Approved"
-                                class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 u-palette-1-base u-radius u-btn-2">
-                                APPROVE </a>
-                                ';
-                              }
-                            ?>
+                                 if ($status == 'Pending'): ?>
+    <!-- REJECT Button -->
+    <button type="button"
+        class="u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-1 
+        u-palette-1-light-2 u-radius u-btn-1"
+        onclick="showRejectPopup(<?= $_GET['id'] ?>, '<?= $_GET['type'] ?>')" style="z-index: 1000; position: relative;">
+        REJECT
+    </button>
+
+    <!-- APPROVE Button -->
+    <form method="POST" action="action.php" style="display:inline;">
+    <input type="hidden" name="id" value="<?= htmlspecialchars($_GET['id']) ?>">
+    <input type="hidden" name="type" value="<?= htmlspecialchars($_GET['type']) ?>">
+    <input type="hidden" name="status" value="Approved">
+    <input type="hidden" name="email" value="<?= htmlspecialchars($supervisor_email) ?>">
+    <input type="hidden" name="supervisor_name" value="<?= htmlspecialchars($supervisor_name) ?>">
+
+    
+        <?php foreach ($team_members as $i => $member): ?>
+            <input type="hidden" name="student_email[]" value="<?= htmlspecialchars($member['email']) ?>">
+            <input type="hidden" name="student_name[]" value="<?= htmlspecialchars($member['name']) ?>">
+        <?php endforeach; ?>
+        <button type="submit"
+            class="u-btn u-btn-round u-button-style u-hover-palette-1-light-1 
+                   u-palette-1-base u-radius u-btn-2">
+            APPROVE
+        </button>
+    </form>
+<?php endif; ?>
+
+                                
+
                           
                         </div>
                     </div>
@@ -342,9 +397,72 @@ if (isset($_GET['id']) && isset($_GET['type'])) {
             <!--/product-->
         </div>
     </section>
+<!-- Hidden form to submit rejection -->
+<form method="POST" action="action.php" id="rejectForm">
+    <input type="hidden" name="id" id="rejectRequestId">
+    <input type="hidden" name="type" id="rejectRequestType">
+    <input type="hidden" name="status" value="Rejected">
+    <input type="hidden" name="delete_reason" id="rejectReasonInput">
+    <input type="hidden" name="email" value="<?= htmlspecialchars($supervisor_email) ?>">
+    <input type="hidden" name="supervisor_name" value="<?= htmlspecialchars($supervisor_name) ?>">
 
 
+    <?php foreach ($team_members as $i => $member): ?>
+        <input type="hidden" name="student_email[]" value="<?= htmlspecialchars($member['email']) ?>">
+        <input type="hidden" name="student_name[]" value="<?= htmlspecialchars($member['name']) ?>">
+    <?php endforeach; ?>
+</form>
 
+
+<!-- Modal Popup for Rejection -->
+<div id="rejectPopup" style="display:none; position:fixed; top:50%; left:50%;
+    transform:translate(-50%, -50%); background:white; padding:20px; 
+    box-shadow:0 4px 8px rgba(0,0,0,0.2); border-radius:8px; z-index:1000; 
+    text-align:center; color:black; width:350px;">
+    <p>Please provide a reason for rejection:</p>
+    <textarea id="rejectReason" style="width:100%; height:80px; margin-top:5px;" required></textarea>
+    <br><br>
+    <button onclick="confirmReject()" style="padding:10px 20px; background-color:#f8d7da;
+        color:#721c24; border:none; border-radius:5px; cursor:pointer; margin-right:10px;">
+        Confirm Rejection
+    </button>
+    <button onclick="hideRejectPopup()" style="padding:10px 20px; background-color:#007BFF;
+        color:white; border:none; border-radius:5px; cursor:pointer;">
+        Cancel
+    </button>
+</div>
+
+<div id="rejectOverlay" style="display:none; position:fixed; top:0; left:0;
+    width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:999;">
+</div>
+
+
+<script>
+function showRejectPopup(id, type) {
+    document.getElementById('rejectPopup').style.display = 'block';
+    document.getElementById('rejectOverlay').style.display = 'block';
+    document.getElementById('rejectRequestId').value = id;
+    document.getElementById('rejectRequestType').value = type;
+}
+
+function hideRejectPopup() {
+    document.getElementById('rejectPopup').style.display = 'none';
+    document.getElementById('rejectOverlay').style.display = 'none';
+}
+
+function confirmReject() {
+    let reason = document.getElementById('rejectReason').value.trim();
+    if (reason === "") {
+        alert("Please provide a reason for rejection.");
+        return;
+    }
+    document.getElementById('rejectReasonInput').value = reason;
+    document.getElementById('rejectForm').submit();
+}
+</script>
+<?php
+
+?>
 
     <footer class="u-clearfix u-custom-color-3 u-footer" id="sec-9e3e">
         <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">

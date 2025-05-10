@@ -126,21 +126,8 @@
           <div class="u-container-layout u-valign-top u-container-layout-1">
             <div class="custom-expanded data-layout-selected u-clearfix u-layout-wrap u-layout-wrap-1">
               
-<?php 
-function sendPasswordResetEmail($email, $newPassword, $config) {
-    $subject = "Password Reset Request";
-    $message = "Please use this new password to login: " . $newPassword;
-    $headers = "From: 443200556@student.ksu.edu.sa";
+<?php
 
-    if (mail($email, $subject, $message, $headers)) {
-        echo "Email sent successfully.";
-    } else {
-        echo "Failed to send email.";
-    }
-}
-function generateRandomPassword($length = 10) {
-    return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, $length);
-}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $type = $_POST['type'];
@@ -148,26 +135,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   if ($type == 1) { // Supervisor
       $stmt = $con->prepare("SELECT email FROM supervisors WHERE email = :email");
-      $updateStmt = $con->prepare("UPDATE supervisors SET password = :password WHERE email = :email");
   } else { // Student
-      $stmt = $con->prepare("SELECT leader_email FROM teams WHERE leader_email = :email");
-      $updateStmt = $con->prepare("UPDATE teams SET password = :password WHERE leader_email = :email");
+      $stmt = $con->prepare("SELECT email FROM students WHERE email = :email");
   }
-
   $stmt->bindParam(':email', $email);
   $stmt->execute();
   $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
   if ($result) {
-      $newPassword = generateRandomPassword();
-      $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-
-      $updateStmt->bindParam(':password', $hashedPassword);
-      $updateStmt->bindParam(':email', $email); // Use ':email' in both cases
-      $updateStmt->execute();
-
-      sendPasswordResetEmail($email, $newPassword, $config);
-      echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-message u-form-send-success">Email has been sent. Check your mail to reset your password.</div>';
+      $code = random_int(100000, 999999);
+      $stmt = $con->prepare("SELECT email FROM verify WHERE email = :email");
+      $stmt->bindParam(':email', $email);
+      $stmt->execute();
+      $result = $stmt->fetch(PDO::FETCH_ASSOC);
+      if($result){
+          $stmt = $con->prepare("UPDATE verify set code=:code WHERE email = :email");
+          $stmt->bindParam(':email', $email);
+          $stmt->bindParam(':code', $code);
+          $stmt->execute();
+      }
+      else{
+          $stmt = $con->prepare("INSERT INTO verify (code,email) VALUES(:code,:email)");
+          $stmt->bindParam(':email', $email);
+          $stmt->bindParam(':code', $code);
+          $stmt->execute();
+      }
+         //send email
+          $mail->addAddress($email, 'Me');
+          $mail->Subject = 'Reset Password';
+          $mail->isHTML(TRUE);
+          $mail->Body = '<html>Hello <br>Reset Password.</br> verify code: '.$code.'</html>';
+          if (!$mail->send()) {
+          echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">Email not sent.</div>';
+          }
+          else{
+      header('location: forgot_verify.php?email='.$email.'&type='.$type);
+          }
   } else {
       echo '<div style="margin-top:5px;padding:5px;border-radius:10px;" class="u-form-send-error u-form-send-message">Email not found. Please try again.</div>';
   }
@@ -209,7 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </select>
                             </div>
                             <div class="u-align-right u-form-group u-form-submit">
-                              <a href="logIn.php" class="frpass">Back to Login?</a>
+                              <a href="LogIn.php" class="frpass">Back to Login?</a>
                               <button type="submit" class="u-active-palette-1-light-1 u-border-none u-btn u-btn-round u-button-style u-hover-palette-1-light-2 u-palette-1-base u-radius u-btn-1">Submit</button>
                             </div>
                         </form>

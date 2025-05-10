@@ -1,4 +1,5 @@
 <?php 
+
  ob_start();
  session_start();
   require_once 'config/connect.php';
@@ -56,7 +57,16 @@ if (isset($_SESSION['message'])) {
     ";
     unset($_SESSION['message']);
 }
+// Check if any updates exist
+$sql = "SELECT COUNT(*) FROM team_idea_request WHERE supervisor_email = :email AND is_updated = 1";
+$stmt = $con->prepare($sql);
+$stmt->bindParam(':email', $supervisorEmail);
+$stmt->execute();
+$hasUpdates = $stmt->fetchColumn() > 0;
 ?>
+
+
+
 
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="en">
@@ -72,6 +82,7 @@ if (isset($_SESSION['message'])) {
     <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
     <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
     <meta name="generator" content="Nicepage 6.19.6, nicepage.com">
+  
     <link id="u-theme-google-font" rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
     <link id="u-page-google-font" rel="stylesheet"
@@ -97,92 +108,9 @@ if (isset($_SESSION['message'])) {
 <body data-path-to-root="./" data-include-products="true" class="u-body u-xl-mode" data-lang="en">
     <header class="u-clearfix u-header" id="sec-4e01">
         <div class="u-clearfix u-sheet u-sheet-1">
-            <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" data-responsive-from="MD">
-                <div class="menu-collapse"
-                    style="font-size: 1rem; letter-spacing: 0px; font-weight: 700; text-transform: uppercase;">
-                    <a class="u-button-style u-custom-active-border-color u-custom-active-color u-custom-border u-custom-border-color u-custom-borders u-custom-hover-border-color u-custom-hover-color u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-nav-link"
-                        href="#" style="padding: 0px; font-size: calc(1em + 0.5px);">
-                        <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 302 302" style="">
-                            <use xlink:href="#svg-5247"></use>
-                        </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
-                            id="svg-5247" x="0px" y="0px" viewBox="0 0 302 302"
-                            style="enable-background:new 0 0 302 302;" xml:space="preserve" class="u-svg-content">
-                            <g>
-                                <rect y="36" width="302" height="30"></rect>
-                                <rect y="236" width="302" height="30"></rect>
-                                <rect y="136" width="302" height="30"></rect>
-                            </g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                            <g></g>
-                        </svg>
-                    </a>
-                </div>
-                <div class="u-custom-menu u-nav-container">
-                    <ul class="u-nav u-spacing-30 u-unstyled u-nav-1">
-                        <li class="u-nav-item"><a
-                                class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
-                                href="SupervisorHomePage.php" style="padding: 10px 0px;">Supervisor home page</a>
-                        </li>
-                        <li class="u-nav-item"><a
-                                class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
-                                style="padding: 10px 0px;" href="supervisorProfile.php">Profile</a>
-                        </li>
-                        <li class="u-nav-item"><a
-                            class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
-                            style="padding: 10px 0px;" href="SupervisorGroup.php">Supervisor Group</a>
-                    </li>
-                        <li class="u-nav-item"><a
-                                class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90"
-                                style="padding: 10px 0px;" href="index.php">Log out</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="u-custom-menu u-nav-container-collapse">
-                    <div
-                        class="u-container-style u-inner-container-layout u-opacity u-opacity-95 u-palette-1-dark-2 u-sidenav">
-                        <div class="u-inner-container-layout u-sidenav-overflow">
-                            <div class="u-menu-close"></div>
-                            <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2">
-                                <li class="u-nav-item"><a class="u-button-style u-nav-link" href="./">Home</a>
-                                </li>
-                                <li class="u-nav-item"><a class="u-button-style u-nav-link">Sign Up</a>
-                                </li>
-                                <li class="u-nav-item"><a class="u-button-style u-nav-link">Login</a>
-                                </li>
-                                <li class="u-nav-item"><a class="u-button-style u-nav-link">Request Project from
-                                        CCIS</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="u-menu-overlay u-opacity u-opacity-70 u-palette-1-dark-2"></div>
-                </div>
-                <style class="menu-style">
-                @media (max-width: 939px) {
-                    [data-responsive-from="MD"] .u-nav-container {
-                        display: none;
-                    }
 
-                    [data-responsive-from="MD"] .menu-collapse {
-                        display: block;
-                    }
-                }
-                </style>
-            </nav>
+ <?php $hasUpdates = true; // or false based on badge logic
+include 'supervisor_menu.php'; ?>            
             <a href="#" class="u-image u-logo u-image-1" data-image-width="276" data-image-height="194">
                 <img src="images/logo_GP-noname.png" class="u-logo-image u-logo-image-1">
             </a>
@@ -225,7 +153,7 @@ if (isset($_SESSION['message'])) {
                        NULL AS last_updated, 
                        sir.id AS request_id,
                        0 AS is_updated,
-                       NULL AS delete_reason
+                       sir.delete_reason
                    FROM 
                        supervisor_idea_request sir 
                    JOIN 
@@ -266,7 +194,7 @@ if (isset($_SESSION['message'])) {
                 $stmt = $con->prepare($sql);
                 $stmt->execute();
                 $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+if (!empty($requests)) {
                 foreach ($requests as $request) {
                     $request_number = $request['request_number'];
                     $leader_name = $request['leader_name'];
@@ -298,157 +226,80 @@ if (isset($_SESSION['message'])) {
                                 <h4 class="u-align-center u-text u-text-palette-1-base u-text-3">' . $leader_name . '</h4>';
                     
                     // If the request was deleted, show the reason instead of description
-                    if (!empty($delete_reason)) {
-                        echo '<p class="u-align-left u-text u-text-4" style="color: red; font-weight: bold;">Deleted Request: ' . htmlspecialchars($delete_reason) . '</p>';
                     
-                }
                 echo '<p class="u-align-left u-text u-text-4" style="margin:1rem;"> ' . htmlspecialchars($idea_description) . '</p>';
 
 
-                    echo $updateBadge; // Display update indicator if available
+                    echo $updateBadge;
 
-                    // View button (only if request is not deleted)
-                    //if (empty($delete_reason)) {
-                        echo '<a href="ViewSpecificRequest.php?id=' . $request_id . '&type=' . $source . '"
-                                  class="u-active-white u-align-center u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-base u-border-palette-1-base u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black u-btn-1"
-                                  data-animation-name="" data-animation-duration="0" data-animation-delay="0"
-                                  data-animation-direction=""> View REQUEST </a>';
-                   // }
+echo '<div style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">';
 
-                    echo '</div></div>';
-                }
-                ?>
+// View REQUEST button
+echo '<div style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">';
+
+// View REQUEST button 
+echo '<a href="ViewSpecificRequest.php?id=' . $request_id . '&type=' . $source . '" 
+        class="u-btn u-btn-round u-button-style u-hover-white u-palette-1-base u-radius u-text-active-black u-text-body-alt-color u-text-hover-black "
+        style="width: 180px; text-align: center; border-radius: 50px !important;">
+        View REQUEST
+      </a>';
+
+// Cancellation Reason button 
+if ($request['status'] == 'Canceled' && !empty($request['delete_reason'])) {
+    echo '<button onclick="showPopup(\'' . htmlspecialchars(addslashes($request['delete_reason'])) . '\')" 
+                 class="u-btn u-button-style u-grey-30 u-btn-round"
+                 style="width: 180px; background-color: #dc3545; color: white; border: none;">
+             View Reason
+          </button>';
+}
+
+echo '</div>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
+
+
+
+                }}else 
+    echo "<p style='text-align:center; color:gray;'>There is no request yet.</p>";
+?>            
+
             </div>
         </div>
     </div>
 </section>
 
 <style>
-    .update-badge {
-        display: inline-block;
-        background-color: yellow;
-        color: black;
-        font-weight: bold;
-        padding: 5px 10px;
-        border-radius: 5px;
-        margin-top: 5px;
-        text-align: center;
-    }
+.update-badge {
+    display: inline-block;
+    background-color: #fff3cd; /* Soft yellow */
+    color: #856404;            /* Dark yellow text */
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-top: 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ffeeba;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.update-badge:hover {
+    background-color: #ffe8a1;
+    color: #5c4500;
+}
+.u-repeater-1 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
 </style>
 
 
-    <section
-        class="u-black u-clearfix u-container-style u-dialog-block u-opacity u-opacity-70 u-payment-dialog u-valign-middle u-dialog-section-5"
-        id="sec-fe6a">
-        <div
-            class="u-align-center u-container-align-center u-container-style u-dialog u-radius-25 u-shape-round u-white u-dialog-1">
-            <div class="u-container-layout u-valign-top u-container-layout-1">
-                <h5 class="u-align-left u-text u-text-1">Buy Now</h5>
-                <div class="u-expanded-width u-products u-products-1" data-site-sorting-prop="created"
-                    data-site-sorting-order="desc" data-items-per-page="1">
-                    <div class="u-list-control"></div>
-                    <div class="u-repeater u-repeater-1">
-                        <!--product_item-->
-                        <div class="u-container-style u-products-item u-repeater-item">
-                            <div class="u-container-layout u-similar-container u-container-layout-2">
-                                <h5 class="u-align-left u-product-control u-text u-text-2">
-                                    <a class="u-product-title-link" href="#">Product 1 Title</a>
-                                </h5>
-                                <div class="u-align-left u-product-control u-product-desc u-text u-text-3">
-                                    <p>Sample text. Lorem ipsum dolor sit amet, consectetur adipiscing elit nullam nunc
-                                        justo sagittis suscipit ultrices.</p>
-                                </div>
-                                <div class="u-align-left u-product-control u-product-quantity u-product-quantity-1">
-                                    <div class="u-hidden u-quantity-label">Quantity</div>
-                                    <div class="u-border-1 u-border-grey-30 u-quantity-input u-radius-50">
-                                        <a class="disabled minus u-button-style u-quantity-button u-text-body-color">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-                                                <path d="m 4 8 h 8" fill="none" stroke="currentColor" stroke-width="1"
-                                                    fill-rule="evenodd"></path>
-                                            </svg>
-                                        </a>
-                                        <input class="u-input" type="text" value="1" pattern="[0-9]+">
-                                        <a class="plus u-button-style u-quantity-button u-text-body-color">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-                                                <path d="m 4 8 h 8 M 8 4 v 8" fill="none" stroke="currentColor"
-                                                    stroke-width="1" fill-rule="evenodd"></path>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div data-add-zero-cents="true"
-                                    class="u-align-left u-product-control u-product-price u-product-price-1">
-                                    <div class="u-price-wrapper u-spacing-10">
-                                        <div class="u-old-price" style="text-decoration: line-through !important;">
-                                            $20.00</div>
-                                        <div class="u-price" style="font-size: 1.25rem; font-weight: 700;">$17.00</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--/product_item-->
-                    </div>
-                    <div class="u-list-control"></div>
-                </div>
-                <div class="u-expanded-width u-payment-services u-tab-links-align-justify u-tab-payment u-tab-vertical u-tabs u-payment-services-1"
-                    data-payment-order-approved-message="Your order has been approved. Thank you!"
-                    data-payment-order-cancelled-message="Unable to process your order. Please try again later.">
-                    <ul class="u-tab-list u-unstyled" role="tablist">
-                        <li class="u-tab-item" role="presentation"><a
-                                class="active u-active-grey-10 u-button-style u-payment-paypal u-tab-link u-text-body-color"
-                                id="link-tab-9cb3" href="#tab-9cb3" role="tab" aria-controls="tab-9cb3"
-                                aria-selected="true"><input type="radio" class="u-field-input u-grey-15 u-radius-15"
-                                    name="payment-group" checked="checked"><span>Paypal</span><svg class="u-svg-content"
-                                    xmlns="http://www.w3.org/2000/svg" x="0px" y="0px">
-                                    <path fill="#009EE3" d="M11,5.9H18c3.8,0,5.2,1.9,4.9,4.7c-0.3,4.7-3.2,7.2-6.9,7.2h-1.9c-0.5,0-0.8,0.3-0.9,1.3l-0.8,4.3
-  c-0.1,0.3-0.2,0.5-0.5,0.6H7.6c-0.4,0-0.5-0.3-0.4-1l2.6-16C9.9,6.3,10.2,5.9,11,5.9z"></path>
-                                    <path fill="#113984" d="M6.7,0h7.1c2,0,4.3,0.1,5.9,1.5c1.1,0.9,1.6,2.4,1.5,4c-0.4,5.4-3.7,8.5-8,8.5H9.6c-0.6,0-0.9,0.4-1.2,1.5
-  l-0.9,5.1C7.4,21,7.3,21.3,7,21.3H2.6C2,21.3,1.9,21,2,20.1L5.2,1.3C5.3,0.4,5.7,0,6.7,0z"></path>
-                                    <path fill="#172C70" d="M8.6,14.8l1.3-7.9c0.1-0.7,0.5-1,1.3-1h7.1c1.2,0,2.1,0.2,2.8,0.5c-0.7,4.8-3.8,7.5-7.9,7.5H9.6
-  C9.1,13.9,8.8,14.1,8.6,14.8z"></path>
-                                </svg>
-                            </a>
-                        </li>
-                        <li class="u-tab-item" role="presentation"><a
-                                class="u-active-grey-10 u-button-style u-payment-stripe u-tab-link u-text-body-color"
-                                id="link-tab-ab80" href="#tab-ab80" role="tab" aria-controls="tab-ab80"
-                                aria-selected="false"><input type="radio" class="u-field-input u-grey-15 u-radius-15"
-                                    name="payment-group"><span>Stripe</span><svg class="u-svg-content"
-                                    xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 24 24">
-                                    <path fill="#635BFF" d="M14,9.2c-2.3-0.8-3.4-1.5-3.4-2.4c0-0.8,0.8-1.3,2-1.3c2.3,0,4.7,0.8,6.4,1.6l0.9-5.5
-  c-1.3-0.5-4-1.6-7.7-1.6C9.6,0,7.5,0.7,5.8,1.9C4.1,3.2,3.4,4.9,3.4,7.2c0,4,2.6,5.7,6.8,7.2c2.7,0.9,3.6,1.6,3.6,2.5
-  c0,0.9-0.9,1.6-2.4,1.6c-1.9,0-5.2-0.9-7.3-2.1L3,22c1.8,0.9,5.1,2,8.7,2c2.8,0,5.1-0.7,6.6-1.9c1.8-1.3,2.7-3.2,2.7-5.7
-  C20.9,12.3,18.2,10.7,14,9.2L14,9.2z"></path>
-                                </svg>
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="u-tab-content">
-                        <div class="u-container-style u-payment-paypal u-tab-active u-tab-pane" id="tab-9cb3"
-                            role="tabpanel" aria-labelledby="link-tab-9cb3">
-                            <div class="u-container-layout u-payment-services-inner u-container-layout-3">Loading...
-                            </div>
-                        </div>
-                        <div class="u-container-style u-payment-stripe u-tab-pane" id="tab-ab80" role="tabpanel"
-                            aria-labelledby="link-tab-ab80">
-                            <div class="u-container-layout u-container-layout-4">
-                                <a href="#" class="u-btn u-button-style u-stripe-button u-btn-1">Pay with Stripe</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><button class="u-dialog-close-button u-icon u-text-grey-40 u-icon-1"><svg class="u-svg-link"
-                    preserveAspectRatio="xMidYMin slice" viewBox="0 0 16 16" style="">
-                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-efe9"></use>
-                </svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
-                    xml:space="preserve" class="u-svg-content" viewBox="0 0 16 16" x="0px" y="0px" id="svg-efe9">
-                    <rect x="7" y="0" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -3.3138 8.0002)" width="2"
-                        height="16"></rect>
-                    <rect x="0" y="7" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -3.3138 8.0002)" width="16"
-                        height="2"></rect>
-                </svg></button>
-        </div>
-    </section>
+
+    
     <footer class="u-clearfix u-custom-color-3 u-footer" id="sec-9e3e">
         <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
             <div class="data-layout-selected u-clearfix u-expanded-width u-gutter-30 u-layout-wrap u-layout-wrap-1">
@@ -505,6 +356,61 @@ if (isset($_SESSION['message'])) {
             </div>
         </div>
     </footer>
+<!-- Reason Popup -->
+<div id="reasonPopup" style="
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    width: 400px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    z-index: 1000;
+    text-align: center;
+">
+    <p id="reasonText" style="color:black;     text-align: center;
+ font-size: 16px; margin-bottom: 20px;"></p>
+    <button onclick="hidePopup()" style="
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+
+    ">Close</button>
+</div>
+
+
+<!-- Overlay -->
+<div id="overlay" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+"></div>
+
+<!-- JS to Show/Hide Popup -->
+<script>
+function showPopup(reason) {
+    document.getElementById('reasonText').innerText = reason;
+    document.getElementById('reasonPopup').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+}
+function hidePopup() {
+    document.getElementById('reasonPopup').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+}
+</script>
+
+
     <style>
     .u-dialog-section-5 .u-dialog-1 {
         width: 570px;

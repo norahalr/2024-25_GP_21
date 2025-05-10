@@ -21,9 +21,7 @@ if (isset($_COOKIE['role'])) {
     } else {
         echo "Role is not defined.";
     }
-} else {
-    echo "Role cookie not set.";
-}
+} 
  // Fetch user information from the students table based on the email
 $studentStmt = $con->prepare("SELECT name, team_email FROM students WHERE email = :email");
 $studentStmt->bindParam(':email', $userEmail);
@@ -37,26 +35,20 @@ $teamEmail = $student['team_email'];
   $stmt->execute();
   $teamLogo = $stmt->fetch(PDO::FETCH_ASSOC);
 
-  $stmt = $con->prepare("SELECT draft_ideas FROM students WHERE email = :email");
-  $stmt->bindParam(':email', $userEmail);
-  $stmt->execute();
-  $studentDraft = $stmt->fetch(PDO::FETCH_ASSOC);
-  
-  $existingIdea = $studentDraft['draft_ideas'] ;
+
   $logoPath = $teamLogo['logo'] ?? 'images/7973420.png'; // Default logo
 
 // Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['textarea'])) {
-  $idea = trim($_POST['textarea']); // Trim spaces before saving
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['draft_idea'])) {
+    $idea = trim($_POST['draft_idea']);
 
   // Update existing idea
   $updateStmt = $con->prepare("UPDATE students SET draft_ideas = :idea WHERE email = :email");
   $updateStmt->bindParam(':idea', $idea);
   $updateStmt->bindParam(':email', $userEmail);
   $updateStmt->execute();
+$existingIdea = $idea;
 
-  header("Location: " . $_SERVER['PHP_SELF']);
-  exit;
 }
   if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['group_logo'])) {
     $file = $_FILES['group_logo'];
@@ -246,9 +238,15 @@ if ($student) {
 
 }
 
+$stmt = $con->prepare("SELECT draft_ideas FROM students WHERE email = :email");
+$stmt->bindParam(':email', $userEmail);
+$stmt->execute();
+$studentDraft = $stmt->fetch(PDO::FETCH_ASSOC);
+$existingIdea = $studentDraft['draft_ideas'];
 
 
 ?>
+
 
 
 <!DOCTYPE html>
@@ -260,9 +258,9 @@ if ($student) {
     <title>groupProfile</title>
     <link rel="stylesheet" href="nicepage2.css" media="screen">
 <link rel="stylesheet" href="groupProfile.css" media="screen">
-    <!-- <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
-    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script> -->
-    <meta name="generator" content="Nicepage 6.19.6, nicepage.com">
+<!--- <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+<script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>--->
+   <meta name="generator" content="Nicepage 6.19.6, nicepage.com">
     <meta name="referrer" content="origin">
     <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
     
@@ -279,44 +277,7 @@ if ($student) {
   <meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
   <body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="en">
     <header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
-      <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" data-responsive-from="MD">
-        <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px; font-weight: 700; text-transform: uppercase;">
-          <a class="u-button-style u-custom-active-border-color u-custom-active-color u-custom-border u-custom-border-color u-custom-borders u-custom-hover-border-color u-custom-hover-color u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-nav-link" href="#" style="padding: 0px; font-size: calc(1em + 0.5px);">
-            <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 302 302" style=""><use xlink:href="#svg-5247"></use></svg>
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="svg-5247" x="0px" y="0px" viewBox="0 0 302 302" style="enable-background:new 0 0 302 302;" xml:space="preserve" class="u-svg-content"><g><rect y="36" width="302" height="30"></rect><rect y="236" width="302" height="30"></rect><rect y="136" width="302" height="30"></rect>
-</g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>
-          </a>
-        </div>
-        <div class="u-custom-menu u-nav-container">
-          <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.php" style="padding: 10px 0px;">Student Home page</a>
-          </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentProfile.php">Profile</a>
-          </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentRequest.php">Request list</a>
-          
-          </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.php">Log out</a>
-</li></ul>
-        </div>
-        <div class="u-custom-menu u-nav-container-collapse">
-          <div class="u-container-style u-inner-container-layout u-opacity u-opacity-95 u-palette-1-dark-2 u-sidenav">
-            <div class="u-inner-container-layout u-sidenav-overflow">
-              <div class="u-menu-close"></div>
-              <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2"><li class="u-nav-item"><a class="u-button-style u-nav-link" href="./">Home</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link">Sign Up</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link">Login</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link">Request Project from CCIS</a>
-</li></ul>
-            </div>
-          </div>
-          <div class="u-menu-overlay u-opacity u-opacity-70 u-palette-1-dark-2"></div>
-        </div>
-        <style class="menu-style">@media (max-width: 939px) {
-                  [data-responsive-from="MD"] .u-nav-container {
-                      display: none;
-                  }
-                  [data-responsive-from="MD"] .menu-collapse {
-                      display: block;
-                  }
-              }</style>
-      </nav>
+        <?php include 'Student_menu.php';?>
       <a href="#" class="u-image u-logo u-image-1" data-image-width="276" data-image-height="194">
         <img src="images/logo_GP-noname.png" class="u-logo-image u-logo-image-1">
       </a>
@@ -331,14 +292,10 @@ if ($student) {
                 <div class="u-container-layout u-valign-top u-container-layout-1">
                   <div class="u-expanded-width u-form u-form-1">
 
-                  <form id="ideaForm" action="StudentProfile.php" method="POST" class="u-clearfix u-form-spacing-15 u-form-vertical u-inner-form" style="padding: 15px;"  name="form"> 
+                  <form id="ideaForm" action="StudentProfile.php" data-form-type="custom" method="POST" class="u-clearfix u-form-spacing-15 u-form-vertical u-inner-form" style="padding: 15px;"  name="form"> 
     <div class="u-form-group u-form-textarea u-label-none u-form-group-1">
         <label for="textarea-0d3e" class="u-label">Ideas Draft: </label>
-        <textarea 
-    rows="4" 
-    cols="50" 
-    id="textarea-0d3e" 
-    name="textarea" 
+<textarea name="draft_idea" rows="4" cols="50" id="textarea-0d3e"
     class="u-input u-input-rectangle" 
     required 
     placeholder="Write down your ideas to save them for you! (Draft)"

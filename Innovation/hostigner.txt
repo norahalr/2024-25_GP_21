@@ -1,0 +1,8 @@
+82.25.113.44
+65002
+u253034616
+@Qq12345
+ssh -p 65002 u253034616@82.25.113.44
+
+
+scp C:/Users/username/Desktop/Code/scpfile.py u253034616@82.25.113.44:files

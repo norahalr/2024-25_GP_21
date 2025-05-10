@@ -10,6 +10,7 @@ if (!isset($_SESSION['user_id'])) {
   header("Location: LogIn.php");
   exit();
 }
+
 $userEmail = $_SESSION['user_id'] ; // Get user ID from session
 if (isset($_SESSION['role'])) {
     $role = $_SESSION['role']; // Retrieve the role from the cookie
@@ -107,9 +108,7 @@ try {
 
 
 $userEmail = $_SESSION['user_id'];  
-$apiUrl = 'http://127.0.0.1:5000/recommend?student_id=' . urlencode($userEmail);
-// $userEmail = '443200556@student.ksu.edu.sa';  
-// $apiUrl = 'http://127.0.0.1:5000/recommend?student_id=' . urlencode($userEmail);
+$apiUrl = 'https://app8800.pythonanywhere.com/recommend?student_id=' . urlencode($userEmail);
 
 $response = @file_get_contents($apiUrl); 
 if ($response === FALSE) {
@@ -142,28 +141,201 @@ $otherSupervisors = array_filter($supervisors, function($supervisor) use ($recom
 <body class="u-body u-xl-mode">
 
 <header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
-      <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" data-responsive-from="MD">
-        <div class="menu-collapse">
-          <a class="u-button-style u-nav-link" href="#">
-            <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 302 302"><use xlink:href="#svg-5247"></use></svg>
-          </a>
-        </div>
-        <div class="u-custom-menu u-nav-container">
-          <ul class="u-nav u-spacing-30 u-unstyled u-nav-1">
-        <li class="u-nav-item"><a class="u-nav-link" href="StudentHomePage.php">Student Home page</a></li>
-        <li class="u-nav-item"><a class="u-nav-link" href="StudentProfile.php">Profile</a></li>
-        <li class="u-nav-item"><a class="u-nav-link" href="StudentRequest.php">Request list</a></li>
-        <li class="u-nav-item"><a class="u-nav-link" href="index.php">Log out</a></li>
-          </ul>
-        </div>
-      </nav>
+<?php include "Student_menu.php";?>
       <a href="#" class="u-image u-logo u-image-1">
         <img src="images/logo_GP-noname.png" class="u-logo-image u-logo-image-1">
       </a>
     </div></header>
+    <!-- 📦 InnoBot Chat UI -->
+<!-- Chat Button -->
+<div id="chat-toggle">
+    💬
+</div>
+
+<!-- Chat Popup -->
+<div id="chat-popup" style="display: none;">
+    <div id="chat-header">
+        <span>InnoBot</span>
+        <button id="chat-close">&times;</button>
+    </div>
+    <div id="chat-output"></div>
+    <div id="chat-controls">
+        <input type="text" id="chat-input" placeholder="Ask me something...">
+        <button id="chat-submit">Send</button>
+    </div>
+</div>
+
+<style>
+    /* Chat Toggle Button */
+    #chat-toggle {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 60px;
+        height: 60px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+        transition: background-color 0.3s;
+    }
+
+    #chat-toggle:hover {
+        background-color: #0056b3;
+    }
+
+    /* Chat Popup */
+    #chat-popup {
+        position: fixed;
+        bottom: 100px;
+        right: 25px;
+        width: 350px;
+        max-height: 500px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        font-family: Arial, sans-serif;
+        z-index: 1000;
+        overflow: hidden;
+    }
+
+    #chat-header {
+        background-color: #007bff;
+        color: white;
+        padding: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+    }
+
+    #chat-close {
+        background: transparent;
+        border: none;
+        font-size: 18px;
+        color: white;
+        cursor: pointer;
+    }
+
+    #chat-output {
+        flex: 1;
+        padding: 12px;
+        overflow-y: auto;
+        background: #f9f9f9;
+    }
+
+    #chat-controls {
+        display: flex;
+        padding: 10px;
+        gap: 8px;
+        border-top: 1px solid #eee;
+        background: #fff;
+    }
+
+    #chat-input {
+        flex: 1;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    #chat-submit {
+        padding: 8px 14px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    #chat-submit:hover {
+        background-color: #0056b3;
+    }
+
+    p {
+        margin: 6px 0;
+    }
+
+    .bot-loading {
+        color: gray;
+        font-style: italic;
+    }
+</style>
+
+<script>
+    // Handle toggle and close
+    const chatToggle = document.getElementById('chat-toggle');
+    const chatPopup = document.getElementById('chat-popup');
+    const chatClose = document.getElementById('chat-close');
+
+    chatToggle.addEventListener('click', () => {
+        chatPopup.style.display = 'flex';
+        chatToggle.style.display = 'none';
+    });
+
+    chatClose.addEventListener('click', () => {
+        chatPopup.style.display = 'none';
+        chatToggle.style.display = 'flex';
+    });
+
+    // DOM loaded: chat logic
+    document.addEventListener("DOMContentLoaded", function () {
+        const chatInput = document.getElementById("chat-input");
+        const chatSubmit = document.getElementById("chat-submit");
+        const chatOutput = document.getElementById("chat-output");
+
+        function appendMessage(sender, message) {
+            const messageHtml = `<p><strong>${sender}:</strong> ${message}</p>`;
+            chatOutput.innerHTML += messageHtml;
+            chatOutput.scrollTop = chatOutput.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const userMessage = chatInput.value.trim();
+            if (!userMessage) return;
+
+            appendMessage("You", userMessage);
+            appendMessage("InnoBot", "<span class='bot-loading'>Typing...</span>");
+
+            try {
+                const response = await fetch("https://app8800.pythonanywhere.com/chatbot", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: userMessage })
+                });
+
+                const data = await response.json();
+
+                // Remove typing placeholder
+                chatOutput.lastElementChild.remove();
+                appendMessage("InnoBot", data.reply);
+            } catch (error) {
+                chatOutput.lastElementChild.remove();
+                appendMessage("InnoBot", "❌ Couldn't reach the server.");
+            }
+
+            chatInput.value = "";
+        }
+
+        chatSubmit.addEventListener("click", sendMessage);
+        chatInput.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") sendMessage();
+        });
+    });
+</script>
 
 
-    <section class="u-clearfix u-section-1" id="sec-9f4c" style="padding-bottom:20px;">
+<section class="u-clearfix u-section-1" id="sec-9f4c" style="padding-bottom:20px;">
     <div class="u-clearfix u-sheet u-sheet-1">
         <div class="custom-expanded u-form u-form-1">
             <form id="searchForm" class="u-clearfix u-form-horizontal u-inner-form" style="padding: 10px;">
@@ -235,22 +407,41 @@ $otherSupervisors = array_filter($supervisors, function($supervisor) use ($recom
     </div>
 </div>
     
+
+
+
+
+
 <!-- بداية عرض المشرفين المرشحين -->
-<?php if (!empty($recommendedSupervisors)): ?>
 <section id="recommendedSupervisors" class="u-align-center u-clearfix u-container-align-center u-gradient u-section-2" style="background-color: #e9f2fa; width: 100vw;">
     <div class="u-clearfix u-sheet u-sheet-1">
         <h2 class="u-align-center u-text u-text-palette-1-dark-1 u-text-1" style="margin:10px;">Recommended Supervisors</h2>
-        <div class="u-layout-grid u-list u-list-1">
+        <div class="u-layout-grid u-list u-list-1" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
             <div class="u-repeater u-repeater-1">
-                <?php foreach ($recommendedSupervisors as $supervisor): ?>
+                <?php
+                usort($recommendedSupervisors, function ($a, $b) {
+                    return $a['availability'] === 'Unavailable' ? 1 : -1;
+                });
+                ?>
+
+                <?php if (empty($recommendedSupervisors)): ?>
+                    
+                    <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1"
+ style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); width: 1200px; min-height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; font-size: 32px;">
+                        <p style="font-size: 18px; color: #4D7397;">
+                            No recommended supervisors found for your current interests.
+                        </p>
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($recommendedSupervisors as $supervisor): ?>
                     <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
                          style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); margin-bottom: 20px;">
-                        <div class="u-container-layout u-similar-container u-container-layout-1">
+                        <div class="u-container-layout u-similar-container u-container-layout-1" >
 
                             
                             <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2">
-                                 <?= htmlspecialchars($supervisor['name']) ?> (Recommended)
-                            </h5>
+     Dr. <?= htmlspecialchars($supervisor['name']) ?> (Recommended)
+</h5>
 
                             <div class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-2" style="margin-bottom: 35px;"></div>
                             <a href="ViewSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
@@ -271,14 +462,14 @@ $otherSupervisors = array_filter($supervisors, function($supervisor) use ($recom
                                 </span>
                             </h6>
 
-                            <?php if ($supervisor['availability'] !== 'Unavailable' && empty($teamData['supervisor_email'])): ?>
-                                <?php if (isset($_COOKIE['role']) && $_SESSION['role'] === 'leader'): ?>
-                                    <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" 
-                                    class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
-                                    REQUEST
-                                    </a>
-                                <?php endif; ?>
-                            <?php endif; ?>
+                                                   <?php if ($supervisor['availability'] !== 'Unavailable' && empty($teamData['supervisor_email'])): ?>
+    <?php if ($_SESSION['role'] === 'leader'): ?>
+        <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" 
+           class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
+           REQUEST
+        </a>
+    <?php endif; ?>
+<?php endif; ?>
 
                         </div>
                     </div>
@@ -297,13 +488,20 @@ $otherSupervisors = array_filter($supervisors, function($supervisor) use ($recom
         <h2 class="u-align-center u-text u-text-palette-1-dark-1 u-text-1" style="margin:10px;">Other Supervisors</h2>
         <div class="u-layout-grid u-list u-list-1">
             <div class="u-repeater u-repeater-1">
+            <?php
+usort($otherSupervisors, function ($a, $b) {
+    return $a['availability'] === 'Unavailable' ? 1 : -1;
+});
+?>
                 <?php foreach ($otherSupervisors as $supervisor): ?>
                     <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
                          style="background-color: white; box-shadow: 5px 5px 19px rgba(0,0,0,0.15); margin-bottom: 20px;">
                         <div class="u-container-layout u-similar-container u-container-layout-1">
 
                           
-                            <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2"><?= htmlspecialchars($supervisor['name']) ?></h5>
+                            <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2">
+     Dr. <?= htmlspecialchars($supervisor['name']) ?>
+</h5>
 
                             <div class="u-border-5 u-border-palette-1-dark-1 u-image u-image-circle u-image-2" style="margin-bottom: 35px;"></div>
                             <a href="ViewSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1">View</a>
@@ -324,14 +522,14 @@ $otherSupervisors = array_filter($supervisors, function($supervisor) use ($recom
                                 </span>
                             </h6>
 
-                            <?php if ($supervisor['availability'] !== 'Unavailable' && empty($teamData['supervisor_email'])): ?>
-                                <?php if (isset($_COOKIE['role']) && $_SESSION['role'] === 'leader'): ?>
-                                    <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" 
-                                    class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
-                                    REQUEST
-                                    </a>
-                                <?php endif; ?>
-                            <?php endif; ?>
+                           <?php if ($supervisor['availability'] !== 'Unavailable' && empty($teamData['supervisor_email'])): ?>
+    <?php if ($_SESSION['role'] === 'leader'): ?>
+        <a href="RequestSupervisor.php?supervisor_email=<?= urlencode($supervisor['email']) ?>" 
+           class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-2">
+           REQUEST
+        </a>
+    <?php endif; ?>
+<?php endif; ?>
 
                         </div>
                     </div>
@@ -342,6 +540,7 @@ $otherSupervisors = array_filter($supervisors, function($supervisor) use ($recom
 </div>
 </section>
 <!-- نهاية المشرفين الآخرين -->
+
 
 
 <div id="searchResults"></div>
@@ -555,7 +754,8 @@ function displayResults(data) {
                                     <h5 class="u-align-center u-text u-text-palette-1-dark-1 u-text-2" style="margin: 10px 200px 10px 100px;">${item.name}</h5>
                                     <p style="margin-bottom: 100px; font-size: 16px; line-height: 1.6; text-align: left; padding-right: 20px;">${item.description}</p>
                                     
-                                    <a href="${item.document}" target="_blank" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1" style=" margin:50px 200px 50px 450px" >View</a>
+                                   <!-- <a href="${item.document}" target="_blank" class="u-btn u-button-style u-hover-palette-1-dark-1 u-palette-1-base u-btn-1" style=" margin:50px 200px 50px 450px">View</a> -->
+<span class="u-btn u-button-style u-palette-1-base u-btn-1" style="margin:50px 200px 50px 450px; cursor: not-allowed; opacity: 0.6;">View</span>
                                 </div>
                             </div>` : `
                             <div class="u-container-style u-list-item u-repeater-item u-shape-rectangle u-white u-list-item-1" 
@@ -627,3 +827,6 @@ function displayResults(data) {
 </footer>
 </body>
 </html>
+
+
+

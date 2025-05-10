@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $idea = trim($_POST['Idea']);
       
           // Call Python API for semantic search
-          $api_url = "http://127.0.0.1:5000/check_duplicate";  
+          $api_url = "https://app8800.pythonanywhere.com/check_duplicate";
           $data = json_encode(["idea" => $idea]);
       
           $options = [
@@ -119,18 +119,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           // exit();
 
           // Extract similarity results
-          $cosine_similarity = $response['cosine_similarity']['similarity'] ?? 0;
-          $cosine_project_name = $response['cosine_similarity']['project_name'] ?? '';
+$semantic_project = $response['semantic_similarity']['project_name'] ?? '';
+$semantic_score = number_format($response['semantic_similarity']['similarity'] ?? 0, 2);
+
+if ($semantic_score >= 0.85) {
+    $_SESSION['message'] = "❌ Your idea is almost identical to a previous project ({$semantic_project}) — similarity score: {$semantic_score}. Please revise your idea completely.";
+    header("Location: StudentHomePage.php");
+    exit();
+} elseif ($semantic_score >= 0.7) {
+    $_SESSION['message'] = "⚠️ Your idea is highly similar to an existing project ({$semantic_project}) — similarity score: {$semantic_score}. Consider changing key elements.";
+    header("Location: StudentHomePage.php");
+    exit();
+} elseif ($semantic_score >= 0.5) {
+    $_SESSION['message'] = "🔎 Your idea shares some moderate similarity with a past project ({$semantic_project}) — similarity score: {$semantic_score}. You're likely safe, but review to ensure uniqueness.";
+    // no redirect
+} else {
+    // Below 0.5 – no alert necessary
+}
+        //   $cosine_similarity = $response['cosine_similarity']['similarity'] ?? 0;
+        //   $cosine_project_name = $response['cosine_similarity']['project_name'] ?? '';
       
-          $dice_similarity = $response['dice_coefficient']['similarity'] ?? 0;
-          $dice_project_name = $response['dice_coefficient']['project_name'] ?? '';
+        //   $dice_similarity = $response['dice_coefficient']['similarity'] ?? 0;
+        //   $dice_project_name = $response['dice_coefficient']['project_name'] ?? '';
       
-          // Use cosine similarity as the main threshold check
-          if ($response && $response['semantic_similarity']['similarity'] >= 0.7) {
-            $_SESSION['message'] = "Warning: Your idea is highly similar to an existing project ({$response['semantic_similarity']['project_name']}) with a similarity score of {$response['semantic_similarity']['similarity']}. Please modify your idea.";
-            header("Location: StudentHomePage.php");
-            exit();
-        }
+        //   // Use cosine similarity as the main threshold check
+        //   if ($response && $response['semantic_similarity']['similarity'] >= 0.7) {
+        //     $_SESSION['message'] = "Warning: Your idea is highly similar to an existing project ({$response['semantic_similarity']['project_name']}) with a similarity score of {$response['semantic_similarity']['similarity']}. Please modify your idea.";
+        //     header("Location: StudentHomePage.php");
+        //     exit();
+        // }
         
       
           // Insert new idea since no duplicate was found
@@ -157,8 +174,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
       
        else {
-            $_SESSION['message'] = "Error: Invalid project preference selected.";
-            header("Location: StudentHomePage.php");
+           // $_SESSION['message'] = "Error: Invalid project preference selected.";
+           // header("Location: StudentHomePage.php");
         }
     } catch (Exception $e) {
         $_SESSION['message'] = "Error: " . $e->getMessage();
@@ -1355,49 +1372,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }</style>
   </head>
 <body class="u-body u-xl-mode">
-  <header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
-    <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" data-responsive-from="MD">
-      <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px; font-weight: 700; text-transform: uppercase;">
-        <a class="u-button-style u-custom-active-border-color u-custom-active-color u-custom-border u-custom-border-color u-custom-borders u-custom-hover-border-color u-custom-hover-color u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-nav-link" href="#" style="padding: 0px; font-size: calc(1em + 0.5px);">
-          <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 302 302" style=""><use xlink:href="#svg-5247"></use></svg>
-          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="svg-5247" x="0px" y="0px" viewBox="0 0 302 302" style="enable-background:new 0 0 302 302;" xml:space="preserve" class="u-svg-content"><g><rect y="36" width="302" height="30"></rect><rect y="236" width="302" height="30"></rect><rect y="136" width="302" height="30"></rect>
-</g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>
-        </a>
-      </div>
-      <div class="u-custom-menu u-nav-container">
-        <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.php" style="padding: 10px 0px;">Student Home page</a>
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentProfile.php">Profile</a>
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentRequest.php">Request list</a>
-
-</li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.php">Log out</a>
-</li></ul>
-      </div>
-      <div class="u-custom-menu u-nav-container-collapse">
-        <div class="u-container-style u-inner-container-layout u-opacity u-opacity-95 u-palette-1-dark-2 u-sidenav">
-          <div class="u-inner-container-layout u-sidenav-overflow">
-            <div class="u-menu-close"></div>
-            <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2"><li class="u-nav-item"><a class="u-button-style u-nav-link" href="./">Home</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link">Sign Up</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link">Login</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link">Request Project from CCIS</a>
-</li></ul>
-          </div>
-        </div>
-        <div class="u-menu-overlay u-opacity u-opacity-70 u-palette-1-dark-2"></div>
-      </div>
-      <style class="menu-style">@media (max-width: 939px) {
-                [data-responsive-from="MD"] .u-nav-container {
-                    display: none;
-                }
-                [data-responsive-from="MD"] .menu-collapse {
-                    display: block;
-                }
-            }</style>
-    </nav>
-    <a href="#" class="u-image u-logo u-image-1" data-image-width="276" data-image-height="194">
-      <img src="images/logo_GP-noname.png" class="u-logo-image u-logo-image-1">
-    </a>
-  </div></header>
+           <header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
+<?php include "Student_menu.php";?>
+      <a href="#" class="u-image u-logo u-image-1">
+        <img src="images/logo_GP-noname.png" class="u-logo-image u-logo-image-1">
+      </a>
+    </div></header>
     
     <!-- <section class="u-clearfix u-palette-1-light-1 u-section-1">
         <div class="u-clearfix u-sheet u-sheet-1">

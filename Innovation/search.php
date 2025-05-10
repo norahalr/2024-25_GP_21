@@ -1,16 +1,6 @@
 <?php
-$host = 'localhost';
-$dbname = 'InnovationEngine';
-$username = 'root';
-$password = 'root';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo json_encode(["error" => "Database connection failed: " . $e->getMessage()]);
-    exit;
-}
+header('Content-Type: application/json');
+require_once 'config/connect.php';  // الاتصال جاهز هنا باسم $con
 
 // Retrieve search parameters
 $searchCategory = $_POST['search_category'] ?? '';
@@ -25,7 +15,6 @@ $sql = "";
 
 try {
     if ($initialProjects) {
-        // Load initial project list
         $sql = "SELECT p.id, p.name, p.description, p.document, p.field, 
                        GROUP_CONCAT(DISTINCT t.name SEPARATOR ', ') AS technologies 
                 FROM past_projects p
@@ -33,7 +22,6 @@ try {
                 LEFT JOIN technologies t ON pt.technology_id = t.id
                 GROUP BY p.id, p.name, p.description, p.document, p.field";
     } elseif ($searchCategory === "ProjectName" && !empty($query)) {
-        // Search projects by name with priority for matches starting with the query
         $sql = "SELECT p.id, p.name, p.description, p.document, p.field, 
                        GROUP_CONCAT(DISTINCT t.name SEPARATOR ', ') AS technologies 
                 FROM past_projects p
@@ -48,9 +36,8 @@ try {
                     END, 
                     p.name ASC";
         $params[] = "%$query%";
-        $params[] = "$query%"; // Prioritize names starting with the query
+        $params[] = "$query%";
     } elseif ($searchCategory === "SupervisorName" && !empty($query)) {
-        // Search supervisors by name with priority for matches starting with the query
         $sql = "SELECT name, email, interest, availability 
                 FROM supervisors 
                 WHERE name LIKE ?
@@ -61,15 +48,13 @@ try {
                     END, 
                     name ASC";
         $params[] = "%$query%";
-        $params[] = "$query%"; // Prioritize names starting with the query
+        $params[] = "$query%";
     } elseif ($searchCategory === "Track" && !empty($track)) {
-        // Search by track
         $sql = "SELECT name, email, interest, availability 
                 FROM supervisors 
                 WHERE track = ?";
         $params[] = $track;
     } elseif (!empty($field) || !empty($technology)) {
-        // Filter projects by field and/or technology
         $sql = "SELECT p.id, p.name, p.description, p.document, p.field, 
                        GROUP_CONCAT(DISTINCT t.name SEPARATOR ', ') AS technologies 
                 FROM past_projects p
@@ -87,19 +72,17 @@ try {
         }
         $sql .= " GROUP BY p.id, p.name, p.description, p.document, p.field";
     } else {
-        // Default: Fetch all supervisors
         $sql = "SELECT name, email, interest, availability FROM supervisors";
     }
 
     // Execute query
-    $stmt = $pdo->prepare($sql);
+    $stmt = $con->prepare($sql);  // هنا استخدمي $con
     $stmt->execute($params);
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Return results as JSON
     echo json_encode($results);
 } catch (PDOException $e) {
-    // Return detailed error for debugging
     echo json_encode(["error" => "Query failed: " . $e->getMessage()]);
     exit;
 }
+?>

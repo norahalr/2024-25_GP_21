@@ -15,10 +15,10 @@ $userEmail = $_SESSION['user_id'] ; // Get user ID from session
 if (isset($_SESSION['role'])) {
     $role = $_SESSION['role']; // Retrieve the role
     if ($role == 'leader') {
-        echo "User is a leader.";
+       // echo "User is a leader.";
         $welcomeMessage = "Welcome, Leader!";
     } elseif ($role == 'member') {
-       echo "User is a member.";
+       ##echo "User is a member.";
         $welcomeMessage = "Welcome, Member!";
     } else {
         echo "Role is not defined.";
@@ -35,8 +35,7 @@ $leader_email = $stmt->fetchColumn();
 
   
 
-  try { 
-    // Prepare the SQL statement to fetch requests from both the team_idea_request and supervisor_idea_request tables
+ try { 
     $stmt = $con->prepare("
     SELECT 
         tir.id, 
@@ -44,19 +43,25 @@ $leader_email = $stmt->fetchColumn();
         tir.description, 
         tir.status, 
         tir.request_date,
+        tir.reject_reason,
+        tir.delete_reason,
         s.name AS supervisor_name,
         s.email AS supervisor_email,
         'team_idea_request' AS request_type
     FROM team_idea_request tir
     LEFT JOIN supervisors s ON tir.supervisor_email = s.email
     WHERE tir.team_email = :team_email
+
     UNION ALL
+
     SELECT 
         sir.id, 
         NULL AS project_name, 
         s.idea AS description, 
         sir.status, 
         sir.request_date,
+        sir.reject_reason,
+        sir.delete_reason,
         s.name AS supervisor_name,
         s.email AS supervisor_email,
         'supervisor_idea_request' AS request_type
@@ -70,6 +75,7 @@ $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo "Error: " . $e->getMessage();
 }
 
+
 if (isset($_SESSION['message'])) {
     $message = htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
     $backgroundColor = "#007BFF"; // Default background color for the button
@@ -77,48 +83,49 @@ if (isset($_SESSION['message'])) {
     $popupTextColor = "black";    // Default text color for the popup
 
     // Display the popup
-    echo "
-    <div id='popup' style='
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: white;
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        border-radius: 8px;
-        z-index: 1000;
-        text-align: center;
-        color: $popupTextColor;
-    '>
-        <p>$message</p>
-        <button id='confirmButton' style='
-            padding: 10px 20px;
-            background-color: $backgroundColor;
-            color: $buttonTextColor;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        '>OK</button>
-    </div>
-    <div id='overlay' style='
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-    '></div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('confirmButton').addEventListener('click', function() {
-                document.getElementById('popup').style.display = 'none';
-                document.getElementById('overlay').style.display = 'none';
-            });
+   echo "
+<div id='popup' style='
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    z-index: 1000;
+    text-align: center;
+    color: $popupTextColor;
+'>
+    <p>$message</p>
+    <button id='confirmButton' style='
+        padding: 10px 20px;
+        background-color: $backgroundColor;
+        color: $buttonTextColor;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    '>OK</button>
+</div>
+<div id='overlay' style='
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+'></div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('confirmButton').addEventListener('click', function() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
         });
-    </script>
-    ";
+    });
+</script>
+";
+
     unset($_SESSION['message']); // Clear message
 }
 
@@ -172,7 +179,14 @@ if (isset($_SESSION['error'])) {
     </script>
     ";
     unset($_SESSION['error']); // Clear error
+
 }
+
+$requestTypeDescriptions = [
+    'team_idea_request' => 'Team’s Own Idea',
+    'supervisor_idea_request' => 'Supervisor’s Offered Idea'
+];
+
 ?>
 
    
@@ -205,44 +219,10 @@ if (isset($_SESSION['error'])) {
     <meta property="og:type" content="website">
   <meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
   <body data-path-to-root="./" data-include-products="true" class="u-body u-xl-mode" data-lang="en">
-    <header class="u-clearfix u-header" id="sec-4e01"><div class="u-clearfix u-sheet u-sheet-1">
-        <nav class="u-menu u-menu-one-level u-menu-open-right u-offcanvas u-menu-1" data-responsive-from="MD">
-          <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px; font-weight: 700; text-transform: uppercase;">
-            <a class="u-button-style u-custom-active-border-color u-custom-active-color u-custom-border u-custom-border-color u-custom-borders u-custom-hover-border-color u-custom-hover-color u-custom-left-right-menu-spacing u-custom-padding-bottom u-custom-text-active-color u-custom-text-color u-custom-text-hover-color u-custom-top-bottom-menu-spacing u-nav-link" href="#" style="padding: 0px; font-size: calc(1em + 0.5px);">
-              <svg class="u-svg-link" preserveAspectRatio="xMidYMin slice" viewBox="0 0 302 302" style=""><use xlink:href="#svg-5247"></use></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="svg-5247" x="0px" y="0px" viewBox="0 0 302 302" style="enable-background:new 0 0 302 302;" xml:space="preserve" class="u-svg-content"><g><rect y="36" width="302" height="30"></rect><rect y="236" width="302" height="30"></rect><rect y="136" width="302" height="30"></rect>
-</g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>
-            </a>
-          </div>
-          <div class="u-custom-menu u-nav-container">
-            <ul class="u-nav u-spacing-30 u-unstyled u-nav-1"><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" href="StudentHomePage.php" style="padding: 10px 0px;">Student Home page</a>
-            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentProfile.php">Profile</a>
-            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="StudentRequest.php">Request list</a>
-            
-            </li><li class="u-nav-item"><a class="u-border-2 u-border-active-palette-1-base u-border-hover-palette-1-light-1 u-border-no-left u-border-no-right u-border-no-top u-button-style u-nav-link u-text-active-grey-90 u-text-grey-90 u-text-hover-grey-90" style="padding: 10px 0px;" href="index.php">Log out</a>
-          </div>
-          <div class="u-custom-menu u-nav-container-collapse">
-            <div class="u-container-style u-inner-container-layout u-opacity u-opacity-95 u-palette-1-dark-2 u-sidenav">
-              <div class="u-inner-container-layout u-sidenav-overflow">
-                <div class="u-menu-close"></div>
-                <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2"><li class="u-nav-item"><a class="u-button-style u-nav-link" href="./">Home</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link">Sign Up</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link">Login</a>
-</li><li class="u-nav-item"><a class="u-button-style u-nav-link">Request Project from CCIS</a>
-</li></ul>
-              </div>
-            </div>
-            <div class="u-menu-overlay u-opacity u-opacity-70 u-palette-1-dark-2"></div>
-          </div>
-          <style class="menu-style">@media (max-width: 939px) {
-                    [data-responsive-from="MD"] .u-nav-container {
-                        display: none;
-                    }
-                    [data-responsive-from="MD"] .menu-collapse {
-                        display: block;
-                    }
-                }</style>
-        </nav>
+    <header class="u-clearfix u-header" id="sec-4e01">
+        <div class="u-clearfix u-sheet u-sheet-1">
+<?php include "Student_menu.php";?>
+
         <a href="#" class="u-image u-logo u-image-1" data-image-width="276" data-image-height="194">
           <img src="images/logo_GP-noname.png" class="u-logo-image u-logo-image-1">
         </a>
@@ -251,7 +231,7 @@ if (isset($_SESSION['error'])) {
 
       <section class="u-align-center u-clearfix u-container-align-center u-section-1" id="carousel_2094">
     <div class="u-clearfix u-sheet u-sheet-1">
-\    
+
     <h1 class=" u-align-center u-text u-text-default u-text-palette-1-dark-1 u-text-1">Your Group Requests</h1>
     <?php if (isset($_COOKIE['role']) && $_COOKIE['role'] === 'leader'): ?>
         <a href="StudentHomePage.php" class="u-btn u-button-style u-hover-palette-1-light-1 u-palette-1-base u-text-white u-btn-1">
@@ -259,88 +239,73 @@ if (isset($_SESSION['error'])) {
             <span class="u-file-icon u-icon u-text-palette-1-light-1"><img src="images/1665629-c9014b65.png" alt=""></span>
         </a>
     <?php endif; ?>
-        <div class="u-blog u-expanded-width u-blog-1">
-            <div class="u-list-control"></div>
-            <div class="u-repeater u-repeater-1">
-            <?php if (!empty($requests)): ?>
-                <?php
-// Custom sorting function to order by status and date
-usort($requests, function($a, $b) {
-    // Status order (Approved = 1, Pending = 2, Canceled = 3, Rejected = 4)
-    $statusOrder = [
-        'Approved' => 1,
-        'Pending' => 2,
-        'Canceled' => 3,
-        'Rejected' => 4
-    ];
-
-    // Compare statuses
-    $statusComparison = $statusOrder[$a['status']] <=> $statusOrder[$b['status']];
-    if ($statusComparison !== 0) {
-        return $statusComparison;
-    }
-
-    // If statuses are the same, compare by date (latest first)
-    return strtotime($b['request_date']) <=> strtotime($a['request_date']);
-});
-?>
-    <?php foreach ($requests as $request): ?>
-      <div class="u-blog-post u-repeater-item">
-    <div class="u-container-layout u-similar-container u-valign-bottom-xs u-container-layout-<?= $request['id'] ?>">
-        <!-- <a class="u-post-header-link" href="blog/request-<?= $request['id'] ?>.php"> -->
-            <img src="images/bulb_idea_knowledge_light_read_icon.png" alt="" class="u-blog-control u-image u-image-default u-image-1" data-image-width="1280" data-image-height="852">
-        <!-- </a> -->
-        <h2 class="u-blog-control u-text u-text-2">
-            <!-- <a class="u-align-left u-custom-font u-font-oswald u-text u-text-palette-1-dark-2 u-text-1" href="blog/request-<?= $request['id'] ?>.php"> -->
-                <?= htmlspecialchars($request['project_name'] ?: "Supervisor's Idea") ?>
-            <!-- </a> -->
-        </h2>
-        <?php if ($request['supervisor_name']): ?>
-            <h5 class="u-blog-control u-custom-font u-font-oswald u-text u-text-3">
-                <a href="ViewSupervisor.php?email=<?= htmlspecialchars($request['supervisor_email']) ?>">
-                    <?= htmlspecialchars($request['supervisor_name']) ?>
-                </a>
+    
+    
+       <div class="u-blog u-expanded-width u-blog-1">
+  <div class="u-repeater u-repeater-1">
+    <?php if (!empty($requests)): ?>
+      <?php
+      usort($requests, function($a, $b) {
+          $statusOrder = ['Approved' => 1, 'Pending' => 2, 'Canceled' => 3, 'Rejected' => 4];
+          $statusComparison = $statusOrder[$a['status']] <=> $statusOrder[$b['status']];
+          return $statusComparison !== 0
+              ? $statusComparison
+              : strtotime($b['request_date']) <=> strtotime($a['request_date']);
+      });
+      ?>
+      <?php foreach ($requests as $request): ?>
+        <div class="u-blog-post u-repeater-item">
+          <div class="u-container-layout">
+            <img src="images/bulb_idea_knowledge_light_read_icon.png" alt="" class="u-image-1">
+            <h2 class="u-text-2">
+  <?php if ($request['request_type'] === 'supervisor_idea_request'): ?>
+    Supervisor's Idea
+  <?php else: ?>
+    <?= htmlspecialchars($request['project_name'] ?: "Student's Idea") ?>
+  <?php endif; ?>
+</h2>
+            <h5 class="u-text-3">
+              <a href="ViewSupervisor.php?supervisor_email=<?= htmlspecialchars($request['supervisor_email']) ?>">
+                <?= htmlspecialchars($request['supervisor_name']) ?>
+              </a>
             </h5>
-            <h6 class="u-blog-control u-custom-font u-font-oswald u-text u-text-3">
-                Email: <?= htmlspecialchars($request['supervisor_email']) ?>
-            </h6>
-        <?php endif; ?>
-        <?php
-// Define a mapping of request types to user-friendly descriptions
-$requestTypeDescriptions = [
-    'team_idea_request' => 'Team Idea Request',
-    'supervisor_idea_request' => 'Supervisor Idea Request'
-];
+            <h6 class="u-text-3">Email: <?= htmlspecialchars($request['supervisor_email']) ?></h6>
+            <h7 class="u-text-3">
+              Request Type: <?= htmlspecialchars($requestTypeDescriptions[$request['request_type']] ?? 'Unknown') ?>
+            </h7>
+            <div class="u-post-content u-text u-text-3 fr-view">
+              Project Idea: <?= htmlspecialchars($request['description']) ?>
+            </div>
+            <div class="u-post-tags u-post-tags-1">
+              <span><?= htmlspecialchars($request['request_date']) ?></span>
+            </div>
+            
+            
+            <div class="u-metadata u-metadata-1" style="display: flex; align-items: center; gap: 10px;">
+  <span class="u-meta-date u-meta-icon" style="
+    color: <?= $request['status'] == 'Approved' ? 'lightgreen' :
+                 ($request['status'] == 'Rejected' ? 'red' :
+                 ($request['status'] == 'Canceled' ? 'gray' : 'black')) ?>;
+    flex: 0;
+  ">
+    <?= htmlspecialchars($request['status']) ?>
+  </span>
+  
 
-// Get the friendly description for the request type
-$requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 'Unknown Request Type';
-?>
-
-<h7 class="u-blog-control u-custom-font u-font-oswald u-text u-text-3">
-    Request Type: <?= htmlspecialchars($requestTypeDescription) ?>
-</h7>
-        <div class="u-blog-control u-post-content u-text u-text-3 fr-view">
-            Project Idea: <?= htmlspecialchars($request['description']) ?>
-        </div>
-        <div class="u-blog-control u-post-tags u-post-tags-1">
-            <span><?= htmlspecialchars($request['request_date']) ?></span>
-        </div>
-        <div class="u-blog-control u-metadata u-metadata-1">
-            <span class="u-meta-date u-meta-icon" style="color: 
-                <?php 
-                if ($request['status'] == 'Approved') {
-                    echo 'lightgreen';
-                } elseif ($request['status'] == 'Rejected') {
-                  echo 'red';
-                }elseif ($request['status'] == 'Canceled') {
-                    echo 'gray';
-                } else {
-                    echo 'black';
-                } 
-                ?>">
-                <?= htmlspecialchars($request['status']) ?>
-            </span>
-        </div>
+  <?php if ($request['status'] == 'Rejected' && !empty($request['reject_reason'])): ?>
+    <button onclick="showPopup('<?= htmlspecialchars(addslashes($request['reject_reason'])) ?>')" 
+            class="u-btn u-button-style u-palette-2-base" 
+            style="flex: 0; padding: 8px 12px;">
+        View Rejection Reason
+    </button>
+  <?php elseif ($request['status'] == 'Canceled' && !empty($request['delete_reason'])): ?>
+    <button onclick="showPopup('<?= htmlspecialchars(addslashes($request['delete_reason'])) ?>')" 
+            class="u-btn u-button-style u-grey-30" 
+            style="flex: 0; padding: 8px 12px;">
+        View Cancellation Reason
+    </button>
+  <?php endif; ?>
+</div>
         <?php if ($request['status'] == 'Pending'): // Check if the status is not Canceled ?>
 
         <!-- Add Buttons Here -->
@@ -354,7 +319,7 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
         <?php if ($request['request_type'] === 'team_idea_request' && isset($_SESSION['role']) && $_SESSION['role'] === 'leader'): ?>
         
         <!-- Edit Form -->
-        <form action="edit-request.php" method="GET">
+        <form action="Edit-request.php" method="GET">
             <input type="hidden" name="id" value="<?= htmlspecialchars($request['id'], ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="type" value="<?= htmlspecialchars($request['request_type'], ENT_QUOTES, 'UTF-8') ?>">
             <button type="submit" class="u-btn u-btn-edit" 
@@ -380,7 +345,7 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
             <input type="hidden" name="request_type" value="<?= htmlspecialchars($request['request_type']) ?>">
             <input type="hidden" name="delete_reason" id="deleteReasonInput">
 
-            <button type="button" class="u-btn u-btn-delete" onclick="showDeletePopup()"
+            <button type="button" class="u-btn u-btn-delete" onclick="showDeletePopup(<?= $request['id'] ?>)"
                 style="
                     padding: 10px 20px;
                     background-color: #f8d7da;
@@ -400,7 +365,7 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
 
 
 <!-- Custom Delete Confirmation Modal -->
-<div id="deletePopup" style="display: none; position: fixed; top: 50%; left: 50%;
+<div id="deletePopup-<?= $request['id'] ?>" style="display: none; position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%); background-color: white; padding: 20px; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border-radius: 8px; z-index: 1000; 
     text-align: center; color: black; width: 350px;">
@@ -413,10 +378,10 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
     <button id="confirmDeleteButton" style="padding: 10px 20px; background-color: #f8d7da;
         color: #721c24; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;"
         onclick="confirmDelete()">Yes, Cancel</button>
-
-    <button id="cancelDeleteButton" style="padding: 10px 20px; background-color: #007BFF;
-        color: white; border: none; border-radius: 5px; cursor: pointer;"
-        onclick="hideDeletePopup()">No, Don't Cancel</button>
+<button id="cancelDeleteButton" onclick="hideDeletePopup(<?= $request['id'] ?>)" style="padding: 10px 20px; background-color: #007BFF;
+        color: white; border: none; border-radius: 5px; cursor: pointer;">
+    No, Don't Cancel
+</button>
 </div>
 
 <div id="deleteOverlay" style="display: none; position: fixed; top: 0; left: 0;
@@ -424,15 +389,17 @@ $requestTypeDescription = $requestTypeDescriptions[$request['request_type']] ?? 
 </div>
 
 <script>
-function showDeletePopup() {
-    document.getElementById('deletePopup').style.display = 'block';
-    document.getElementById('deleteOverlay').style.display = 'block';
+function showDeletePopup(id) {
+  document.getElementById('deletePopup-' + id).style.display = 'block';
+  document.getElementById('deleteOverlay').style.display = 'block'; // FIXED
 }
 
-function hideDeletePopup() {
-    document.getElementById('deletePopup').style.display = 'none';
-    document.getElementById('deleteOverlay').style.display = 'none';
+function hideDeletePopup(id) {
+  document.getElementById('deletePopup-' + id).style.display = 'none';
+  document.getElementById('deleteOverlay').style.display = 'none'; // FIXED
 }
+
+
 
 function confirmDelete() {
     let reason = document.getElementById('deleteReason').value.trim();
@@ -447,22 +414,23 @@ function confirmDelete() {
 
     <?php endif; ?>
 </div>
-
-    </div>
-</div>
-
-
-<hr>
-
-    <?php endforeach; ?>
-<?php else: ?>
-    <p>No requests found.</p>
-<?php endif; ?>
-
-            </div>
-            <div class="u-list-control"></div>
+            
+            
+          </div>
+        
         </div>
-    </div>
+        
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p>No requests found.</p>
+    <?php endif; ?>
+            </div>
+            
+            </div>
+        </div>
+
+          
+
 </section>
     
     
@@ -498,5 +466,88 @@ function confirmDelete() {
     </div>
   </div>
 </div></footer>
-  
+  <style>
+/* Force requests to stack vertically and look consistent */
+.u-section-1 .u-blog-1 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.u-repeater-1 {
+  display: block !important;
+}
+
+.u-repeater-item {
+  display: block !important;
+  width: 100% !important;
+  margin-bottom: 30px !important;
+  background-color: #e6f1fb !important;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.u-container-layout {
+  display: block !important;
+}
+
+.u-container-layout{
+      margin-bottom: 0 auto
+}
+
+
+  </style>
+<!-- Modal for Reason Popup -->
+<div id="reasonPopup" style="
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+    max-width: 400px;
+    width: 90%;
+    text-align: center; /* ✅ center text and button */
+">
+    <p id="reasonText" style="color:black;"></p>
+    <button onclick="hidePopup()" style="
+        margin-top: 15px;
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    ">Close</button>
+</div>
+
+<!-- Overlay -->
+<div id="overlay" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+"></div>
+
+
+<script>
+function showPopup(reason) {
+    document.getElementById('reasonText').innerText = reason;
+    document.getElementById('reasonPopup').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+}
+function hidePopup() {
+    document.getElementById('reasonPopup').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+}
+</script>
+
 </body></html>
